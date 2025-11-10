@@ -1,0 +1,13 @@
+//예약 삭제 > 유저 삭제 
+//?===유저 id
+
+
+예약 삭제 
+DELETE FROM reservations WHERE user_id = ?; 
+
+유저 삭제
+
+DELETE FROM users WHERE id = ?;
+
+listings 전체데이터삭제
+TRUNCATE TABLE listings;
