@@ -1,11 +1,10 @@
-// src/pages/ReservationComplete.js
+// 예약완료
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTheme } from "../contexts/ThemeContext";
 
 function ReservationComplete() {
-  const { state } = useLocation();
   const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -24,13 +23,11 @@ function ReservationComplete() {
     : "0 12px 28px rgba(0,0,0,0.08)";
   const titleColor = isDark ? "#e8e8e8" : "#222";
   const textColor = isDark ? "#bbb" : "#666";
-  const summaryBg = isDark ? "#1c1c1c" : "#fafafa";
-  const summaryBorder = isDark ? "#444" : "#e5e5e5";
 
   return (
     <div
       style={{
-        minHeight: "100vh", // 전체 화면을 덮어서 아래 베이지 안 보이게 수정
+        minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -66,37 +63,11 @@ function ReservationComplete() {
           ✅ 예약이 완료되었습니다
         </div>
 
-        <div style={{ color: textColor, marginBottom: 16 }}>
+        <div style={{ color: textColor, marginBottom: 12 }}>
           곧{" "}
           <strong style={{ color: isDark ? "#fff" : "#222" }}>예약 내역</strong>{" "}
           페이지로 이동합니다.
         </div>
-
-        {/* 요약 박스 */}
-        {state?.summary && (
-          <div
-            style={{
-              marginTop: 10,
-              background: summaryBg,
-              border: `1px dashed ${summaryBorder}`,
-              borderRadius: 10,
-              padding: "12px 14px",
-              fontSize: 14,
-              color: isDark ? "#ddd" : "#444",
-              textAlign: "left",
-              transition: "0.3s ease",
-            }}
-          >
-            <div style={{ fontWeight: 700, marginBottom: 8 }}>결제 요약</div>
-            <div>
-              총 금액:{" "}
-              <b style={{ color: "#ff5a5f" }}>
-                {state.summary.total.toLocaleString()}원
-              </b>
-            </div>
-            <div>숙박: {state.summary.nights}박</div>
-          </div>
-        )}
       </motion.div>
     </div>
   );

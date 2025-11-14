@@ -1,12 +1,15 @@
-//로그인
+// 로그인
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
 import { motion } from "framer-motion";
 
 function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { theme } = useTheme();
+
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,6 +26,52 @@ function LoginPage() {
     if (success) navigate("/");
   };
 
+  // 🎨 다크모드 스타일
+  const bgGradient =
+    theme === "dark"
+      ? "linear-gradient(135deg, #000, #111)"
+      : "linear-gradient(135deg, rgba(255,90,95,0.1), rgba(255,90,95,0.3))";
+
+  const cardStyle = {
+    background: theme === "dark" ? "#111" : "#fff",
+    padding: "40px 30px",
+    borderRadius: "12px",
+    boxShadow:
+      theme === "dark"
+        ? "0 10px 30px rgba(255,255,255,0.07)"
+        : "0 10px 30px rgba(0,0,0,0.1)",
+    width: "90%",
+    maxWidth: "380px",
+    textAlign: "center",
+    border: theme === "dark" ? "1px solid #333" : "1px solid #eee",
+    transition: "0.25s",
+  };
+
+  const inputStyle = {
+    width: "100%",
+    padding: "12px",
+    border: theme === "dark" ? "1px solid #444" : "1px solid #ddd",
+    background: theme === "dark" ? "#222" : "#fff",
+    color: theme === "dark" ? "#fff" : "#222",
+    borderRadius: "6px",
+    marginBottom: "14px",
+    outline: "none",
+    fontSize: "15px",
+    transition: "0.25s",
+  };
+
+  const loginButton = {
+    width: "100%",
+    padding: "12px",
+    border: "none",
+    borderRadius: "6px",
+    background: "#ff5a5f",
+    color: "white",
+    fontWeight: "600",
+    cursor: "pointer",
+    fontSize: "16px",
+  };
+
   return (
     <div
       style={{
@@ -30,31 +79,23 @@ function LoginPage() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background:
-          "linear-gradient(135deg, rgba(255,90,95,0.1), rgba(255,90,95,0.3))",
+        background: bgGradient,
         padding: "20px",
+        transition: "0.25s",
       }}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        style={{
-          background: "white",
-          padding: "40px 30px",
-          borderRadius: "12px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-          width: "90%",
-          maxWidth: "380px",
-          textAlign: "center",
-        }}
+        style={cardStyle}
       >
         <h2
           style={{
             marginBottom: "25px",
             fontWeight: "700",
             fontSize: "26px",
-            color: "#333",
+            color: theme === "dark" ? "#fff" : "#333",
           }}
         >
           로그인
@@ -67,7 +108,6 @@ function LoginPage() {
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             style={inputStyle}
-            autoComplete="off"
           />
 
           <input
@@ -76,7 +116,6 @@ function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={inputStyle}
-            autoComplete="new-password"
           />
 
           {error && <p style={{ color: "#ff5a5f" }}>{error}</p>}
@@ -86,10 +125,20 @@ function LoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: "16px", fontSize: "14px", color: "#555" }}>
+        <div
+          style={{
+            marginTop: "16px",
+            fontSize: "14px",
+            color: theme === "dark" ? "#ccc" : "#555",
+          }}
+        >
           아직 계정이 없으신가요?{" "}
           <span
-            style={{ color: "#ff5a5f", cursor: "pointer", fontWeight: 600 }}
+            style={{
+              color: theme === "dark" ? "#ff767a" : "#ff5a5f",
+              cursor: "pointer",
+              fontWeight: 600,
+            }}
             onClick={() => navigate("/signup")}
           >
             회원가입
@@ -99,27 +148,5 @@ function LoginPage() {
     </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px",
-  border: "1px solid #ddd",
-  borderRadius: "6px",
-  marginBottom: "14px",
-  outline: "none",
-  fontSize: "15px",
-};
-
-const loginButton = {
-  width: "100%",
-  padding: "12px",
-  border: "none",
-  borderRadius: "6px",
-  background: "#ff5a5f",
-  color: "white",
-  fontWeight: "600",
-  cursor: "pointer",
-  fontSize: "16px",
-};
 
 export default LoginPage;

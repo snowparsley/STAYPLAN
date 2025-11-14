@@ -240,9 +240,9 @@ function Header() {
                     <Link to="/reservations" style={styles.menuItem}>
                       <FiClipboard /> 예약 내역 보기
                     </Link>
-                    <Link to="/settings" style={styles.menuItem}>
+                    {/* <Link to="/settings" style={styles.menuItem}>
                       <FiSettings /> 설정
-                    </Link>
+                    </Link> */}
                     <hr style={{ height: 1, background: "#444", margin: 0 }} />
                     <button onClick={handleLogout} style={styles.menuItem}>
                       <FiLogOut /> 로그아웃

@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
+// import SettingsPage from "./pages/SettingsPage";
 import ReservationsPage from "./pages/ReservationsPage";
 import PrivateRoute from "./components/PrivateRoute";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -66,14 +66,14 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/settings"
               element={
                 <PrivateRoute>
                   <SettingsPage />
                 </PrivateRoute>
               }
-            />
+            /> */}
           </Routes>
         </Router>
       </ThemeProvider>
