@@ -1,3 +1,4 @@
+//상단 큰 그림
 import React, { useEffect, useState } from "react";
 
 const slides = [
@@ -47,7 +48,7 @@ function HeroSlider() {
       className="hero-slider"
       style={{
         maxWidth: "1200px",
-        margin: "0 auto 20px",
+        margin: "24px auto 20px",
         padding: isMobile ? "0 12px" : "0 24px",
       }}
     >

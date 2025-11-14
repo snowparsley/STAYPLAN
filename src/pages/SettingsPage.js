@@ -1,3 +1,4 @@
+//설정
 import React, { useState } from "react";
 
 function SettingsPage() {

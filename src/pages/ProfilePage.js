@@ -1,3 +1,4 @@
+//내 정보
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 

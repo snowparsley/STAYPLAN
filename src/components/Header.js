@@ -1,12 +1,8 @@
+//상단
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-  useCallback,
-} from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
 import {
   FiLogIn,
   FiUser,
@@ -17,11 +13,14 @@ import {
   FiUserCheck,
   FiMenu,
   FiX,
+  FiMoon,
+  FiSun,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Header() {
   const { isLoggedIn, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -53,7 +52,6 @@ function Header() {
     []
   );
 
-  // 🔹 외부 클릭 닫기
   useEffect(() => {
     const onMouseDown = (e) => {
       if (
@@ -69,7 +67,6 @@ function Header() {
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
-  // 🔹 라우트 이동 시 드롭다운 닫기
   useEffect(() => {
     setOpen(false);
     setMobileMenu(false);
@@ -91,7 +88,8 @@ function Header() {
       zIndex: 100,
       background: THEME.bg,
       borderBottom: `1px solid ${THEME.border}`,
-      backgroundColor: "beige",
+      backgroundColor: theme === "dark" ? "#111" : "beige",
+      transition: "0.3s ease",
     },
     headerInner: {
       display: "flex",
@@ -170,8 +168,22 @@ function Header() {
           STAYPLAN
         </Link>
 
-        {/* ✅ PC 전용 메뉴 */}
         <div className="desktop-menu" style={styles.right}>
+          {/* 💡 다크모드 토글 버튼 */}
+          <button
+            onClick={toggleTheme}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "22px",
+              cursor: "pointer",
+              color: theme === "dark" ? "#fff" : "#444",
+              transition: "0.25s",
+            }}
+          >
+            {theme === "dark" ? <FiSun /> : <FiMoon />}
+          </button>
+
           {isLoggedIn && (
             <Link to="/reservations" style={styles.navLink}>
               예약 내역
@@ -242,7 +254,6 @@ function Header() {
           )}
         </div>
 
-        {/* ✅ 모바일 햄버거 버튼 */}
         <button
           className="mobile-toggle"
           onClick={() => setMobileMenu((prev) => !prev)}
@@ -259,7 +270,6 @@ function Header() {
         </button>
       </div>
 
-      {/* ✅ 모바일 메뉴 (펼쳐지는 메뉴) */}
       <AnimatePresence>
         {mobileMenu && (
           <motion.div
@@ -268,7 +278,7 @@ function Header() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
             style={{
-              background: "#fff",
+              background: theme === "dark" ? "#111" : "#fff",
               borderTop: `1px solid ${THEME.border}`,
               boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
             }}
@@ -281,6 +291,23 @@ function Header() {
                 gap: "14px",
               }}
             >
+              {/* 모바일에도 다크모드 버튼 추가 */}
+              <button
+                onClick={toggleTheme}
+                style={{
+                  border: "none",
+                  background: "none",
+                  textAlign: "left",
+                  color: theme === "dark" ? "#fff" : "#444",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  marginBottom: "8px",
+                  fontSize: "16px",
+                }}
+              >
+                {theme === "dark" ? "☀ 라이트 모드" : "🌙 다크 모드"}
+              </button>
+
               {isLoggedIn ? (
                 <>
                   <Link to="/profile" onClick={() => setMobileMenu(false)}>
@@ -326,7 +353,6 @@ function Header() {
         )}
       </AnimatePresence>
 
-      {/* ✅ 반응형 스타일 */}
       <style>
         {`
           @media (max-width: 768px) {

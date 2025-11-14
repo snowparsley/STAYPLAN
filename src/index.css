@@ -89,3 +89,52 @@ button {
     padding: 14px !important;
   }
 }
+/* ============================================
+   🌙 다크모드 (body.dark 가 활성화 될 때)
+============================================ */
+body.dark {
+  background-color: #111 !important;
+  color: #f0f0f0 !important;
+}
+
+/* 모든 텍스트 기본 색 덮어쓰기 */
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6,
+body.dark p,
+body.dark span,
+body.dark div,
+body.dark a {
+  color: #f1f1f1 !important;
+}
+
+/* 카드 배경 */
+body.dark .listing-card {
+  background: #1d1d1d !important;
+  color: #f8f8f8 !important;
+  box-shadow: 0 4px 12px rgba(255,255,255,0.05) !important;
+}
+
+/* CollectionSection 배경 */
+body.dark .collection-section {
+  background: linear-gradient(to bottom right, #1a1a1a, #111) !important;
+}
+
+/* HeroSlider 텍스트 */
+body.dark .hero-slider h1,
+body.dark .hero-slider p {
+  color: #fff !important;
+}
+
+/* 버튼 */
+body.dark button {
+  background-color: #222 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+/* 헤더는 이미 다크모드 적용되어 있으므로 그대로 유지 */
+

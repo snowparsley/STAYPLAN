@@ -1,15 +1,17 @@
-// src/pages/HomePage.js
+//홈페이지
 import React, { useEffect, useState } from "react";
 import HeroSlider from "../components/HeroSlider";
 import CollectionSection from "../components/CollectionSection";
 import Footer from "../components/Footer";
+import { useTheme } from "../contexts/ThemeContext";
 
 function HomePage() {
+  const { theme } = useTheme(); // ← 다크모드 상태 가져오기
+
   const [listings, setListings] = useState([]);
-  const [type, setType] = useState("domestic"); // ✅ 기본값: 국내
+  const [type, setType] = useState("domestic");
   const [loading, setLoading] = useState(true);
 
-  // ✅ 숙소 불러오기
   const fetchListings = async (selectedType) => {
     try {
       setLoading(true);
@@ -27,12 +29,10 @@ function HomePage() {
     }
   };
 
-  // ✅ 첫 렌더 및 type 변경 시 실행
   useEffect(() => {
     fetchListings(type);
   }, [type]);
 
-  // ✅ 섹션 제목 & 감성 문구
   const sectionTitles =
     type === "domestic"
       ? [
@@ -69,95 +69,124 @@ function HomePage() {
           "로맨틱한 순간이 머무는 여행의 끝자락",
         ];
 
-  // ✅ 섹션 나누기
   const sections = [];
   const chunkSize = type === "domestic" ? 8 : 5;
   for (let i = 0; i < listings.length; i += chunkSize) {
     const index = Math.floor(i / chunkSize) % sectionTitles.length;
     sections.push({
       title: sectionTitles[index],
-      subtitle: sectionSubtitles[index], // ✅ 추가된 부분
+      subtitle: sectionSubtitles[index],
       data: listings.slice(i, i + chunkSize),
     });
   }
 
+  // 🌙 라이트/다크 배경
+  const outerBackground = theme === "dark" ? "#000" : "beige";
+  const innerBackground = theme === "dark" ? "#111" : "#fff";
+  const cardShadow =
+    theme === "dark"
+      ? "0 8px 25px rgba(255,255,255,0.05)"
+      : "0 8px 25px rgba(0,0,0,0.08)";
+
   return (
-    <div>
-      <HeroSlider />
-
-      {/* ✅ 국내/해외 전환 버튼 */}
-      <div style={{ textAlign: "center", margin: "40px 0 30px" }}>
-        <div
-          style={{
-            display: "inline-flex",
-            background: "#fff",
-            borderRadius: "50px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            overflow: "hidden",
-          }}
-        >
-          {["domestic", "abroad"].map((t) => (
-            <button
-              key={t}
-              onClick={() => setType(t)}
-              style={{
-                padding: "10px 26px",
-                border: "none",
-                outline: "none",
-                cursor: "pointer",
-                fontSize: "15px",
-                fontWeight: 600,
-                backgroundColor: type === t ? "#000" : "#fff",
-                color: type === t ? "#fff" : "#000",
-                transition: "all 0.25s ease",
-              }}
-            >
-              {t === "domestic" ? "국내" : "해외"}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ✅ 숙소 목록 */}
+    <div
+      style={{
+        background: outerBackground,
+        minHeight: "100vh",
+        paddingBottom: "50px",
+        transition: "0.3s ease",
+      }}
+    >
+      {/* 중앙 흰색 박스 */}
       <div
         style={{
           maxWidth: "1200px",
-          margin: "0 auto 80px",
-          padding: "0 24px",
+          margin: "0 auto",
+          background: innerBackground,
+          borderRadius: "18px",
+          boxShadow: cardShadow,
+          overflow: "hidden",
+          transition: "0.3s ease",
         }}
       >
-        {loading ? (
-          <p
+        <HeroSlider />
+
+        {/* 국내/해외 버튼 */}
+        <div style={{ textAlign: "center", margin: "40px 0 30px" }}>
+          <div
             style={{
-              textAlign: "center",
-              color: "#777",
-              marginTop: "80px",
-              fontSize: "17px",
+              display: "inline-flex",
+              background: innerBackground,
+              borderRadius: "50px",
+              boxShadow:
+                theme === "dark"
+                  ? "0 2px 8px rgba(255,255,255,0.05)"
+                  : "0 2px 8px rgba(0,0,0,0.1)",
+              overflow: "hidden",
+              transition: "0.3s ease",
             }}
           >
-            숙소 정보를 불러오는 중입니다...
-          </p>
-        ) : listings.length === 0 ? (
-          <p
-            style={{
-              textAlign: "center",
-              color: "#999",
-              marginTop: "60px",
-              fontSize: "16px",
-            }}
-          >
-            표시할 숙소가 없습니다.
-          </p>
-        ) : (
-          sections.map((section, idx) => (
-            <CollectionSection
-              key={idx}
-              title={section.title}
-              subtitle={section.subtitle} // ✅ 감성 문구 전달
-              listings={section.data}
-            />
-          ))
-        )}
+            {["domestic", "abroad"].map((t) => (
+              <button
+                key={t}
+                onClick={() => setType(t)}
+                style={{
+                  padding: "10px 26px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "15px",
+                  fontWeight: 600,
+                  backgroundColor:
+                    type === t
+                      ? theme === "dark"
+                        ? "#fff"
+                        : "#000"
+                      : "transparent",
+                  color:
+                    type === t
+                      ? theme === "dark"
+                        ? "#000"
+                        : "#fff"
+                      : theme === "dark"
+                      ? "#ddd"
+                      : "#000",
+                  transition: "all 0.25s ease",
+                }}
+              >
+                {t === "domestic" ? "국내" : "해외"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 목록 */}
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "0 24px 40px",
+            transition: "0.3s ease",
+          }}
+        >
+          {loading ? (
+            <p style={{ textAlign: "center", marginTop: "80px" }}>
+              숙소 정보를 불러오는 중입니다...
+            </p>
+          ) : listings.length === 0 ? (
+            <p style={{ textAlign: "center", marginTop: "60px" }}>
+              표시할 숙소가 없습니다.
+            </p>
+          ) : (
+            sections.map((section, idx) => (
+              <CollectionSection
+                key={idx}
+                title={section.title}
+                subtitle={section.subtitle}
+                listings={section.data}
+              />
+            ))
+          )}
+        </div>
       </div>
 
       <Footer />
