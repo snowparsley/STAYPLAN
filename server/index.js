@@ -4,14 +4,54 @@ import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+/* -------------------------------------------------------
+   ⭐ 기존 CORS 유지 + 배포용 CORS 추가
+------------------------------------------------------- */
+app.use(cors()); // ← 기존 코드 그대로 유지
+
+// ⭐ Vercel / Render 배포 환경에서도 허용
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // 로컬 개발
+      "https://your-vercel-domain.vercel.app", // ← 배포된 Vercel 프론트 주소
+      "https://your-render-domain.onrender.com", // ← Render 서버 주소
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-// ✅ DB 연결
+// 📌 프로필 업로드 폴더 생성
+const profileDir = "./uploads/profile";
+if (!fs.existsSync(profileDir)) {
+  fs.mkdirSync(profileDir, { recursive: true });
+}
+
+// 📌 Multer 설정
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, profileDir),
+    filename: (req, file, cb) =>
+      cb(null, `user_${Date.now()}_${file.originalname}`),
+  }),
+});
+
+// 정적 파일 제공
+app.use("/uploads", express.static("uploads"));
+
+/* -------------------------------------------------------
+   DB 연결
+------------------------------------------------------- */
 const db = await mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -19,17 +59,19 @@ const db = await mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-// ✅ JWT 시크릿 키
+/* -------------------------------------------------------
+   JWT 시크릿 키
+------------------------------------------------------- */
 const JWT_SECRET = process.env.JWT_SECRET || "stayplan_secret_key";
 
-// ✅ 기본 테스트 라우트
+/* -------------------------------------------------------
+   기본 라우트
+------------------------------------------------------- */
 app.get("/", (req, res) => res.send("✅ Express Server Running"));
 
 /* -------------------------------------------------------
- ✅ 숙소 관련 API
+   숙소 관련 API
 ------------------------------------------------------- */
-
-// ✅ 숙소 전체 or type별 조회 (국내 / 해외 필터링 지원)
 app.get("/api/listings", async (req, res) => {
   try {
     const { type } = req.query;
@@ -37,7 +79,6 @@ app.get("/api/listings", async (req, res) => {
     let query = "SELECT * FROM listings";
     const params = [];
 
-    // ✅ type이 있을 때만 필터링
     if (type === "domestic" || type === "abroad") {
       query += " WHERE type = ?";
       params.push(type);
@@ -51,7 +92,6 @@ app.get("/api/listings", async (req, res) => {
   }
 });
 
-// ✅ 숙소 상세 조회
 app.get("/api/listings/:id", async (req, res) => {
   try {
     const [rows] = await db.query("SELECT * FROM listings WHERE id = ?", [
@@ -66,7 +106,7 @@ app.get("/api/listings/:id", async (req, res) => {
 });
 
 /* -------------------------------------------------------
- ✅ 회원가입 API
+   회원가입
 ------------------------------------------------------- */
 app.post("/api/signup", async (req, res) => {
   try {
@@ -84,12 +124,13 @@ app.post("/api/signup", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     await db.query(
-      "INSERT INTO users (user_id, password, name, email) VALUES (?, ?, ?, ?)",
+      "INSERT INTO users (user_id, password, name, email, profile_image) VALUES (?, ?, ?, ?, '')",
       [userId, hashedPassword, name, email]
     );
 
-    res.json({ ok: true, message: "회원가입이 완료되었습니다 🎉" });
+    res.json({ ok: true, message: "회원가입 완료 🎉" });
   } catch (err) {
     console.error("❌ Signup Error:", err);
     res.status(500).json({ message: "서버 오류 발생" });
@@ -97,7 +138,7 @@ app.post("/api/signup", async (req, res) => {
 });
 
 /* -------------------------------------------------------
- ✅ 로그인 API (JWT 발급)
+   로그인
 ------------------------------------------------------- */
 app.post("/api/login", async (req, res) => {
   try {
@@ -122,13 +163,14 @@ app.post("/api/login", async (req, res) => {
 
     res.json({
       ok: true,
-      message: `${user.name}님, 환영합니다 🎉`,
+      message: `${user.name}님 환영합니다 🎉`,
       token,
       user: {
         id: user.id,
         userId: user.user_id,
         name: user.name,
         email: user.email,
+        profile_image: user.profile_image,
       },
     });
   } catch (err) {
@@ -138,7 +180,7 @@ app.post("/api/login", async (req, res) => {
 });
 
 /* -------------------------------------------------------
- ✅ JWT 인증 미들웨어
+   JWT 인증 미들웨어
 ------------------------------------------------------- */
 function authRequired(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -146,21 +188,62 @@ function authRequired(req, res, next) {
     return res.status(401).json({ message: "인증 토큰이 없습니다." });
 
   const token = authHeader.replace("Bearer ", "");
+
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
-    console.error("🔐 JWT Verify Error:", err);
     return res.status(403).json({ message: "유효하지 않은 토큰입니다." });
   }
 }
 
 /* -------------------------------------------------------
- ✅ 예약 관련 API
+   프로필 이미지 업로드
 ------------------------------------------------------- */
+app.post(
+  "/api/profile/upload",
+  authRequired,
+  upload.single("profile"),
+  async (req, res) => {
+    try {
+      const filePath = `uploads/profile/${req.file.filename}`;
 
-// ✅ 예약 생성
+      await db.query("UPDATE users SET profile_image = ? WHERE id = ?", [
+        filePath,
+        req.user.id,
+      ]);
+
+      res.json({ ok: true, profile_image: filePath });
+    } catch (err) {
+      console.error("❌ Upload Error:", err);
+      res.status(500).json({ message: "업로드 실패" });
+    }
+  }
+);
+
+/* -------------------------------------------------------
+   내 정보 업데이트
+------------------------------------------------------- */
+app.patch("/api/profile/update", authRequired, async (req, res) => {
+  try {
+    const { name, email } = req.body;
+
+    await db.query("UPDATE users SET name = ?, email = ? WHERE id = ?", [
+      name,
+      email,
+      req.user.id,
+    ]);
+
+    res.json({ ok: true, message: "정보가 수정되었습니다." });
+  } catch (err) {
+    res.status(500).json({ message: "업데이트 실패" });
+  }
+});
+
+/* -------------------------------------------------------
+   예약 생성
+------------------------------------------------------- */
 app.post("/api/reservations", authRequired, async (req, res) => {
   try {
     const {
@@ -197,7 +280,7 @@ app.post("/api/reservations", authRequired, async (req, res) => {
     res.json({
       ok: true,
       id: result.insertId,
-      message: "예약이 성공적으로 완료되었습니다 ✅",
+      message: "예약 완료되었습니다.",
     });
   } catch (err) {
     console.error("❌ Reservation Error:", err);
@@ -205,7 +288,9 @@ app.post("/api/reservations", authRequired, async (req, res) => {
   }
 });
 
-// ✅ 내 예약 조회
+/* -------------------------------------------------------
+   내 예약 조회
+------------------------------------------------------- */
 app.get("/api/my-reservations", authRequired, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -220,75 +305,14 @@ app.get("/api/my-reservations", authRequired, async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    console.error("❌ 예약 내역 불러오기 오류:", err);
     res.status(500).json({ message: "예약 내역을 불러오지 못했습니다." });
   }
 });
 
-// ✅ 예약 삭제
-app.delete("/api/reservations/:id", authRequired, async (req, res) => {
-  try {
-    const reservationId = req.params.id;
-    const loginUserId = req.user.id;
-
-    const [check] = await db.query(
-      "SELECT * FROM reservations WHERE id = ? AND user_id = ?",
-      [reservationId, loginUserId]
-    );
-    if (check.length === 0) {
-      return res
-        .status(403)
-        .json({ ok: false, message: "삭제 권한이 없습니다." });
-    }
-
-    await db.query("DELETE FROM reservations WHERE id = ?", [reservationId]);
-
-    res.json({ ok: true, message: "예약 내역이 삭제되었습니다 ✅" });
-  } catch (err) {
-    console.error("❌ 예약 삭제 오류:", err);
-    res.status(500).json({ ok: false, message: "서버 오류 발생" });
-  }
-});
-
-// ✅ 예약 취소
-app.patch("/api/reservations/:id/cancel", authRequired, async (req, res) => {
-  try {
-    const reservationId = req.params.id;
-    const loginUserId = req.user.id;
-
-    const [check] = await db.query(
-      "SELECT * FROM reservations WHERE id = ? AND user_id = ?",
-      [reservationId, loginUserId]
-    );
-
-    if (check.length === 0) {
-      return res.status(403).json({
-        ok: false,
-        message: "해당 예약을 취소할 권한이 없습니다.",
-      });
-    }
-
-    await db.query("UPDATE reservations SET status='canceled' WHERE id=?", [
-      reservationId,
-    ]);
-
-    return res.json({
-      ok: true,
-      message: "예약이 취소되었습니다.",
-    });
-  } catch (err) {
-    console.error("❌ 예약 취소 오류:", err);
-    return res.status(500).json({
-      ok: false,
-      message: "서버 오류 발생",
-    });
-  }
-});
-
 /* -------------------------------------------------------
- ✅ 서버 실행
+   서버 실행
 ------------------------------------------------------- */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
-  console.log(`✅ Server running on http://localhost:${PORT}`)
+  console.log(`🚀 Server running on http://localhost:${PORT}`)
 );

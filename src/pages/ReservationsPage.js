@@ -13,9 +13,12 @@ function ReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  // 🔥 공통 API 주소
+  const API = import.meta.env.VITE_API_URL;
+
   const fetchReservations = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/my-reservations", {
+      const res = await fetch(`${API}/api/my-reservations`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -30,13 +33,13 @@ function ReservationsPage() {
 
   useEffect(() => {
     fetchReservations();
-  }, [token]);
+  }, [token, API]);
 
   const deleteReservation = async (id) => {
     if (!window.confirm("정말 예약 내역을 삭제하시겠습니까?")) return;
     setRefreshing(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/reservations/${id}`, {
+      const res = await fetch(`${API}/api/reservations/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -69,8 +72,7 @@ function ReservationsPage() {
     );
   }
 
-  // 🎨 다크/라이트 색상
-  const pageBg = isDark ? "#000" : "#fff";
+  const pageBg = isDark ? "#000" : "beige";
   const titleColor = isDark ? "#f5f5f5" : "#000";
   const emptyColor = isDark ? "#888" : "#777";
   const cardBg = isDark ? "#111" : "#fff";
@@ -86,7 +88,7 @@ function ReservationsPage() {
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: pageBg, // ★ 전체 화면 배경 적용
+        background: pageBg,
         padding: "40px 0",
         transition: "0.25s ease",
       }}

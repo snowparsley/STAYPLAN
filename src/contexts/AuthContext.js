@@ -8,15 +8,20 @@ export const AuthProvider = ({ children }) => {
   );
   const [token, setToken] = useState(localStorage.getItem("token") || null);
 
+  // 🔥 배포/개발 환경 공통 API 주소
+  const API = import.meta.env.VITE_API_URL;
+  // 예: https://stayplan-server.onrender.com
+
   const login = async (userId, password) => {
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
+      const res = await fetch(`${API}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, password }),
       });
 
       const data = await res.json();
+
       if (!res.ok) {
         alert(data.message || "로그인 실패 ❌");
         return false;
@@ -26,6 +31,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", data.token);
       setUser(data.user);
       setToken(data.token);
+
       alert(data.message);
       return true;
     } catch (err) {

@@ -17,6 +17,9 @@ function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔥 공통 API 주소
+  const API = import.meta.env.VITE_API_URL;
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -30,7 +33,7 @@ function SignupPage() {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/signup", {
+      const res = await fetch(`${API}/api/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

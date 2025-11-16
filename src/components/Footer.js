@@ -12,7 +12,7 @@ function Footer() {
         marginTop: "50px",
       }}
     >
-      © 2025 StayPlan. All rights reserved.
+      © 2025 StayPlan. All rights reserved..
     </footer>
   );
 }

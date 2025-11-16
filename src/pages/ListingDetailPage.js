@@ -4,12 +4,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
 import Footer from "../components/Footer";
-import { useTheme } from "../contexts/ThemeContext"; // ⭐ 추가
+import { useTheme } from "../contexts/ThemeContext";
 
 function ListingDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { theme } = useTheme(); // ⭐ 다크모드 상태 가져오기
+  const { theme } = useTheme();
 
   const [listing, setListing] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -22,17 +22,19 @@ function ListingDetailPage() {
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // 반응형 감지
+  // 🔥 공통 API 주소
+  const API = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 데이터 로딩
+  // 상세 데이터 불러오기
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/listings/${id}`)
+      .get(`${API}/api/listings/${id}`)
       .then((res) => setListing(res.data))
       .catch((err) => console.error(err));
 
@@ -68,15 +70,13 @@ function ListingDetailPage() {
         comment: "응대가 친절했고 침구도 깨끗했습니다. 추천합니다!",
       },
     ]);
-  }, [id]);
+  }, [id, API]);
 
-  // 입력 변경
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 결제 이동
   const goPayment = () => {
     if (!form.user_name || !form.check_in || !form.check_out) {
       alert("모든 정보를 입력해주세요!");
@@ -93,10 +93,6 @@ function ListingDetailPage() {
 
     navigate("/payment", { state: { listing, form, nights } });
   };
-
-  // -------------------------------
-  // 🌙 다크모드 CSS (중앙에서 정의)
-  // -------------------------------
 
   const bgPage = theme === "dark" ? "#000" : "#fff";
   const textColor = theme === "dark" ? "#f5f5f5" : "#222";
@@ -132,7 +128,6 @@ function ListingDetailPage() {
         transition: "0.3s ease",
       }}
     >
-      {/* 상단 이미지 */}
       <motion.img
         src={listing.thumbnail}
         alt={listing.title}
@@ -147,7 +142,6 @@ function ListingDetailPage() {
         }}
       />
 
-      {/* 예약 폼 */}
       <div
         style={{
           background: cardBg,
@@ -194,11 +188,7 @@ function ListingDetailPage() {
           style={inputStyle(isMobile, theme)}
         >
           {[1, 2, 3, 4, 5].map((n) => (
-            <option
-              key={n}
-              value={n}
-              style={{ color: "#000" }} // select 내부 옵션은 반드시 라이트 텍스트 유지
-            >
+            <option key={n} value={n} style={{ color: "#000" }}>
               게스트 {n}명{n === 5 ? "+" : ""}
             </option>
           ))}
@@ -214,7 +204,6 @@ function ListingDetailPage() {
         </motion.button>
       </div>
 
-      {/* 숙소 정보 */}
       <div style={{ maxWidth: 1100, margin: "40px auto", padding: "0 20px" }}>
         <h1
           style={{
@@ -249,7 +238,6 @@ function ListingDetailPage() {
           {listing.description}
         </p>
 
-        {/* 후기 */}
         <div
           style={{
             borderTop: theme === "dark" ? "1px solid #333" : "1px solid #eee",
@@ -292,9 +280,6 @@ function ListingDetailPage() {
   );
 }
 
-// ------------------------------
-// ⭐ 유지 & 다크모드 확장된 스타일
-// ------------------------------
 const inputStyle = (isMobile, theme) => ({
   flex: 1,
   padding: isMobile ? "10px 12px" : "12px 14px",

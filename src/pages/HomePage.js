@@ -1,4 +1,3 @@
-//홈페이지
 import React, { useEffect, useState } from "react";
 import HeroSlider from "../components/HeroSlider";
 import CollectionSection from "../components/CollectionSection";
@@ -6,18 +5,19 @@ import Footer from "../components/Footer";
 import { useTheme } from "../contexts/ThemeContext";
 
 function HomePage() {
-  const { theme } = useTheme(); // ← 다크모드 상태 가져오기
+  const { theme } = useTheme();
 
   const [listings, setListings] = useState([]);
   const [type, setType] = useState("domestic");
   const [loading, setLoading] = useState(true);
 
+  // 🔥 공통 API 주소
+  const API = import.meta.env.VITE_API_URL;
+
   const fetchListings = async (selectedType) => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `http://localhost:5000/api/listings?type=${selectedType}`
-      );
+      const res = await fetch(`${API}/api/listings?type=${selectedType}`);
       const data = await res.json();
       if (Array.isArray(data)) setListings(data);
       else setListings([]);
@@ -80,7 +80,6 @@ function HomePage() {
     });
   }
 
-  // 🌙 라이트/다크 배경
   const outerBackground = theme === "dark" ? "#000" : "beige";
   const innerBackground = theme === "dark" ? "#111" : "#fff";
   const cardShadow =
@@ -97,7 +96,6 @@ function HomePage() {
         transition: "0.3s ease",
       }}
     >
-      {/* 중앙 흰색 박스 */}
       <div
         style={{
           maxWidth: "1200px",
@@ -111,7 +109,7 @@ function HomePage() {
       >
         <HeroSlider />
 
-        {/* 국내/해외 버튼 */}
+        {/* 국내/해외 선택 */}
         <div style={{ textAlign: "center", margin: "40px 0 30px" }}>
           <div
             style={{
@@ -159,7 +157,7 @@ function HomePage() {
           </div>
         </div>
 
-        {/* 목록 */}
+        {/* 숙소 섹션 */}
         <div
           style={{
             maxWidth: "1200px",

@@ -184,11 +184,11 @@ function Header() {
             {theme === "dark" ? <FiSun /> : <FiMoon />}
           </button>
 
-          {isLoggedIn && (
+          {/* {isLoggedIn && (
             <Link to="/reservations" style={styles.navLink}>
               예약 내역
             </Link>
-          )}
+          )} */}
 
           {!isLoggedIn && (
             <button

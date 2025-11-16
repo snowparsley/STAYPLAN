@@ -14,6 +14,9 @@ function PaymentPage() {
 
   const [selectedMethod, setSelectedMethod] = useState("card");
 
+  // 🔥 공통 API 주소
+  const API = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (!state || !state.listing || !state.form) navigate("/");
   }, [state, navigate]);
@@ -43,16 +46,12 @@ function PaymentPage() {
         payment_method: selectedMethod,
       };
 
-      const res = await axios.post(
-        "http://localhost:5000/api/reservations",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await axios.post(`${API}/api/reservations`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
       navigate("/reservation-complete", {
         state: {
@@ -66,7 +65,7 @@ function PaymentPage() {
     }
   };
 
-  // ✅ 결제 수단 정보
+  // 결제 수단 정보
   const methods = [
     {
       id: "card",
@@ -93,7 +92,6 @@ function PaymentPage() {
 
   const selected = methods.find((m) => m.id === selectedMethod);
 
-  // 🌙 라이트 / 다크 공통 색 정의
   const isDark = theme === "dark";
 
   const pageBackground = isDark
@@ -153,7 +151,7 @@ function PaymentPage() {
           alignItems: "stretch",
         }}
       >
-        {/* ✅ 숙소 카드 */}
+        {/* 숙소 카드 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -244,7 +242,7 @@ function PaymentPage() {
           </div>
         </motion.div>
 
-        {/* ✅ 결제 요약 + 수단 */}
+        {/* 결제 수단 + 요약 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -265,6 +263,7 @@ function PaymentPage() {
             color: textColor,
           }}
         >
+          {/* 요금 요약 */}
           <div>
             <h3
               style={{
@@ -318,7 +317,7 @@ function PaymentPage() {
               </div>
             </div>
 
-            {/* ✅ 결제 수단 선택 (로고형) */}
+            {/* 결제 수단 선택 */}
             <div style={{ marginTop: "35px" }}>
               <h4
                 style={{
@@ -403,7 +402,7 @@ function PaymentPage() {
               border: "none",
               fontSize: "17px",
               fontWeight: 700,
-              color: selectedMethod === "kakaopay" ? "#222" : "#fff", // 카카오는 원래 노란색이라 어둡게
+              color: selectedMethod === "kakaopay" ? "#222" : "#fff",
               cursor: "pointer",
               boxShadow: `0 8px 20px ${selected.bg}`,
               transition: "all 0.3s ease",
