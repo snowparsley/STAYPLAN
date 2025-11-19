@@ -1,4 +1,4 @@
-// 로그인
+// 로그인 (B안 디자인 적용)
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -9,6 +9,8 @@ function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { theme } = useTheme();
+
+  const isDark = theme === "dark";
 
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
@@ -26,76 +28,57 @@ function LoginPage() {
     if (success) navigate("/");
   };
 
-  // 🎨 다크모드 스타일
-  const bgGradient =
-    theme === "dark"
-      ? "linear-gradient(135deg, #000, #111)"
-      : "linear-gradient(135deg, rgba(255,90,95,0.1), rgba(255,90,95,0.3))";
+  /* ------------------------------
+     B안 컬러 시스템
+  ------------------------------ */
+  const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
+  const cardBg = isDark ? "#2A2926" : "#FFFFFF";
+  const cardBorder = isDark ? "#4A4743" : "#E6E1D8";
+  const mainText = isDark ? "#E3DFD7" : "#4C4740";
+  const subText = isDark ? "#A9A39A" : "#7A746D";
 
-  const cardStyle = {
-    background: theme === "dark" ? "#111" : "#fff",
-    padding: "40px 30px",
-    borderRadius: "12px",
-    boxShadow:
-      theme === "dark"
-        ? "0 10px 30px rgba(255,255,255,0.07)"
-        : "0 10px 30px rgba(0,0,0,0.1)",
-    width: "90%",
-    maxWidth: "380px",
-    textAlign: "center",
-    border: theme === "dark" ? "1px solid #333" : "1px solid #eee",
-    transition: "0.25s",
-  };
+  const inputBg = isDark ? "#1A1917" : "#FFFFFF";
+  const inputBorder = isDark ? "#4A4743" : "#DAD6CF";
+  const inputText = isDark ? "#E3DFD7" : "#4C4740";
 
-  const inputStyle = {
-    width: "100%",
-    padding: "12px",
-    border: theme === "dark" ? "1px solid #444" : "1px solid #ddd",
-    background: theme === "dark" ? "#222" : "#fff",
-    color: theme === "dark" ? "#fff" : "#222",
-    borderRadius: "6px",
-    marginBottom: "14px",
-    outline: "none",
-    fontSize: "15px",
-    transition: "0.25s",
-  };
-
-  const loginButton = {
-    width: "100%",
-    padding: "12px",
-    border: "none",
-    borderRadius: "6px",
-    background: "#ff5a5f",
-    color: "white",
-    fontWeight: "600",
-    cursor: "pointer",
-    fontSize: "16px",
-  };
+  const buttonBg = isDark ? "#CFCAC0" : "#5A554D";
+  const buttonText = isDark ? "#1F1E1C" : "#FFFFFF";
 
   return (
     <div
       style={{
         minHeight: "100vh",
+        background: pageBg,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: bgGradient,
-        padding: "20px",
-        transition: "0.25s",
+        padding: 20,
+        transition: "0.3s ease",
       }}
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        style={cardStyle}
+        style={{
+          background: cardBg,
+          padding: "40px 30px",
+          borderRadius: 12,
+          width: "90%",
+          maxWidth: 380,
+          textAlign: "center",
+          border: `1px solid ${cardBorder}`,
+          boxShadow: isDark
+            ? "0 10px 25px rgba(0,0,0,0.4)"
+            : "0 10px 25px rgba(0,0,0,0.08)",
+        }}
       >
         <h2
           style={{
-            marginBottom: "25px",
-            fontWeight: "700",
-            fontSize: "26px",
-            color: theme === "dark" ? "#fff" : "#333",
+            marginBottom: 25,
+            fontWeight: 700,
+            fontSize: 26,
+            color: mainText,
           }}
         >
           로그인
@@ -107,7 +90,17 @@ function LoginPage() {
             placeholder="아이디를 입력하세요"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            style={inputStyle}
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: 8,
+              border: `1px solid ${inputBorder}`,
+              background: inputBg,
+              color: inputText,
+              fontSize: 15,
+              marginBottom: 14,
+              outline: "none",
+            }}
           />
 
           <input
@@ -115,27 +108,61 @@ function LoginPage() {
             placeholder="비밀번호를 입력하세요"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: 8,
+              border: `1px solid ${inputBorder}`,
+              background: inputBg,
+              color: inputText,
+              fontSize: 15,
+              marginBottom: 14,
+              outline: "none",
+            }}
           />
 
-          {error && <p style={{ color: "#ff5a5f" }}>{error}</p>}
+          {error && (
+            <p
+              style={{
+                color: "#B86B6B",
+                marginTop: -4,
+                marginBottom: 12,
+                fontSize: 14,
+              }}
+            >
+              {error}
+            </p>
+          )}
 
-          <button type="submit" style={loginButton}>
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: 8,
+              border: "none",
+              background: buttonBg,
+              color: buttonText,
+              fontWeight: 700,
+              cursor: "pointer",
+              fontSize: 16,
+            }}
+          >
             로그인하기
           </button>
         </form>
 
         <div
           style={{
-            marginTop: "16px",
-            fontSize: "14px",
-            color: theme === "dark" ? "#ccc" : "#555",
+            marginTop: 16,
+            fontSize: 14,
+            color: subText,
           }}
         >
           아직 계정이 없으신가요?{" "}
           <span
             style={{
-              color: theme === "dark" ? "#ff767a" : "#ff5a5f",
+              color: isDark ? "#D8C8B7" : "#A47A6B",
               cursor: "pointer",
               fontWeight: 600,
             }}

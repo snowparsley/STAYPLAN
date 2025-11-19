@@ -1,10 +1,12 @@
-// src/pages/ReservationsPage.js
+// 예약내역 페이지 (B안 전체 톤 적용)
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 function ReservationsPage() {
+  const navigate = useNavigate();
   const { token } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -13,12 +15,9 @@ function ReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // 🔥 공통 API 주소
-  const API = import.meta.env.VITE_API_URL;
-
   const fetchReservations = async () => {
     try {
-      const res = await fetch(`${API}/api/my-reservations`, {
+      const res = await fetch("http://localhost:5000/api/my-reservations", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -33,16 +32,18 @@ function ReservationsPage() {
 
   useEffect(() => {
     fetchReservations();
-  }, [token, API]);
+  }, [token]);
 
   const deleteReservation = async (id) => {
     if (!window.confirm("정말 예약 내역을 삭제하시겠습니까?")) return;
     setRefreshing(true);
+
     try {
-      const res = await fetch(`${API}/api/reservations/${id}`, {
+      const res = await fetch(`http://localhost:5000/api/reservations/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const data = await res.json();
 
       if (res.ok) {
@@ -63,25 +64,35 @@ function ReservationsPage() {
       <div
         style={{
           textAlign: "center",
-          marginTop: "100px",
-          color: isDark ? "#bbb" : "#777",
+          marginTop: 100,
+          color: isDark ? "#A9A39A" : "#7A746D",
+          fontSize: 18,
         }}
       >
-        {loading ? "불러오는 중..." : "내역 갱신 중..."}
+        {loading ? "불러오는 중..." : "업데이트 중..."}
       </div>
     );
   }
 
-  const pageBg = isDark ? "#000" : "beige";
-  const titleColor = isDark ? "#f5f5f5" : "#000";
-  const emptyColor = isDark ? "#888" : "#777";
-  const cardBg = isDark ? "#111" : "#fff";
+  /* ---------------------------------------------
+        🎨 B안 전체 색 구성
+  --------------------------------------------- */
+  const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
+  const titleColor = isDark ? "#E3DFD7" : "#46423C";
+  const emptyColor = isDark ? "#A9A39A" : "#7A746D";
+
+  const cardBg = isDark ? "#2A2926" : "#FFFFFF";
   const cardShadow = isDark
-    ? "0 4px 18px rgba(255,255,255,0.05)"
-    : "0 4px 18px rgba(0,0,0,0.08)";
-  const textPrimary = isDark ? "#ddd" : "#000";
-  const textSecondary = isDark ? "#bbb" : "#444";
-  const priceColor = "#ff5a5f";
+    ? "0 10px 26px rgba(0,0,0,0.55)"
+    : "0 10px 26px rgba(0,0,0,0.08)";
+  const lineColor = isDark ? "#4A4743" : "#E6E1D8";
+
+  const mainText = isDark ? "#E3DFD7" : "#3F3A35";
+  const subText = isDark ? "#A9A39A" : "#7A746D";
+  const priceColor = "#A47A6B";
+
+  const buttonBg = isDark ? "#CFCAC0" : "#5A554D";
+  const buttonText = isDark ? "#1F1E1C" : "#FFF";
 
   return (
     <div
@@ -89,23 +100,22 @@ function ReservationsPage() {
         width: "100%",
         minHeight: "100vh",
         background: pageBg,
-        padding: "40px 0",
+        padding: "50px 0",
         transition: "0.25s ease",
       }}
     >
       <div
         style={{
-          width: "100%",
-          maxWidth: "1300px",
+          maxWidth: 1300,
           margin: "0 auto",
           padding: "0 20px",
         }}
       >
         <h2
           style={{
-            fontSize: "32px",
+            fontSize: 32,
             fontWeight: 800,
-            marginBottom: "30px",
+            marginBottom: 35,
             color: titleColor,
             textAlign: "center",
           }}
@@ -113,12 +123,15 @@ function ReservationsPage() {
           나의 예약 내역
         </h2>
 
+        {/* ------------------------------------------ */}
+        {/* 빈 상태 */}
+        {/* ------------------------------------------ */}
         {reservations.length === 0 ? (
           <div
             style={{
               textAlign: "center",
-              marginTop: "120px",
-              fontSize: "22px",
+              marginTop: 140,
+              fontSize: 22,
               fontWeight: 700,
               color: emptyColor,
             }}
@@ -131,8 +144,8 @@ function ReservationsPage() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-              gap: "25px",
-              paddingBottom: "60px",
+              gap: 30,
+              paddingBottom: 80,
             }}
           >
             {reservations.map((r) => (
@@ -140,12 +153,15 @@ function ReservationsPage() {
                 key={r.id}
                 whileHover={{ y: -6 }}
                 transition={{ duration: 0.25 }}
+                onClick={() => navigate(`/listing/${r.listing_id}`)}
                 style={{
                   background: cardBg,
-                  borderRadius: "16px",
+                  borderRadius: 16,
                   overflow: "hidden",
                   boxShadow: cardShadow,
+                  border: `1px solid ${lineColor}`,
                   transition: "0.25s ease",
+                  cursor: "pointer",
                 }}
               >
                 <img
@@ -153,18 +169,18 @@ function ReservationsPage() {
                   alt={r.title}
                   style={{
                     width: "100%",
-                    height: "200px",
+                    height: 200,
                     objectFit: "cover",
                   }}
                 />
 
-                <div style={{ padding: "18px" }}>
+                <div style={{ padding: 18 }}>
                   <h3
                     style={{
                       margin: 0,
-                      fontSize: "18px",
+                      fontSize: 18,
                       fontWeight: 700,
-                      color: textPrimary,
+                      color: mainText,
                     }}
                   >
                     {r.title}
@@ -172,9 +188,9 @@ function ReservationsPage() {
 
                   <p
                     style={{
-                      margin: "6px 0",
-                      color: textSecondary,
-                      fontSize: "14px",
+                      margin: "8px 0",
+                      color: subText,
+                      fontSize: 14,
                     }}
                   >
                     {r.check_in.slice(0, 10)} ~ {r.check_out.slice(0, 10)}
@@ -184,8 +200,8 @@ function ReservationsPage() {
                     style={{
                       color: priceColor,
                       fontWeight: 700,
-                      fontSize: "15px",
-                      marginBottom: "6px",
+                      fontSize: 16,
+                      marginBottom: 6,
                     }}
                   >
                     {Number(r.total_price).toLocaleString()}원
@@ -193,39 +209,45 @@ function ReservationsPage() {
 
                   <p
                     style={{
-                      color: r.status === "canceled" ? "#d9534f" : "#2ecc71",
-                      fontWeight: 600,
-                      fontSize: "14px",
-                      marginBottom: "12px",
+                      color: r.status === "canceled" ? "#C66A6A" : "#8ECF9E",
+                      fontWeight: 700,
+                      fontSize: 14,
+                      marginBottom: 18,
                     }}
                   >
                     {r.status === "canceled" ? "취소됨 ❌" : "결제 완료 ✅"}
                   </p>
 
-                  <button
-                    onClick={() => deleteReservation(r.id)}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={(e) => {
+                      e.stopPropagation(); //  상세페이지 이동 막기
+                      deleteReservation(r.id); // 실제 취소 실행
+                    }}
                     style={{
                       width: "100%",
-                      background: "#ff5a5f",
+                      background: buttonBg,
                       border: "none",
-                      padding: "10px 0",
-                      color: "#fff",
-                      borderRadius: "8px",
+                      padding: "12px 0",
+                      color: buttonText,
+                      borderRadius: 10,
                       fontWeight: 700,
                       cursor: "pointer",
-                      fontSize: "15px",
+                      fontSize: 15,
                     }}
                   >
                     {r.status === "canceled"
                       ? "예약 내역 삭제하기"
                       : "예약 취소하기"}
-                  </button>
+                  </motion.button>
                 </div>
               </motion.div>
             ))}
           </div>
         )}
 
+        {/* 반응형 */}
         <style>
           {`
             @media (max-width: 768px) {

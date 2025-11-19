@@ -11,13 +11,12 @@ function HomePage() {
   const [type, setType] = useState("domestic");
   const [loading, setLoading] = useState(true);
 
-  // 🔥 공통 API 주소
-  const API = import.meta.env.VITE_API_URL;
-
   const fetchListings = async (selectedType) => {
     try {
       setLoading(true);
-      const res = await fetch(`${API}/api/listings?type=${selectedType}`);
+      const res = await fetch(
+        `http://localhost:5000/api/listings?type=${selectedType}`
+      );
       const data = await res.json();
       if (Array.isArray(data)) setListings(data);
       else setListings([]);
@@ -54,7 +53,7 @@ function HomePage() {
   const sectionSubtitles =
     type === "domestic"
       ? [
-          "하루의 피로를 녹여줄, 나만의 쉼표 같은 공간",
+          "하루의 피로를 념려줄, 나만의 쉼표 같은 공간",
           "많은 이들이 머무르고 반한 특별한 순간들",
           "도시의 소음을 벗어나 숲의 숨결을 느껴보세요",
           "바쁜 일상 속, 잠시 머무는 따뜻한 여유",
@@ -80,12 +79,18 @@ function HomePage() {
     });
   }
 
-  const outerBackground = theme === "dark" ? "#000" : "beige";
-  const innerBackground = theme === "dark" ? "#111" : "#fff";
-  const cardShadow =
-    theme === "dark"
-      ? "0 8px 25px rgba(255,255,255,0.05)"
-      : "0 8px 25px rgba(0,0,0,0.08)";
+  /* 🎨 B안 — 크리미 베이지 감성 */
+  const isDark = theme === "dark";
+
+  const outerBackground = isDark ? "#2A2926" : "#FAF7F0";
+  const innerBackground = isDark ? "#34322D" : "#FFFFFF";
+  const textColor = isDark ? "#EFEDE8" : "#2A2926";
+
+  const cardShadow = isDark
+    ? "0 5px 20px rgba(0,0,0,0.4)"
+    : "0 5px 20px rgba(0,0,0,0.06)";
+
+  const borderColor = isDark ? "#4A4743" : "#E6E1D8";
 
   return (
     <div
@@ -94,6 +99,7 @@ function HomePage() {
         minHeight: "100vh",
         paddingBottom: "50px",
         transition: "0.3s ease",
+        color: textColor,
       }}
     >
       <div
@@ -109,55 +115,61 @@ function HomePage() {
       >
         <HeroSlider />
 
-        {/* 국내/해외 선택 */}
+        {/* 국내/해외 버튼 */}
         <div style={{ textAlign: "center", margin: "40px 0 30px" }}>
           <div
             style={{
               display: "inline-flex",
               background: innerBackground,
               borderRadius: "50px",
-              boxShadow:
-                theme === "dark"
-                  ? "0 2px 8px rgba(255,255,255,0.05)"
-                  : "0 2px 8px rgba(0,0,0,0.1)",
+              border: `1px solid ${borderColor}`,
               overflow: "hidden",
               transition: "0.3s ease",
             }}
           >
-            {["domestic", "abroad"].map((t) => (
-              <button
-                key={t}
-                onClick={() => setType(t)}
-                style={{
-                  padding: "10px 26px",
-                  border: "none",
-                  cursor: "pointer",
-                  fontSize: "15px",
-                  fontWeight: 600,
-                  backgroundColor:
-                    type === t
-                      ? theme === "dark"
-                        ? "#fff"
-                        : "#000"
-                      : "transparent",
-                  color:
-                    type === t
-                      ? theme === "dark"
-                        ? "#000"
-                        : "#fff"
-                      : theme === "dark"
-                      ? "#ddd"
-                      : "#000",
-                  transition: "all 0.25s ease",
-                }}
-              >
-                {t === "domestic" ? "국내" : "해외"}
-              </button>
-            ))}
+            {["domestic", "abroad"].map((t) => {
+              const isActive = type === t;
+
+              const lightActiveBg = "#2A2926";
+              const lightInactiveBg = "#EFECE7";
+
+              const darkActiveBg = "#EFEDE8";
+              const darkInactiveBg = "#43413D";
+
+              return (
+                <button
+                  key={t}
+                  onClick={() => setType(t)}
+                  style={{
+                    padding: "10px 26px",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "15px",
+                    fontWeight: 600,
+                    backgroundColor: isDark
+                      ? isActive
+                        ? darkActiveBg
+                        : darkInactiveBg
+                      : isActive
+                      ? lightActiveBg
+                      : lightInactiveBg,
+                    color: isDark
+                      ? isActive
+                        ? "#2A2926"
+                        : "#CFCAC0"
+                      : isActive
+                      ? "#FFFFFF"
+                      : "#6F6A62",
+                    transition: "all 0.25s ease",
+                  }}
+                >
+                  {t === "domestic" ? "국내" : "해외"}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* 숙소 섹션 */}
         <div
           style={{
             maxWidth: "1200px",

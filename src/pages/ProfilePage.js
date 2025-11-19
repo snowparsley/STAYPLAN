@@ -1,295 +1,263 @@
+// src/pages/ProfilePage.js
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
-import axios from "axios";
+import CollectionSection from "../components/CollectionSection";
 
 function ProfilePage() {
-  const { user, token, logout } = useAuth();
+  const { user, token } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const [profile] = useState(user);
   const [reservations, setReservations] = useState([]);
-  const [stats, setStats] = useState({
-    totalCount: 0,
-    totalPrice: 0,
-    recent: null,
-  });
+  const [recommended, setRecommended] = useState([]);
+  const [badges, setBadges] = useState([]);
 
-  const [form, setForm] = useState({
-    name: user?.name,
-    email: user?.email,
-  });
-
-  const [passwordForm, setPasswordForm] = useState({
-    current: "",
-    next: "",
-    confirm: "",
-  });
-
-  // 🔥 공통 API 주소
-  const API = import.meta.env.VITE_API_URL;
-
-  // 예약 통계 불러오기
+  /* -------------------------------------------------------
+     브라우저 배경
+  ------------------------------------------------------- */
   useEffect(() => {
-    const load = async () => {
+    document.body.style.backgroundColor = isDark ? "#1A1A18" : "#FAF7F0";
+    return () => (document.body.style.backgroundColor = "");
+  }, [isDark]);
+
+  /* -------------------------------------------------------
+     예약 데이터 불러오기
+  ------------------------------------------------------- */
+  useEffect(() => {
+    const loadReservations = async () => {
       try {
-        const res = await fetch(`${API}/api/my-reservations`, {
+        const res = await fetch("http://localhost:5000/api/my-reservations", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
 
-        setReservations(data);
-
-        let totalPrice = data.reduce(
-          (sum, r) => sum + Number(r.total_price),
-          0
-        );
-
-        setStats({
-          totalCount: data.length,
-          totalPrice,
-          recent: data[0] || null,
-        });
+        if (Array.isArray(data)) {
+          setReservations(data);
+          calculateBadges(data);
+          loadRecommendations(data);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("❌ 예약 로딩 오류:", err);
       }
     };
 
-    load();
-  }, [token, API]);
+    loadReservations();
+  }, [token]);
 
-  // 프로필 정보 수정
-  const saveProfile = async () => {
-    const res = await axios.patch(`${API}/api/profile/update`, form, {
-      headers: { Authorization: `Bearer ${token}` },
+  /* -------------------------------------------------------
+     뱃지 계산
+  ------------------------------------------------------- */
+  const calculateBadges = (list) => {
+    const newBadges = [];
+
+    if (list.length >= 1) newBadges.push("첫 여행 완료");
+    if (list.length >= 3) newBadges.push("3회 이상 여행자");
+
+    const cities = new Set(list.map((r) => r.title.slice(0, 2)));
+    if (cities.size >= 3) newBadges.push("3개 도시 여행");
+
+    const totalPrice = list.reduce((s, r) => s + Number(r.total_price), 0);
+    if (totalPrice >= 500000) newBadges.push("고액 여행자");
+
+    let totalNights = 0;
+    list.forEach((r) => {
+      const inDate = new Date(r.check_in);
+      const outDate = new Date(r.check_out);
+      const diff = (outDate - inDate) / (1000 * 60 * 60 * 24);
+      totalNights += diff;
     });
+    if (totalNights >= 5) newBadges.push("장기 여행자");
 
-    if (res.data.ok) {
-      alert("정보가 저장되었습니다.");
+    setBadges(newBadges);
+  };
+
+  /* -------------------------------------------------------
+     추천 숙소 로딩
+  ------------------------------------------------------- */
+  const loadRecommendations = async (list) => {
+    if (list.length === 0) return;
+
+    const recent = list[0];
+    const recentCity = recent.title.slice(0, 2);
+
+    try {
+      const res = await fetch("http://localhost:5000/api/listings");
+      const data = await res.json();
+
+      if (!Array.isArray(data)) return;
+
+      let filtered = data.filter(
+        (l) => !l.title.includes(recentCity) && l.type === "domestic"
+      );
+
+      filtered = filtered.slice(0, 3);
+      setRecommended(filtered);
+    } catch (err) {
+      console.error("❌ 추천 로딩 오류:", err);
     }
   };
 
-  // 비밀번호 변경
-  const changePassword = async () => {
-    if (passwordForm.next !== passwordForm.confirm) {
-      alert("새 비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    const res = await axios.patch(
-      `${API}/api/profile/password`,
-      {
-        currentPassword: passwordForm.current,
-        newPassword: passwordForm.next,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (res.data.ok) {
-      alert("비밀번호가 변경되었습니다.");
-    }
+  /* -------------------------------------------------------
+     스타일
+  ------------------------------------------------------- */
+  const c = {
+    bg: isDark ? "#1A1A18" : "#FAF7F0",
+    card: isDark ? "#262522" : "#FFFFFF",
+    line: isDark ? "#3F3C38" : "#E9E5DD",
+    text: isDark ? "#EAE6DE" : "#3F3A35",
+    sub: isDark ? "#A9A39A" : "#7F776E",
   };
 
-  // 회원 탈퇴
-  const deleteUser = async () => {
-    if (!window.confirm("정말 탈퇴하시겠습니까?")) return;
-
-    await axios.delete(`${API}/api/profile/delete`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    alert("탈퇴 완료되었습니다.");
-    logout();
+  const cardStyle = {
+    background: c.card,
+    border: `1px solid ${c.line}`,
+    borderRadius: 22,
+    padding: "38px",
+    marginBottom: "48px",
+    boxShadow: isDark
+      ? "0 14px 28px rgba(0,0,0,0.6)"
+      : "0 14px 28px rgba(0,0,0,0.08)",
   };
 
-  // 색상
-  const boxBg = isDark ? "#111" : "#fff";
-  const textColor = isDark ? "#ddd" : "#222";
-  const borderColor = isDark ? "#333" : "#ddd";
+  const summaryCard = {
+    flex: 1,
+    background: c.card,
+    border: `1px solid ${c.line}`,
+    padding: "28px",
+    borderRadius: 20,
+    minHeight: 130,
+    boxShadow: isDark
+      ? "0 10px 22px rgba(0,0,0,0.5)"
+      : "0 10px 22px rgba(0,0,0,0.06)",
+  };
 
-  if (!user) return <div>로그인이 필요합니다</div>;
+  const stats = {
+    totalCount: reservations.length,
+    totalPrice: reservations.reduce((s, r) => s + Number(r.total_price), 0),
+    recent: reservations[0] || null,
+  };
 
+  /* -------------------------------------------------------
+     JSX
+  ------------------------------------------------------- */
   return (
     <div
       style={{
-        maxWidth: "900px",
-        margin: "60px auto",
+        maxWidth: 1150,
+        margin: "60px auto 80px",
         padding: "20px",
-        color: textColor,
+        color: c.text,
       }}
     >
-      {/* 프로필 카드 */}
-      <div
-        style={{
-          background: boxBg,
-          padding: "30px",
-          borderRadius: "16px",
-          boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
-          marginBottom: "40px",
-          textAlign: "center",
-        }}
-      >
-        <h2 style={{ color: "black", fontSize: "30px" }}>
-          {profile?.name}님 환영합니다
+      {/* ⭐ HERO */}
+      <div style={cardStyle}>
+        <h2 style={{ margin: 0, fontSize: 34, fontWeight: 800 }}>
+          {user?.name}님,
         </h2>
+        <p style={{ marginTop: 14, color: c.sub, fontSize: 19 }}>
+          따뜻했던 여행의 순간을 다시 만나보세요.
+        </p>
       </div>
 
-      {/* 예약 통계 */}
-      <div
-        style={{
-          background: boxBg,
-          padding: "25px",
-          borderRadius: "16px",
-          marginBottom: "40px",
-        }}
-      >
-        <h3>📊 예약 통계</h3>
-        <p>
-          총 예약 수: <b>{stats.totalCount}</b>
-        </p>
-        <p>
-          총 결제 금액: <b>{stats.totalPrice.toLocaleString()}원</b>
-        </p>
+      {/* ⭐ SUMMARY */}
+      <div style={{ display: "flex", gap: 22, marginBottom: 55 }}>
+        <div style={summaryCard}>
+          <h3 style={{ margin: 0, color: c.sub, fontSize: 15 }}>총 예약 수</h3>
+          <p style={{ margin: "10px 0 0", fontSize: 28, fontWeight: 700 }}>
+            {stats.totalCount}회
+          </p>
+        </div>
+        <div style={summaryCard}>
+          <h3 style={{ margin: 0, color: c.sub, fontSize: 15 }}>
+            총 결제 금액
+          </h3>
+          <p style={{ margin: "10px 0 0", fontSize: 28, fontWeight: 700 }}>
+            {stats.totalPrice.toLocaleString()}원
+          </p>
+        </div>
+        <div style={summaryCard}>
+          <h3 style={{ margin: 0, color: c.sub, fontSize: 15 }}>
+            최근 여행 기간
+          </h3>
+          <p style={{ margin: "10px 0 0", fontSize: 22, fontWeight: 700 }}>
+            {stats.recent
+              ? `${stats.recent.check_in.slice(
+                  5,
+                  10
+                )} ~ ${stats.recent.check_out.slice(5, 10)}`
+              : "-"}
+          </p>
+        </div>
+      </div>
 
-        {stats.recent && (
-          <div style={{ marginTop: "15px" }}>
-            <h4>최근 예약:</h4>
-            <img
-              src={`${API}/${stats.recent.thumbnail}`}
-              alt=""
-              style={{ width: "100%", borderRadius: "12px" }}
-            />
-            <p style={{ marginTop: 10 }}>
-              {stats.recent.title}
-              <br />
-              {stats.recent.check_in.slice(0, 10)} ~{" "}
-              {stats.recent.check_out.slice(0, 10)}
-            </p>
+      {/* ⭐ BADGES */}
+      <div style={cardStyle}>
+        <h3 style={{ marginBottom: 22, color: c.sub }}>여행 뱃지</h3>
+
+        {badges.length === 0 ? (
+          <p style={{ color: c.sub }}>아직 획득한 뱃지가 없습니다.</p>
+        ) : (
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            {badges.map((b, i) => (
+              <div
+                key={i}
+                style={{
+                  padding: "10px 18px",
+                  background: isDark ? "#34322E" : "#F1ECE4",
+                  borderRadius: 22,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  border: `1px solid ${isDark ? "#3F3C38" : "#E0DAD2"}`,
+                }}
+              >
+                {b}
+              </div>
+            ))}
           </div>
         )}
       </div>
 
-      {/* 개인정보 수정 */}
-      <div
-        style={{
-          background: boxBg,
-          padding: "25px",
-          borderRadius: "16px",
-          marginBottom: "40px",
-        }}
-      >
-        <h3>👤 개인정보 수정</h3>
+      {/* ⭐ RECENT */}
+      {stats.recent && (
+        <div style={cardStyle}>
+          <h3 style={{ marginBottom: 22, color: c.sub }}>최근 방문 숙소</h3>
 
-        <label>이름</label>
-        <input
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          style={inputStyle(borderColor, boxBg, textColor)}
+          <div style={{ display: "flex", gap: 18, alignItems: "center" }}>
+            <img
+              src={stats.recent.thumbnail}
+              alt=""
+              style={{
+                width: 125,
+                height: 95,
+                borderRadius: 14,
+                objectFit: "cover",
+              }}
+            />
+            <div>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: 18 }}>
+                {stats.recent.title}
+              </p>
+              <p style={{ marginTop: 6, color: c.sub }}>
+                {stats.recent.check_in.slice(0, 10)} ~{" "}
+                {stats.recent.check_out.slice(0, 10)}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ⭐ RECOMMENDATIONS — 화살표 제거 적용 */}
+      {recommended.length > 0 && (
+        <CollectionSection
+          title="다음 여행을 위한 추천"
+          subtitle="최근 여행과 비슷한 분위기의 숙소를 골라봤어요."
+          listings={recommended}
+          hideArrows={true}
         />
-
-        <label>이메일</label>
-        <input
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          style={inputStyle(borderColor, boxBg, textColor)}
-        />
-
-        <button style={btnStyle} onClick={saveProfile}>
-          저장하기
-        </button>
-      </div>
-
-      {/* 비밀번호 변경 */}
-      <div
-        style={{
-          background: boxBg,
-          padding: "25px",
-          borderRadius: "16px",
-          marginBottom: "40px",
-        }}
-      >
-        <h3>🔐 비밀번호 변경</h3>
-
-        <label>현재 비밀번호</label>
-        <input
-          type="password"
-          value={passwordForm.current}
-          onChange={(e) =>
-            setPasswordForm({ ...passwordForm, current: e.target.value })
-          }
-          style={inputStyle(borderColor, boxBg, textColor)}
-        />
-
-        <label>새 비밀번호</label>
-        <input
-          type="password"
-          value={passwordForm.next}
-          onChange={(e) =>
-            setPasswordForm({ ...passwordForm, next: e.target.value })
-          }
-          style={inputStyle(borderColor, boxBg, textColor)}
-        />
-
-        <label>새 비밀번호 확인</label>
-        <input
-          type="password"
-          value={passwordForm.confirm}
-          onChange={(e) =>
-            setPasswordForm({ ...passwordForm, confirm: e.target.value })
-          }
-          style={inputStyle(borderColor, boxBg, textColor)}
-        />
-
-        <button style={btnStyle} onClick={changePassword}>
-          비밀번호 변경
-        </button>
-      </div>
-
-      {/* 탈퇴 */}
-      <div style={{ textAlign: "center", marginBottom: "60px" }}>
-        <button
-          onClick={deleteUser}
-          style={{
-            padding: "12px 22px",
-            background: "#d9534f",
-            color: "#fff",
-            border: "none",
-            borderRadius: "10px",
-            cursor: "pointer",
-            fontWeight: "700",
-          }}
-        >
-          회원 탈퇴
-        </button>
-      </div>
+      )}
     </div>
   );
 }
-
-function inputStyle(borderColor, boxBg, textColor) {
-  return {
-    width: "100%",
-    padding: "10px",
-    marginTop: "6px",
-    marginBottom: "14px",
-    borderRadius: "10px",
-    border: `1px solid ${borderColor}`,
-    background: boxBg,
-    color: textColor,
-  };
-}
-
-const btnStyle = {
-  padding: "12px 20px",
-  background: "#ff5a5f",
-  color: "#fff",
-  border: "none",
-  borderRadius: "10px",
-  cursor: "pointer",
-  fontWeight: "700",
-};
 
 export default ProfilePage;

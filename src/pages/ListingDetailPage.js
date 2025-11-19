@@ -1,4 +1,4 @@
-//상세페이지
+// 상세페이지 (B안 전체 톤 적용)
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -11,6 +11,8 @@ function ListingDetailPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
+  const isDark = theme === "dark";
+
   const [listing, setListing] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [form, setForm] = useState({
@@ -22,22 +24,21 @@ function ListingDetailPage() {
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // 🔥 공통 API 주소
-  const API = import.meta.env.VITE_API_URL;
-
+  // 반응형 감지
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 상세 데이터 불러오기
+  // 상세 데이터 가져오기
   useEffect(() => {
     axios
-      .get(`${API}/api/listings/${id}`)
+      .get(`http://localhost:5000/api/listings/${id}`)
       .then((res) => setListing(res.data))
       .catch((err) => console.error(err));
 
+    // 실제 API로 변경 가능
     setReviews([
       {
         id: 1,
@@ -70,13 +71,15 @@ function ListingDetailPage() {
         comment: "응대가 친절했고 침구도 깨끗했습니다. 추천합니다!",
       },
     ]);
-  }, [id, API]);
+  }, [id]);
 
+  // 입력 변경
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 결제 이동
   const goPayment = () => {
     if (!form.user_name || !form.check_in || !form.check_out) {
       alert("모든 정보를 입력해주세요!");
@@ -94,11 +97,20 @@ function ListingDetailPage() {
     navigate("/payment", { state: { listing, form, nights } });
   };
 
-  const bgPage = theme === "dark" ? "#000" : "#fff";
-  const textColor = theme === "dark" ? "#f5f5f5" : "#222";
-  const cardBg = theme === "dark" ? "#1a1a1a" : "#fff";
-  const cardBorder = theme === "dark" ? "1px solid #333" : "1px solid #eee";
-  const mutedText = theme === "dark" ? "#bbb" : "#444";
+  // -------------------------------
+  // 🌙 B안: 크리미 베이지 / 미드나잇 베이지 톤
+  // -------------------------------
+  const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
+  const mainText = isDark ? "#E3DFD7" : "#46423C";
+  const subText = isDark ? "#A9A39A" : "#7A746D";
+  const cardBg = isDark ? "#2A2926" : "#FFFFFF";
+  const lineColor = isDark ? "#4A4743" : "#E6E1D8";
+
+  const inputBg = isDark ? "#1A1917" : "#FFFFFF";
+  const inputBorder = isDark ? "#4A4743" : "#DAD6CF";
+
+  const buttonBg = isDark ? "#CFCAC0" : "#5A554D";
+  const buttonText = isDark ? "#1F1E1C" : "#FFFFFF";
 
   if (!listing)
     return (
@@ -106,9 +118,9 @@ function ListingDetailPage() {
         style={{
           textAlign: "center",
           padding: "100px 0",
-          color: theme === "dark" ? "#ddd" : "#777",
+          color: subText,
           fontSize: 18,
-          background: bgPage,
+          background: pageBg,
           minHeight: "100vh",
         }}
       >
@@ -122,12 +134,13 @@ function ListingDetailPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       style={{
-        backgroundColor: bgPage,
-        color: textColor,
+        backgroundColor: pageBg,
+        color: mainText,
         minHeight: "100vh",
         transition: "0.3s ease",
       }}
     >
+      {/* 썸네일 */}
       <motion.img
         src={listing.thumbnail}
         alt={listing.title}
@@ -138,54 +151,57 @@ function ListingDetailPage() {
           width: "100%",
           height: isMobile ? "40vh" : "480px",
           objectFit: "cover",
-          borderBottom: theme === "dark" ? "1px solid #333" : "1px solid #eee",
+          borderBottom: `1px solid ${lineColor}`,
         }}
       />
 
+      {/* 예약 폼 */}
       <div
         style={{
           background: cardBg,
-          border: cardBorder,
-          boxShadow:
-            theme === "dark"
-              ? "0 6px 18px rgba(255,255,255,0.05)"
-              : "0 4px 14px rgba(0,0,0,0.05)",
+          border: `1px solid ${lineColor}`,
+          boxShadow: isDark
+            ? "0 8px 20px rgba(0,0,0,0.35)"
+            : "0 6px 18px rgba(0,0,0,0.06)",
           borderRadius: 12,
           margin: isMobile ? "20px auto" : "40px auto 0",
-          padding: isMobile ? "18px" : "20px 28px",
+          padding: isMobile ? "16px" : "22px 28px",
           maxWidth: 1100,
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
           alignItems: "center",
           justifyContent: "space-between",
-          gap: isMobile ? 10 : 15,
+          gap: isMobile ? 10 : 16,
         }}
       >
+        {/* 입력창 */}
         <input
           type="text"
           name="user_name"
           placeholder="예약자 이름"
           onChange={handleChange}
-          style={inputStyle(isMobile, theme)}
+          style={inputStyle(isDark, inputBg, inputBorder, isMobile)}
         />
+
         <input
           type="date"
           name="check_in"
           onChange={handleChange}
-          style={inputStyle(isMobile, theme)}
+          style={inputStyle(isDark, inputBg, inputBorder, isMobile)}
         />
+
         <input
           type="date"
           name="check_out"
           onChange={handleChange}
-          style={inputStyle(isMobile, theme)}
+          style={inputStyle(isDark, inputBg, inputBorder, isMobile)}
         />
 
         <select
           name="guests"
           value={form.guests}
           onChange={handleChange}
-          style={inputStyle(isMobile, theme)}
+          style={inputStyle(isDark, inputBg, inputBorder, isMobile)}
         >
           {[1, 2, 3, 4, 5].map((n) => (
             <option key={n} value={n} style={{ color: "#000" }}>
@@ -194,23 +210,36 @@ function ListingDetailPage() {
           ))}
         </select>
 
+        {/* 버튼 */}
         <motion.button
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.98 }}
           onClick={goPayment}
-          style={buttonStyle(isMobile)}
+          style={{
+            flex: isMobile ? "none" : 0.8,
+            width: isMobile ? "100%" : "auto",
+            backgroundColor: buttonBg,
+            color: buttonText,
+            border: "none",
+            padding: isMobile ? "10px 14px" : "12px 20px",
+            borderRadius: 8,
+            cursor: "pointer",
+            fontWeight: 700,
+            fontSize: isMobile ? 14 : 15,
+          }}
         >
           결제하기
         </motion.button>
       </div>
 
+      {/* 상세 정보 */}
       <div style={{ maxWidth: 1100, margin: "40px auto", padding: "0 20px" }}>
         <h1
           style={{
             fontSize: isMobile ? 24 : 32,
             fontWeight: 700,
             marginBottom: 8,
-            color: textColor,
+            color: mainText,
           }}
         >
           {listing.title}
@@ -220,7 +249,7 @@ function ListingDetailPage() {
           style={{
             fontSize: isMobile ? 18 : 22,
             fontWeight: 700,
-            color: "#ff5a5f",
+            color: "#A47A6B",
             marginBottom: 16,
           }}
         >
@@ -230,7 +259,7 @@ function ListingDetailPage() {
         <p
           style={{
             fontSize: isMobile ? 15 : 16,
-            color: mutedText,
+            color: subText,
             lineHeight: 1.7,
             marginBottom: 40,
           }}
@@ -238,12 +267,8 @@ function ListingDetailPage() {
           {listing.description}
         </p>
 
-        <div
-          style={{
-            borderTop: theme === "dark" ? "1px solid #333" : "1px solid #eee",
-            paddingTop: 25,
-          }}
-        >
+        {/* 후기 */}
+        <div style={{ borderTop: `1px solid ${lineColor}`, paddingTop: 25 }}>
           <h3
             style={{
               fontSize: isMobile ? 18 : 20,
@@ -258,16 +283,17 @@ function ListingDetailPage() {
             <div
               key={r.id}
               style={{
-                borderBottom:
-                  theme === "dark" ? "1px solid #333" : "1px solid #f0f0f0",
+                borderBottom: `1px solid ${lineColor}`,
                 padding: "15px 0",
               }}
             >
-              <strong style={{ fontSize: 16 }}>{r.name}</strong>
+              <strong style={{ fontSize: 16, color: mainText }}>
+                {r.name}
+              </strong>
               <span style={{ marginLeft: 8, color: "#ffb400" }}>
                 {"★".repeat(r.rating)}
               </span>
-              <p style={{ margin: "6px 0", color: mutedText, lineHeight: 1.5 }}>
+              <p style={{ margin: "6px 0", color: subText, lineHeight: 1.5 }}>
                 {r.comment}
               </p>
             </div>
@@ -280,28 +306,16 @@ function ListingDetailPage() {
   );
 }
 
-const inputStyle = (isMobile, theme) => ({
+// 입력창 스타일 통일
+const inputStyle = (isDark, bg, border, isMobile) => ({
   flex: 1,
   padding: isMobile ? "10px 12px" : "12px 14px",
-  border: theme === "dark" ? "1px solid #444" : "1px solid #ccc",
+  border: `1px solid ${border}`,
   borderRadius: 8,
-  background: theme === "dark" ? "#111" : "#fff",
-  color: theme === "dark" ? "#eee" : "#222",
+  background: bg,
+  color: isDark ? "#E3DFD7" : "#3F3A35",
   fontSize: isMobile ? 14 : 15,
   width: isMobile ? "100%" : "auto",
-});
-
-const buttonStyle = (isMobile) => ({
-  flex: isMobile ? "none" : 0.8,
-  width: isMobile ? "100%" : "auto",
-  backgroundColor: "#ff5a5f",
-  color: "#fff",
-  border: "none",
-  padding: isMobile ? "10px 14px" : "12px 18px",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: "bold",
-  fontSize: isMobile ? 14 : 15,
 });
 
 export default ListingDetailPage;

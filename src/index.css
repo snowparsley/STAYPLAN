@@ -1,12 +1,12 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css');
 
 body {
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
   background-color: #fafafa;
   color: #222;
   margin: 0;
   padding: 0;
-
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 button {
@@ -14,19 +14,71 @@ button {
   cursor: pointer;
 }
 
+/* ---------------------------------------
+   🌙 다크 모드 (전역 스타일)
+---------------------------------------- */
+body.dark {
+  background-color: #1e1e1e;
+  color: #e8e8e8;
+}
+
+body.dark a {
+  color: #e8e8e8;
+}
+
+body.dark button {
+  color: #e8e8e8;
+}
+
+/* input, select, textarea 전역 적용 */
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+  border-color: #444 !important;
+}
+
+body.dark header {
+  background-color: #2a2a2a !important;
+  border-color: #444 !important;
+}
+
+body.dark .card,
+body.dark .panel,
+body.dark .box {
+  background-color: #2a2a2a !important;
+  border-color: #444 !important;
+  color: #e8e8e8 !important;
+}
+
+/* 드롭다운 / 메뉴 */
+body.dark .dropdown,
+body.dark .menu {
+  background-color: #2a2a2a !important;
+  border-color: #444 !important;
+}
 
 /* ---------------------------------------
-   ✅ 반응형 전역 스타일
+   🟡 라이트모드 전용 전역 스타일
+---------------------------------------- */
+body.light {
+  background-color: #fafafa;
+  color: #222;
+}
+
+/* ---------------------------------------
+   반응형 전역 스타일
 ---------------------------------------- */
 
-/* 기본 데스크탑 (기존 그대로 유지) */
+/* 데스크탑 */
 @media (min-width: 1025px) {
   body {
     font-size: 16px;
   }
 }
 
-/* 태블릿 (768px 이하) */
+/* 태블릿 */
 @media (max-width: 1024px) {
   body {
     font-size: 15px;
@@ -45,14 +97,13 @@ button {
   }
 }
 
-/* ✅ 모바일 (iPhone SE ~ 480px 이하) */
+/* 모바일 */
 @media (max-width: 480px) {
   body {
     font-size: 14px;
     background-color: #fff;
   }
 
-  /* HeroSlider 반응형 */
   .hero-slider {
     height: 300px !important;
   }
@@ -67,7 +118,6 @@ button {
     margin-top: 10px !important;
   }
 
-  /* 카드 섹션 - 한 줄 한 개씩 */
   .listing-card-container {
     display: grid !important;
     grid-template-columns: 1fr !important;
@@ -80,7 +130,6 @@ button {
     margin: 0 auto;
   }
 
-  /* 버튼, 헤더 텍스트 크기 축소 */
   button {
     font-size: 13px;
     padding: 8px 12px;
@@ -90,54 +139,8 @@ button {
     padding: 14px !important;
   }
 }
-/* ============================================
-   🌙 다크모드 (body.dark 가 활성화 될 때)
-============================================ */
-body.dark {
-  background-color: #111 !important;
-  color: #f0f0f0 !important;
-}
 
-/* 모든 텍스트 기본 색 덮어쓰기 */
-body.dark h1,
-body.dark h2,
-body.dark h3,
-body.dark h4,
-body.dark h5,
-body.dark h6,
-body.dark p,
-body.dark span,
-body.dark div,
-body.dark a {
-  color: #f1f1f1 !important;
-}
-
-/* 카드 배경 */
-body.dark .listing-card {
-  background: #1d1d1d !important;
-  color: #f8f8f8 !important;
-  box-shadow: 0 4px 12px rgba(255,255,255,0.05) !important;
-}
-
-/* CollectionSection 배경 */
-body.dark .collection-section {
-  background: linear-gradient(to bottom right, #1a1a1a, #111) !important;
-}
-
-/* HeroSlider 텍스트 */
-body.dark .hero-slider h1,
-body.dark .hero-slider p {
-  color: #fff !important;
-}
-
-/* 버튼 */
-body.dark button {
-  background-color: #222 !important;
-  color: #fff !important;
-  border-color: #444 !important;
-}
+/* root inherit */
 #root {
   background-color: inherit !important;
 }
-/* 헤더는 이미 다크모드 적용되어 있으므로 그대로 유지 */
-

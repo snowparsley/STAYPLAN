@@ -4,31 +4,29 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || null
+    JSON.parse(sessionStorage.getItem("user")) || null
   );
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [token, setToken] = useState(sessionStorage.getItem("token") || null);
 
-  // 🔥 배포/개발 환경 공통 API 주소
-  const API = import.meta.env.VITE_API_URL;
-  // 예: https://stayplan-server.onrender.com
-
+  // 로그인
   const login = async (userId, password) => {
     try {
-      const res = await fetch(`${API}/api/login`, {
+      const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, password }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
-        alert(data.message || "로그인 실패 ❌");
+        alert(data.message);
         return false;
       }
 
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("token", data.token);
+      // localStorage → sessionStorage 변경
+      sessionStorage.setItem("user", JSON.stringify(data.user));
+      sessionStorage.setItem("token", data.token);
+
       setUser(data.user);
       setToken(data.token);
 
@@ -40,16 +38,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 로그아웃
   const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
     setUser(null);
     setToken(null);
   };
 
+  // 사용자 정보 업데이트
+  const updateUser = (newUser) => {
+    const savedToken = sessionStorage.getItem("token");
+    setUser(newUser);
+    setToken(savedToken);
+    sessionStorage.setItem("user", JSON.stringify(newUser));
+  };
+
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: !!token, user, token, login, logout }}
+      value={{
+        isLoggedIn: !!token,
+        user,
+        token,
+        login,
+        logout,
+        updateUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

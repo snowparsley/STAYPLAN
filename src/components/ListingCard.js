@@ -1,11 +1,11 @@
 //카드
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../contexts/ThemeContext"; // ⭐ 다크모드 추가
+import { useTheme } from "../contexts/ThemeContext";
 
 function ListingCard({ listing }) {
   const navigate = useNavigate();
-  const { theme } = useTheme(); // ⭐ 현재 테마 가져오기
+  const { theme } = useTheme();
   const [fadeOut, setFadeOut] = useState(false);
 
   const { id, title, location, price, thumbnail, rating } = listing || {};
@@ -21,16 +21,18 @@ function ListingCard({ listing }) {
     setTimeout(() => navigate(`/listing/${id}`), 200);
   };
 
-  // -------------------------------
-  // ⭐ 다크모드 스타일 통합 정의
-  // -------------------------------
+  /* -------------------------------
+      B안: 크림 베이지 / 미드나잇 베이지
+  ------------------------------- */
   const isDark = theme === "dark";
-  const cardBg = isDark ? "#1a1a1a" : "#fff";
+
+  const cardBg = isDark ? "#2A2926" : "#ffffffff";
   const cardShadow = isDark
-    ? "0 4px 16px rgba(255,255,255,0.05)"
-    : "0 4px 16px rgba(0,0,0,0.08)";
-  const textColor = isDark ? "#eee" : "#222";
-  const subText = isDark ? "#bbb" : "#777";
+    ? "0 4px 18px rgba(0,0,0,0.45)"
+    : "0 4px 18px rgba(0,0,0,0.06)";
+
+  const textColor = isDark ? "#E3DFD7" : "#3F3A35";
+  const subText = isDark ? "#A9A39A" : "#7A746D";
 
   return (
     <div
@@ -48,7 +50,7 @@ function ListingCard({ listing }) {
         color: textColor,
       }}
       onMouseEnter={(e) =>
-        (e.currentTarget.style.transform = "translateY(-5px)")
+        (e.currentTarget.style.transform = "translateY(-4px)")
       }
       onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
     >
@@ -62,7 +64,7 @@ function ListingCard({ listing }) {
         }}
       />
 
-      <div style={{ padding: "16px" }}>
+      <div style={{ padding: "16px 18px" }}>
         <h3
           style={{
             fontSize: "17px",

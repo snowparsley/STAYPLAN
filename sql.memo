@@ -12,5 +12,3 @@ DELETE FROM users WHERE id = ?;
 listings 전체데이터삭제
 TRUNCATE TABLE listings;
 
-//다크모드
-글씨가 하애지고 배경이 그레이

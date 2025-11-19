@@ -1,6 +1,5 @@
-//상단
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import {
@@ -8,7 +7,6 @@ import {
   FiUser,
   FiChevronDown,
   FiLogOut,
-  FiSettings,
   FiClipboard,
   FiUserCheck,
   FiMenu,
@@ -27,38 +25,43 @@ function Header() {
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);
-  const myBtnRef = useRef(null);
+  const btnRef = useRef(null);
 
-  const THEME = useMemo(
-    () => ({
-      brand: "#ff5a5f",
-      text: "#222",
-      subText: "#444",
-      border: "#e5e5e5",
-      bg: "#ffffff",
-      menuBg: "#222",
-      menuDivider: "#444",
-      focus: "rgba(255,90,95,0.35)",
-    }),
-    []
-  );
+  /* -------------------------------
+      B안: 크리미 베이지 감성
+  ------------------------------- */
 
-  const menuVariants = useMemo(
-    () => ({
-      hidden: { opacity: 0, y: -10 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.18 } },
-      exit: { opacity: 0, y: -10, transition: { duration: 0.12 } },
-    }),
-    []
-  );
+  const light = {
+    bg: "#faf7f0ff",
+    text: "#663e3eff",
+    sub: "#6F6A62",
+    line: "#E6E1D8",
+    menuBg: "#FFFFFF",
+  };
+
+  const dark = {
+    bg: "#2A2926",
+    text: "#EFEDE8",
+    sub: "#CFCAC0",
+    line: "#4A4743",
+    menuBg: "#34322D",
+  };
+
+  const colors = theme === "dark" ? dark : light;
+
+  const menuAnim = {
+    hidden: { opacity: 0, y: -6 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.18 } },
+    exit: { opacity: 0, y: -6, transition: { duration: 0.12 } },
+  };
 
   useEffect(() => {
     const onMouseDown = (e) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(e.target) &&
-        myBtnRef.current &&
-        !myBtnRef.current.contains(e.target)
+        btnRef.current &&
+        !btnRef.current.contains(e.target)
       ) {
         setOpen(false);
       }
@@ -81,130 +84,84 @@ function Header() {
     window.location.reload();
   };
 
-  const styles = {
-    header: {
-      position: "sticky",
-      top: 0,
-      zIndex: 100,
-      background: THEME.bg,
-      borderBottom: `1px solid ${THEME.border}`,
-      backgroundColor: theme === "dark" ? "#111" : "beige",
-      transition: "0.3s ease",
-    },
-    headerInner: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      maxWidth: 1200,
-      margin: "0 auto",
-      padding: "16px 20px",
-    },
-    brand: {
-      textDecoration: "none",
-      fontWeight: 800,
-      fontSize: 24,
-      color: THEME.brand,
-    },
-    right: {
-      display: "flex",
-      alignItems: "center",
-      gap: 14,
-    },
-    navLink: {
-      textDecoration: "none",
-      color: THEME.subText,
-      fontWeight: 500,
-      fontSize: 15,
-      padding: "8px 10px",
-      borderRadius: 10,
-      transition: "background 120ms ease",
-    },
-    pill: {
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 8,
-      padding: "10px 14px",
-      borderRadius: 999,
-      border: `1px solid ${THEME.border}`,
-      background: THEME.bg,
-      color: THEME.text,
-      fontWeight: 600,
-      cursor: "pointer",
-      textDecoration: "none",
-      transition: "background 120ms ease",
-    },
-    dropdown: {
-      position: "absolute",
-      top: "calc(100% + 10px)",
-      right: 0,
-      minWidth: 220,
-      background: THEME.menuBg,
-      color: "#fff",
-      borderRadius: 12,
-      boxShadow: "0 12px 24px rgba(0,0,0,0.18)",
-      overflow: "hidden",
-    },
-    menuItem: {
-      display: "flex",
-      alignItems: "center",
-      gap: 10,
-      width: "100%",
-      padding: "12px 16px",
-      color: "#fff",
-      textDecoration: "none",
-      fontSize: 14,
-      fontWeight: 500,
-      cursor: "pointer",
-      background: "transparent",
-      border: "none",
-      textAlign: "left",
-    },
-  };
-
   return (
-    <header style={styles.header}>
-      <div style={styles.headerInner}>
-        <Link to="/" style={styles.brand}>
+    <header
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        background: colors.bg,
+        borderBottom: `1px solid ${colors.line}`,
+        transition: "0.3s ease",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "20px 24px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        {/* 로고 */}
+        <div
+          onClick={() => {
+            navigate("/");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            setTimeout(() => {
+              window.location.reload();
+            }, 200);
+          }}
+          style={{
+            fontSize: 24,
+            fontWeight: 700,
+            color: colors.text,
+            textDecoration: "none",
+            letterSpacing: "0.45px",
+            cursor: "pointer",
+          }}
+        >
           STAYPLAN
-        </Link>
+        </div>
 
-        <div className="desktop-menu" style={styles.right}>
-          {/* 💡 다크모드 토글 버튼 */}
+        {/* PC 메뉴 */}
+        <div
+          className="desktop-menu"
+          style={{ display: "flex", gap: 14, alignItems: "center" }}
+        >
+          {/* 다크모드 버튼 */}
           <button
             onClick={toggleTheme}
             style={{
               background: "none",
               border: "none",
-              fontSize: "22px",
               cursor: "pointer",
-              color: theme === "dark" ? "#fff" : "#444",
-              transition: "0.25s",
+              fontSize: 22,
+              color: colors.text,
+              marginRight: 4,
             }}
           >
             {theme === "dark" ? <FiSun /> : <FiMoon />}
           </button>
 
-          {/* {isLoggedIn && (
-            <Link to="/reservations" style={styles.navLink}>
-              예약 내역
-            </Link>
-          )} */}
-
+          {/* 로그인 버튼 */}
           {!isLoggedIn && (
             <button
               onClick={() => navigate("/login")}
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                backgroundColor: "#fff",
-                color: "#6e6e6e",
-                border: "none",
-                borderRadius: "6px",
+                background: "none",
+                border: `1px solid ${colors.line}`,
                 padding: "8px 14px",
+                borderRadius: 8,
                 cursor: "pointer",
                 fontWeight: 600,
-                fontSize: "14px",
+                color: colors.text,
+                display: "flex",
+                gap: 8,
+                alignItems: "center",
+                transition: "0.2s",
               }}
             >
               <FiLogIn />
@@ -212,12 +169,24 @@ function Header() {
             </button>
           )}
 
+          {/* 로그인 상태 */}
           {isLoggedIn && (
             <div style={{ position: "relative" }}>
               <button
-                ref={myBtnRef}
+                ref={btnRef}
                 onClick={() => setOpen(!open)}
-                style={styles.pill}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "10px 14px",
+                  borderRadius: 999,
+                  border: `1px solid ${colors.line}`,
+                  background: colors.bg,
+                  color: colors.text,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
               >
                 <FiUser />
                 <span>마이페이지</span>
@@ -227,24 +196,45 @@ function Header() {
               <AnimatePresence>
                 {open && (
                   <motion.div
+                    variants={menuAnim}
                     initial="hidden"
                     animate="visible"
                     exit="exit"
-                    variants={menuVariants}
-                    style={styles.dropdown}
                     ref={dropdownRef}
+                    style={{
+                      position: "absolute",
+                      top: "calc(100% + 8px)",
+                      right: 0,
+                      minWidth: 230,
+                      background: colors.menuBg,
+                      borderRadius: 12,
+                      border: `1px solid ${colors.line}`,
+                      boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                      overflow: "hidden",
+                    }}
                   >
-                    <Link to="/profile" style={styles.menuItem}>
-                      <FiUserCheck /> 내 정보 보기
+                    <Link to="/profile" style={dropItem(colors)}>
+                      <FiUserCheck /> 내 정보
                     </Link>
-                    <Link to="/reservations" style={styles.menuItem}>
-                      <FiClipboard /> 예약 내역 보기
+
+                    <Link to="/reservations" style={dropItem(colors)}>
+                      <FiClipboard /> 예약 내역
                     </Link>
-                    {/* <Link to="/settings" style={styles.menuItem}>
-                      <FiSettings /> 설정
-                    </Link> */}
-                    <hr style={{ height: 1, background: "#444", margin: 0 }} />
-                    <button onClick={handleLogout} style={styles.menuItem}>
+
+                    <Link to="/settings" style={dropItem(colors)}>
+                      <FiUserCheck /> 설정
+                    </Link>
+
+                    <hr
+                      style={{
+                        border: 0,
+                        height: 1,
+                        background: colors.line,
+                        margin: 0,
+                      }}
+                    />
+
+                    <button onClick={handleLogout} style={dropItem(colors)}>
                       <FiLogOut /> 로그아웃
                     </button>
                   </motion.div>
@@ -254,22 +244,24 @@ function Header() {
           )}
         </div>
 
+        {/* 모바일 메뉴 버튼 */}
         <button
           className="mobile-toggle"
-          onClick={() => setMobileMenu((prev) => !prev)}
+          onClick={() => setMobileMenu((p) => !p)}
           style={{
             background: "none",
             border: "none",
-            fontSize: "24px",
+            fontSize: 26,
             cursor: "pointer",
+            color: colors.text,
             display: "none",
-            color: THEME.text,
           }}
         >
           {mobileMenu ? <FiX /> : <FiMenu />}
         </button>
       </div>
 
+      {/* 모바일 메뉴 */}
       <AnimatePresence>
         {mobileMenu && (
           <motion.div
@@ -278,77 +270,66 @@ function Header() {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25 }}
             style={{
-              background: theme === "dark" ? "#111" : "#fff",
-              borderTop: `1px solid ${THEME.border}`,
+              background: colors.bg,
+              borderTop: `1px solid ${colors.line}`,
               boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              padding: "18px 20px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "16px",
             }}
           >
-            <div
+            <button
+              onClick={toggleTheme}
               style={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "14px 20px",
-                gap: "14px",
+                background: "none",
+                border: "none",
+                textAlign: "left",
+                color: colors.text,
+                fontWeight: 600,
+                fontSize: "16px",
               }}
             >
-              {/* 모바일에도 다크모드 버튼 추가 */}
+              {theme === "dark" ? "☀ 라이트 모드" : "🌙 다크 모드"}
+            </button>
+
+            {!isLoggedIn ? (
               <button
-                onClick={toggleTheme}
+                onClick={() => navigate("/login")}
                 style={{
-                  border: "none",
                   background: "none",
-                  textAlign: "left",
-                  color: theme === "dark" ? "#fff" : "#444",
-                  fontWeight: 600,
+                  border: `1px solid ${colors.line}`,
+                  padding: "10px 14px",
+                  borderRadius: "8px",
                   cursor: "pointer",
-                  marginBottom: "8px",
-                  fontSize: "16px",
+                  color: colors.text,
+                  fontWeight: 600,
+                  textAlign: "left",
                 }}
               >
-                {theme === "dark" ? "☀ 라이트 모드" : "🌙 다크 모드"}
+                로그인
               </button>
-
-              {isLoggedIn ? (
-                <>
-                  <Link to="/profile" onClick={() => setMobileMenu(false)}>
-                    내 정보 보기
-                  </Link>
-                  <Link to="/reservations" onClick={() => setMobileMenu(false)}>
-                    예약 내역
-                  </Link>
-                  <Link to="/settings" onClick={() => setMobileMenu(false)}>
-                    설정
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    style={{
-                      border: "none",
-                      background: "none",
-                      textAlign: "left",
-                      color: THEME.brand,
-                      fontWeight: 600,
-                      cursor: "pointer",
-                    }}
-                  >
-                    로그아웃
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => navigate("/login")}
-                  style={{
-                    border: "none",
-                    background: "none",
-                    textAlign: "left",
-                    color: THEME.brand,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                  }}
+            ) : (
+              <>
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenu(false)}
+                  style={mobileItem(colors)}
                 >
-                  로그인
+                  내 정보 보기
+                </Link>
+                <Link
+                  to="/reservations"
+                  onClick={() => setMobileMenu(false)}
+                  style={mobileItem(colors)}
+                >
+                  예약 내역
+                </Link>
+                <button onClick={handleLogout} style={mobileItem(colors)}>
+                  로그아웃
                 </button>
-              )}
-            </div>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -368,5 +349,29 @@ function Header() {
     </header>
   );
 }
+
+/* 드롭다운 item */
+const dropItem = (colors) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: 10,
+  padding: "12px 16px",
+  width: "100%",
+  border: "none",
+  background: "none",
+  color: colors.text,
+  fontSize: 15,
+  cursor: "pointer",
+  textDecoration: "none",
+});
+
+/* 모바일 메뉴 item */
+const mobileItem = (colors) => ({
+  color: colors.text,
+  fontWeight: 600,
+  textAlign: "left",
+  padding: "6px 0",
+  cursor: "pointer",
+});
 
 export default Header;
