@@ -8,9 +8,6 @@ function SettingsPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  /* -------------------------------------------------------
-     ⭐ 전체 브라우저 배경 다크모드 적용
-  ------------------------------------------------------- */
   useEffect(() => {
     document.body.style.backgroundColor = isDark ? "#1A1A18" : "#FAF7F0";
     return () => {
@@ -18,9 +15,6 @@ function SettingsPage() {
     };
   }, [isDark]);
 
-  /* -------------------------------------------------------
-     수정 form 상태
-  ------------------------------------------------------- */
   const [form, setForm] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -32,9 +26,8 @@ function SettingsPage() {
     confirm: "",
   });
 
-  /* -------------------------------------------------------
-      다크/라이트 테마 색상
-  ------------------------------------------------------- */
+  const API = "https://stayplanserver.onrender.com/api";
+
   const palette = {
     light: {
       bg: "#FAF7F0",
@@ -62,35 +55,22 @@ function SettingsPage() {
 
   const c = palette[isDark ? "dark" : "light"];
 
-  /* -------------------------------------------------------
-     프로필 저장 (닉네임/이메일)
-  ------------------------------------------------------- */
+  // 프로필 저장
   const saveProfile = async () => {
     try {
-      const res = await axios.patch(
-        "http://localhost:5000/api/profile/update",
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.patch(`${API}/profile/update`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       alert(res.data.message);
-
       updateUser({ ...user, name: form.name, email: form.email });
     } catch (err) {
-      console.error("✅ 프로필 업데이트 에러:", err.response || err);
-
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "정보 저장 실패 ❌";
-
-      alert(msg);
+      console.error(err.response || err);
+      alert("정보 저장 실패 ❌");
     }
   };
 
-  /* -------------------------------------------------------
-     비밀번호 변경
-  ------------------------------------------------------- */
+  // 비밀번호 변경
   const changePassword = async () => {
     if (passwordForm.next !== passwordForm.confirm) {
       return alert("새 비밀번호가 일치하지 않습니다.");
@@ -98,7 +78,7 @@ function SettingsPage() {
 
     try {
       const res = await axios.patch(
-        "http://localhost:5000/api/profile/password",
+        `${API}/profile/password`,
         {
           currentPassword: passwordForm.current,
           newPassword: passwordForm.next,
@@ -109,48 +89,28 @@ function SettingsPage() {
       alert(res.data.message);
       setPasswordForm({ current: "", next: "", confirm: "" });
     } catch (err) {
-      console.error("✅ 비밀번호 변경 에러:", err.response || err);
-
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "비밀번호 변경 실패 ❌";
-
-      alert(msg);
+      console.error(err.response || err);
+      alert("비밀번호 변경 실패 ❌");
     }
   };
 
-  /* -------------------------------------------------------
-     회원 탈퇴
-  ------------------------------------------------------- */
+  // 회원 탈퇴
   const deleteUser = async () => {
     if (!window.confirm("정말 탈퇴하시겠습니까?")) return;
 
     try {
-      const res = await axios.delete(
-        "http://localhost:5000/api/profile/delete",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.delete(`${API}/profile/delete`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       alert(res.data.message);
       logout();
     } catch (err) {
-      console.error("✅ 회원 탈퇴 에러:", err.response || err);
-
-      const msg =
-        err.response?.data?.message ||
-        err.response?.data?.error ||
-        "회원 탈퇴 실패 ❌";
-
-      alert(msg);
+      console.error(err.response || err);
+      alert("회원 탈퇴 실패 ❌");
     }
   };
 
-  /* -------------------------------------------------------
-     공용 스타일
-  ------------------------------------------------------- */
   const sectionStyle = {
     background: c.card,
     border: `1px solid ${c.line}`,
@@ -193,9 +153,6 @@ function SettingsPage() {
     fontWeight: 600,
   };
 
-  /* -------------------------------------------------------
-     JSX
-  ------------------------------------------------------- */
   return (
     <div
       style={{
@@ -205,7 +162,6 @@ function SettingsPage() {
         color: c.text,
       }}
     >
-      {/* HEADER */}
       <div style={sectionStyle}>
         <h2 style={{ margin: 0, fontSize: 28, fontWeight: 600 }}>계정 설정</h2>
         <p style={{ marginTop: 10, color: c.sub }}>
@@ -213,7 +169,6 @@ function SettingsPage() {
         </p>
       </div>
 
-      {/* PERSONAL INFO EDIT */}
       <div style={sectionStyle}>
         <h3 style={{ marginBottom: 20, color: c.sub }}>프로필 정보 수정</h3>
 
@@ -236,7 +191,6 @@ function SettingsPage() {
         </button>
       </div>
 
-      {/* PASSWORD CHANGE */}
       <div style={sectionStyle}>
         <h3 style={{ marginBottom: 20, color: c.sub }}>비밀번호 변경</h3>
 
@@ -275,7 +229,6 @@ function SettingsPage() {
         </button>
       </div>
 
-      {/* DELETE ACCOUNT */}
       <div style={{ textAlign: "center", marginTop: 50 }}>
         <button style={dangerBtn} onClick={deleteUser}>
           회원 탈퇴
