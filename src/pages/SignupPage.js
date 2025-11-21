@@ -32,11 +32,16 @@ function SignupPage() {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+
+      // ⭐ Render 서버 주소로 변경됨
+      const res = await fetch(
+        "https://stayplanserver.onrender.com/api/signup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        }
+      );
 
       const data = await res.json();
 

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   // 로그인
   const login = async (userId, password) => {
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
+      const res = await fetch("https://stayplanserver.onrender.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, password }),
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      // localStorage → sessionStorage 변경
+      // localStorage → sessionStorage 변경(유지)
       sessionStorage.setItem("user", JSON.stringify(data.user));
       sessionStorage.setItem("token", data.token);
 

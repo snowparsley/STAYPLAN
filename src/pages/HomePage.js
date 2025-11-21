@@ -15,7 +15,7 @@ function HomePage() {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:5000/api/listings?type=${selectedType}`
+        `https://stayplanserver.onrender.com/api/listings?type=${selectedType}`
       );
       const data = await res.json();
       if (Array.isArray(data)) setListings(data);

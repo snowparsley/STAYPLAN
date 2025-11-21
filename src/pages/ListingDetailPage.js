@@ -34,7 +34,7 @@ function ListingDetailPage() {
   // 상세 데이터 가져오기
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/listings/${id}`)
+      .get(`https://stayplanserver.onrender.com/api/listings/${id}`)
       .then((res) => setListing(res.data))
       .catch((err) => console.error(err));
 
@@ -97,9 +97,7 @@ function ListingDetailPage() {
     navigate("/payment", { state: { listing, form, nights } });
   };
 
-  // -------------------------------
-  // 🌙 B안: 크리미 베이지 / 미드나잇 베이지 톤
-  // -------------------------------
+  // B안 컬러 구성
   const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
   const mainText = isDark ? "#E3DFD7" : "#46423C";
   const subText = isDark ? "#A9A39A" : "#7A746D";
@@ -174,7 +172,6 @@ function ListingDetailPage() {
           gap: isMobile ? 10 : 16,
         }}
       >
-        {/* 입력창 */}
         <input
           type="text"
           name="user_name"
@@ -210,7 +207,6 @@ function ListingDetailPage() {
           ))}
         </select>
 
-        {/* 버튼 */}
         <motion.button
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.98 }}
@@ -306,7 +302,6 @@ function ListingDetailPage() {
   );
 }
 
-// 입력창 스타일 통일
 const inputStyle = (isDark, bg, border, isMobile) => ({
   flex: 1,
   padding: isMobile ? "10px 12px" : "12px 14px",

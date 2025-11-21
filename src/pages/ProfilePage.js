@@ -27,9 +27,13 @@ function ProfilePage() {
   useEffect(() => {
     const loadReservations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/my-reservations", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          "https://stayplanserver.onrender.com/api/my-reservations",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
         const data = await res.json();
 
         if (Array.isArray(data)) {
@@ -82,7 +86,9 @@ function ProfilePage() {
     const recentCity = recent.title.slice(0, 2);
 
     try {
-      const res = await fetch("http://localhost:5000/api/listings");
+      const res = await fetch(
+        "https://stayplanserver.onrender.com/api/listings"
+      );
       const data = await res.json();
 
       if (!Array.isArray(data)) return;
@@ -150,7 +156,7 @@ function ProfilePage() {
         color: c.text,
       }}
     >
-      {/* ⭐ HERO */}
+      {/* HERO */}
       <div style={cardStyle}>
         <h2 style={{ margin: 0, fontSize: 34, fontWeight: 800 }}>
           {user?.name}님,
@@ -160,7 +166,7 @@ function ProfilePage() {
         </p>
       </div>
 
-      {/* ⭐ SUMMARY */}
+      {/* SUMMARY */}
       <div style={{ display: "flex", gap: 22, marginBottom: 55 }}>
         <div style={summaryCard}>
           <h3 style={{ margin: 0, color: c.sub, fontSize: 15 }}>총 예약 수</h3>
@@ -191,7 +197,7 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* ⭐ BADGES */}
+      {/* BADGES */}
       <div style={cardStyle}>
         <h3 style={{ marginBottom: 22, color: c.sub }}>여행 뱃지</h3>
 
@@ -218,7 +224,7 @@ function ProfilePage() {
         )}
       </div>
 
-      {/* ⭐ RECENT */}
+      {/* RECENT */}
       {stats.recent && (
         <div style={cardStyle}>
           <h3 style={{ marginBottom: 22, color: c.sub }}>최근 방문 숙소</h3>
@@ -247,7 +253,7 @@ function ProfilePage() {
         </div>
       )}
 
-      {/* ⭐ RECOMMENDATIONS — 화살표 제거 적용 */}
+      {/* RECOMMENDATIONS */}
       {recommended.length > 0 && (
         <CollectionSection
           title="다음 여행을 위한 추천"

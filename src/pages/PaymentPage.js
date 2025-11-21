@@ -45,8 +45,9 @@ function PaymentPage() {
         payment_method: selectedMethod,
       };
 
+      // 🔥 Render 서버 URL로 변경됨
       const res = await axios.post(
-        "http://localhost:5000/api/reservations",
+        "https://stayplanserver.onrender.com/api/reservations",
         payload,
         {
           headers: {
@@ -114,9 +115,7 @@ function PaymentPage() {
           margin: "0 auto",
         }}
       >
-        {/* ---------------------------------------------------
-            🟫 숙소 정보 카드 (상세페이지와 동일 톤)
-        --------------------------------------------------- */}
+        {/* 숙소 정보 카드 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -194,9 +193,7 @@ function PaymentPage() {
           </div>
         </motion.div>
 
-        {/* ---------------------------------------------------
-            🟫 결제 요약 + 결제수단 카드 (톤 통일)
-        --------------------------------------------------- */}
+        {/* 결제 요약 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -251,7 +248,6 @@ function PaymentPage() {
               </motion.span>
             </div>
 
-            {/* 결제 수단 */}
             <h4
               style={{
                 fontSize: 17,
@@ -279,7 +275,6 @@ function PaymentPage() {
             </div>
           </div>
 
-          {/* 결제 버튼 */}
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
@@ -302,7 +297,6 @@ function PaymentPage() {
         </motion.div>
       </div>
 
-      {/* 반응형 */}
       <style>
         {`
           @media (max-width: 768px) {
@@ -316,10 +310,6 @@ function PaymentPage() {
     </div>
   );
 }
-
-/* ----------------------------------------
-   🔹 재사용 가능한 UI 컴포넌트
----------------------------------------- */
 
 function Info({ label, value, subtle }) {
   return (

@@ -15,9 +15,11 @@ function ReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
+  const API = "https://stayplanserver.onrender.com";
+
   const fetchReservations = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/my-reservations", {
+      const res = await fetch(`${API}/api/my-reservations`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -39,7 +41,7 @@ function ReservationsPage() {
     setRefreshing(true);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/reservations/${id}`, {
+      const res = await fetch(`${API}/api/reservations/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -222,8 +224,8 @@ function ReservationsPage() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={(e) => {
-                      e.stopPropagation(); //  상세페이지 이동 막기
-                      deleteReservation(r.id); // 실제 취소 실행
+                      e.stopPropagation();
+                      deleteReservation(r.id);
                     }}
                     style={{
                       width: "100%",
