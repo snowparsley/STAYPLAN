@@ -19,7 +19,6 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        {/* 기본 페이지 */}
         <Route path="/" element={<HomePage />} />
         <Route path="/listing/:id" element={<ListingDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -34,7 +33,6 @@ function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/reservation-complete"
           element={
@@ -53,7 +51,6 @@ function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/reservations"
           element={
@@ -62,7 +59,6 @@ function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/settings"
           element={
