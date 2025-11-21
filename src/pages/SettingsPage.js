@@ -8,12 +8,7 @@ function SettingsPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  useEffect(() => {
-    document.body.style.backgroundColor = isDark ? "#1A1A18" : "#FAF7F0";
-    return () => {
-      document.body.style.backgroundColor = "";
-    };
-  }, [isDark]);
+  const API = "https://stayplanserver.onrender.com/api";
 
   const [form, setForm] = useState({
     name: user?.name || "",
@@ -26,36 +21,26 @@ function SettingsPage() {
     confirm: "",
   });
 
-  const API = "https://stayplanserver.onrender.com/api";
+  /* 전체 배경 */
+  useEffect(() => {
+    document.body.style.background = isDark ? "#1A1A18" : "#FAF7F0";
+    return () => (document.body.style.background = "");
+  }, [isDark]);
 
-  const palette = {
-    light: {
-      bg: "#FAF7F0",
-      card: "#FFFFFF",
-      line: "#E6E1D8",
-      text: "#5A554D",
-      sub: "#7A746D",
-      input: "#F7F4ED",
-      button: "#A47A6B",
-      buttonText: "#FFF",
-      danger: "#C66A6A",
-    },
-    dark: {
-      bg: "#1A1A18",
-      card: "#2A2926",
-      line: "#4A4743",
-      text: "#E3DFD7",
-      sub: "#A9A39A",
-      input: "#34322E",
-      button: "#CFCAC0",
-      buttonText: "#1A1A18",
-      danger: "#C66A6A",
-    },
+  /* B안 팔레트 */
+  const c = {
+    bg: isDark ? "#1A1A18" : "#FAF7F0",
+    card: isDark ? "#2A2926" : "#FFFFFF",
+    line: isDark ? "#4A4743" : "#E6E1D8",
+    text: isDark ? "#EAE6DE" : "#3F3A35",
+    sub: isDark ? "#A9A39A" : "#7A746D",
+    input: isDark ? "#34322E" : "#F7F4ED",
+    button: isDark ? "#CFCAC0" : "#5A554D",
+    buttonText: isDark ? "#1A1A18" : "#FFFFFF",
+    danger: "#C66A6A",
   };
 
-  const c = palette[isDark ? "dark" : "light"];
-
-  // 프로필 저장
+  /* -------------------------- 저장하기 -------------------------- */
   const saveProfile = async () => {
     try {
       const res = await axios.patch(`${API}/profile/update`, form, {
@@ -63,18 +48,16 @@ function SettingsPage() {
       });
 
       alert(res.data.message);
-      updateUser({ ...user, name: form.name, email: form.email });
+      updateUser({ ...user, ...form });
     } catch (err) {
-      console.error(err.response || err);
       alert("정보 저장 실패 ❌");
     }
   };
 
-  // 비밀번호 변경
+  /* -------------------------- 비밀번호 변경 -------------------------- */
   const changePassword = async () => {
-    if (passwordForm.next !== passwordForm.confirm) {
+    if (passwordForm.next !== passwordForm.confirm)
       return alert("새 비밀번호가 일치하지 않습니다.");
-    }
 
     try {
       const res = await axios.patch(
@@ -89,12 +72,11 @@ function SettingsPage() {
       alert(res.data.message);
       setPasswordForm({ current: "", next: "", confirm: "" });
     } catch (err) {
-      console.error(err.response || err);
       alert("비밀번호 변경 실패 ❌");
     }
   };
 
-  // 회원 탈퇴
+  /* -------------------------- 회원 탈퇴 -------------------------- */
   const deleteUser = async () => {
     if (!window.confirm("정말 탈퇴하시겠습니까?")) return;
 
@@ -106,98 +88,109 @@ function SettingsPage() {
       alert(res.data.message);
       logout();
     } catch (err) {
-      console.error(err.response || err);
       alert("회원 탈퇴 실패 ❌");
     }
   };
 
-  const sectionStyle = {
+  /* 공통 스타일 */
+  const card = {
     background: c.card,
     border: `1px solid ${c.line}`,
-    borderRadius: 18,
-    padding: "35px",
-    marginBottom: "45px",
-    transition: "0.3s ease",
+    borderRadius: 22,
+    padding: "40px",
+    marginBottom: 50,
+    boxShadow: isDark
+      ? "0 14px 30px rgba(0,0,0,0.55)"
+      : "0 14px 30px rgba(0,0,0,0.08)",
+    transition: ".25s ease",
   };
 
-  const inputStyle = {
+  const input = {
     width: "100%",
-    padding: "12px",
-    marginTop: 8,
-    marginBottom: 18,
-    borderRadius: 10,
-    border: `1px solid ${c.line}`,
+    padding: "14px 16px",
+    marginTop: 10,
+    marginBottom: 25,
     background: c.input,
+    border: `1px solid ${c.line}`,
     color: c.text,
+    borderRadius: 12,
     outline: "none",
+    fontSize: 15,
+    transition: ".25s",
   };
 
-  const buttonStyle = {
-    padding: "12px 20px",
+  const btn = {
+    padding: "14px 24px",
+    borderRadius: 12,
+    border: "none",
     background: c.button,
     color: c.buttonText,
-    border: "none",
-    borderRadius: 10,
+    fontWeight: 700,
     cursor: "pointer",
-    fontWeight: 600,
-    marginTop: 5,
+    fontSize: 15,
   };
 
   const dangerBtn = {
-    padding: "12px 20px",
+    padding: "14px 24px",
     background: c.danger,
-    color: "white",
+    color: "#fff",
     border: "none",
-    borderRadius: 10,
+    borderRadius: 12,
+    fontWeight: 700,
     cursor: "pointer",
-    fontWeight: 600,
+    fontSize: 15,
   };
 
   return (
     <div
       style={{
-        maxWidth: 900,
-        margin: "60px auto",
-        padding: "20px",
+        maxWidth: 950,
+        margin: "70px auto 100px",
+        padding: "0 20px",
         color: c.text,
       }}
     >
-      <div style={sectionStyle}>
-        <h2 style={{ margin: 0, fontSize: 28, fontWeight: 600 }}>계정 설정</h2>
-        <p style={{ marginTop: 10, color: c.sub }}>
-          프로필 및 계정 보안 정보를 변경할 수 있습니다.
+      {/* HEADER */}
+      <div style={card}>
+        <h2 style={{ margin: 0, fontSize: 34, fontWeight: 800, color: c.text }}>
+          계정 설정
+        </h2>
+        <p style={{ marginTop: 12, color: c.sub, fontSize: 17 }}>
+          프로필, 보안, 개인정보를 관리하세요.
         </p>
       </div>
 
-      <div style={sectionStyle}>
-        <h3 style={{ marginBottom: 20, color: c.sub }}>프로필 정보 수정</h3>
+      {/* 프로필 정보 */}
+      <div style={card}>
+        <h3 style={{ marginBottom: 25, color: c.sub }}>✨ 프로필 정보 수정</h3>
 
         <label>닉네임</label>
         <input
-          style={inputStyle}
+          style={input}
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
         />
 
         <label>이메일</label>
         <input
-          style={inputStyle}
+          style={input}
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
 
-        <button style={buttonStyle} onClick={saveProfile}>
+        <button style={btn} onClick={saveProfile}>
           저장하기
         </button>
       </div>
 
-      <div style={sectionStyle}>
-        <h3 style={{ marginBottom: 20, color: c.sub }}>비밀번호 변경</h3>
+      {/* 비밀번호 변경 */}
+      <div style={card}>
+        <h3 style={{ marginBottom: 25, color: c.sub }}>🔐 비밀번호 변경</h3>
 
         <label>현재 비밀번호</label>
         <input
           type="password"
-          style={inputStyle}
+          style={input}
           value={passwordForm.current}
           onChange={(e) =>
             setPasswordForm({ ...passwordForm, current: e.target.value })
@@ -207,7 +200,7 @@ function SettingsPage() {
         <label>새 비밀번호</label>
         <input
           type="password"
-          style={inputStyle}
+          style={input}
           value={passwordForm.next}
           onChange={(e) =>
             setPasswordForm({ ...passwordForm, next: e.target.value })
@@ -217,19 +210,20 @@ function SettingsPage() {
         <label>새 비밀번호 확인</label>
         <input
           type="password"
-          style={inputStyle}
+          style={input}
           value={passwordForm.confirm}
           onChange={(e) =>
             setPasswordForm({ ...passwordForm, confirm: e.target.value })
           }
         />
 
-        <button style={buttonStyle} onClick={changePassword}>
+        <button style={btn} onClick={changePassword}>
           비밀번호 변경
         </button>
       </div>
 
-      <div style={{ textAlign: "center", marginTop: 50 }}>
+      {/* 회원 탈퇴 */}
+      <div style={{ textAlign: "center", marginTop: 60 }}>
         <button style={dangerBtn} onClick={deleteUser}>
           회원 탈퇴
         </button>
