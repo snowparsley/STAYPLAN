@@ -8,7 +8,6 @@ import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import ReservationsPage from "./pages/ReservationsPage";
 import PrivateRoute from "./components/PrivateRoute";
-import { AuthProvider } from "./contexts/AuthContext";
 import Header from "./components/Header";
 import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
@@ -17,75 +16,73 @@ import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Header />
-        <Routes>
-          {/* 기본 페이지 */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/listing/:id" element={<ListingDetailPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
+    <Router>
+      <Header />
+      <Routes>
+        {/* 기본 페이지 */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/listing/:id" element={<ListingDetailPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
 
-          {/* 결제 관련 */}
-          <Route
-            path="/payment"
-            element={
-              <PrivateRoute>
-                <PaymentPage />
-              </PrivateRoute>
-            }
-          />
+        {/* 결제 관련 */}
+        <Route
+          path="/payment"
+          element={
+            <PrivateRoute>
+              <PaymentPage />
+            </PrivateRoute>
+          }
+        />
 
-          <Route
-            path="/reservation-complete"
-            element={
-              <PrivateRoute>
-                <ReservationComplete />
-              </PrivateRoute>
-            }
-          />
+        <Route
+          path="/reservation-complete"
+          element={
+            <PrivateRoute>
+              <ReservationComplete />
+            </PrivateRoute>
+          }
+        />
 
-          {/* 사용자 관련 */}
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <ProfilePage />
-              </PrivateRoute>
-            }
-          />
+        {/* 사용자 관련 */}
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
 
-          <Route
-            path="/reservations"
-            element={
-              <PrivateRoute>
-                <ReservationsPage />
-              </PrivateRoute>
-            }
-          />
+        <Route
+          path="/reservations"
+          element={
+            <PrivateRoute>
+              <ReservationsPage />
+            </PrivateRoute>
+          }
+        />
 
-          <Route
-            path="/settings"
-            element={
-              <PrivateRoute>
-                <SettingsPage />
-              </PrivateRoute>
-            }
-          />
+        <Route
+          path="/settings"
+          element={
+            <PrivateRoute>
+              <SettingsPage />
+            </PrivateRoute>
+          }
+        />
 
-          {/* ⭐ 관리자 페이지 라우트 추가 */}
-          <Route
-            path="/admin"
-            element={
-              <PrivateRoute>
-                <AdminPage />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </AuthProvider>
+        {/* 관리자 페이지 */}
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute>
+              <AdminPage />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 

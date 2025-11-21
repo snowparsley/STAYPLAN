@@ -1,15 +1,17 @@
+// src/contexts/AuthContext.js
 import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // 로그인 상태 초기화 (sessionStorage 사용)
   const [user, setUser] = useState(
     JSON.parse(sessionStorage.getItem("user")) || null
   );
   const [token, setToken] = useState(sessionStorage.getItem("token") || null);
 
   /* -------------------------------------------------------
-     ⭐ 로그인
+      로그인
   ------------------------------------------------------- */
   const login = async (userId, password) => {
     try {
@@ -20,12 +22,13 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await res.json();
+
       if (!res.ok) {
         alert(data.message);
         return false;
       }
 
-      // ⭐ admin 여부도 user 내부에 포함됨
+      // 🔥 서버에서 받아온 user 정보 안에 admin 포함됨
       sessionStorage.setItem("user", JSON.stringify(data.user));
       sessionStorage.setItem("token", data.token);
 
@@ -41,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* -------------------------------------------------------
-     ⭐ 로그아웃
+      로그아웃
   ------------------------------------------------------- */
   const logout = () => {
     sessionStorage.removeItem("user");
@@ -51,20 +54,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   /* -------------------------------------------------------
-     ⭐ 사용자 정보 업데이트 (프로필 수정)
+      프로필 정보 업데이트 (name/email 수정)
   ------------------------------------------------------- */
   const updateUser = (newUser) => {
-    const savedToken = sessionStorage.getItem("token");
+    const savedToken = sessionStorage.getItem("token"); // 유지
 
-    // 🔥 admin 값 유지
-    const updated = {
-      ...newUser,
-      admin: user?.admin || false,
-    };
+    const updated = { ...user, ...newUser }; // admin 포함 유지
 
     setUser(updated);
     setToken(savedToken);
-
     sessionStorage.setItem("user", JSON.stringify(updated));
   };
 
