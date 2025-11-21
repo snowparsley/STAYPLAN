@@ -8,7 +8,9 @@ export const AuthProvider = ({ children }) => {
   );
   const [token, setToken] = useState(sessionStorage.getItem("token") || null);
 
-  // 로그인
+  /* -------------------------------------------------------
+     ⭐ 로그인
+  ------------------------------------------------------- */
   const login = async (userId, password) => {
     try {
       const res = await fetch("https://stayplanserver.onrender.com/api/login", {
@@ -23,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      // localStorage → sessionStorage 변경(유지)
+      // ⭐ admin 여부도 user 내부에 포함됨
       sessionStorage.setItem("user", JSON.stringify(data.user));
       sessionStorage.setItem("token", data.token);
 
@@ -38,7 +40,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 로그아웃
+  /* -------------------------------------------------------
+     ⭐ 로그아웃
+  ------------------------------------------------------- */
   const logout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
@@ -46,12 +50,22 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
-  // 사용자 정보 업데이트
+  /* -------------------------------------------------------
+     ⭐ 사용자 정보 업데이트 (프로필 수정)
+  ------------------------------------------------------- */
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
-    setUser(newUser);
+
+    // 🔥 admin 값 유지
+    const updated = {
+      ...newUser,
+      admin: user?.admin || false,
+    };
+
+    setUser(updated);
     setToken(savedToken);
-    sessionStorage.setItem("user", JSON.stringify(newUser));
+
+    sessionStorage.setItem("user", JSON.stringify(updated));
   };
 
   return (
