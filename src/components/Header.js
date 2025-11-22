@@ -14,7 +14,6 @@ import {
   FiX,
   FiMoon,
   FiSun,
-  FiShield,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -202,15 +201,27 @@ function Header() {
                       overflow: "hidden",
                     }}
                   >
-                    <Link to="/profile" style={dropItem(colors)}>
+                    <Link
+                      to="/profile"
+                      className="dropdown-item"
+                      style={dropItem(colors)}
+                    >
                       <FiUserCheck /> 내 정보
                     </Link>
 
-                    <Link to="/reservations" style={dropItem(colors)}>
+                    <Link
+                      to="/reservations"
+                      className="dropdown-item"
+                      style={dropItem(colors)}
+                    >
                       <FiClipboard /> 예약 내역
                     </Link>
 
-                    <Link to="/settings" style={dropItem(colors)}>
+                    <Link
+                      to="/settings"
+                      className="dropdown-item"
+                      style={dropItem(colors)}
+                    >
                       <FiUserCheck /> 설정
                     </Link>
 
@@ -224,6 +235,7 @@ function Header() {
 
                     <button
                       onClick={handleLogout}
+                      className="dropdown-item"
                       style={{
                         ...dropItem(colors),
                         outline: "none",
@@ -237,104 +249,17 @@ function Header() {
             </div>
           )}
         </div>
-
-        <button
-          className="mobile-toggle"
-          onClick={() => setMobileMenu((p) => !p)}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: 26,
-            cursor: "pointer",
-            color: colors.text,
-            display: "none",
-          }}
-        >
-          {mobileMenu ? <FiX /> : <FiMenu />}
-        </button>
       </div>
 
-      <AnimatePresence>
-        {mobileMenu && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            style={{
-              background: colors.bg,
-              borderTop: `1px solid ${colors.line}`,
-              padding: "18px 20px",
-              display: "flex",
-              flexDirection: "column",
-              gap: 16,
-            }}
-          >
-            <button
-              onClick={toggleTheme}
-              style={{
-                background: "none",
-                border: "none",
-                textAlign: "left",
-                color: colors.text,
-                fontWeight: 600,
-              }}
-            >
-              {theme === "dark" ? "☀ 라이트 모드" : "🌙 다크 모드"}
-            </button>
-
-            {!isLoggedIn ? (
-              <button
-                onClick={() => navigate("/login")}
-                style={mobileItem(colors)}
-              >
-                로그인
-              </button>
-            ) : (
-              <>
-                <Link
-                  to="/profile"
-                  onClick={() => setMobileMenu(false)}
-                  style={mobileItem(colors)}
-                >
-                  내 정보 보기
-                </Link>
-
-                <Link
-                  to="/reservations"
-                  onClick={() => setMobileMenu(false)}
-                  style={mobileItem(colors)}
-                >
-                  예약 내역
-                </Link>
-
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    ...dropItem(colors),
-                    outline: "none", // 🔥 추가
-                  }}
-                >
-                  <FiLogOut /> 로그아웃
-                </button>
-              </>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 🔥 hover CSS 추가 */}
+      {/* Hover 스타일 */}
       <style>{`
-        .dropdown-hover:hover {
+        .dropdown-item:hover {
           background: ${colors.hover} !important;
+          transition: 0.2s;
         }
-        @media (max-width: 768px) {
-          .desktop-menu {
-            display: none !important;
-          }
-          .mobile-toggle {
-            display: block !important;
-          }
+        button:focus {
+          outline: none !important;
+          box-shadow: none !important;
         }
       `}</style>
     </header>
@@ -354,15 +279,6 @@ const dropItem = (colors) => ({
   textDecoration: "none",
   outline: "none",
   transition: "0.2s",
-  className: "dropdown-hover",
-});
-
-const mobileItem = (colors) => ({
-  color: colors.text,
-  fontWeight: 600,
-  padding: "6px 0",
-  cursor: "pointer",
-  textAlign: "left",
 });
 
 export default Header;
