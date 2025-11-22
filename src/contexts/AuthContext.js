@@ -15,7 +15,13 @@ export const AuthProvider = ({ children }) => {
     const storedUser = sessionStorage.getItem("user");
     const storedToken = sessionStorage.getItem("token");
 
-    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      // admin을 boolean으로 강제 변환
+      parsed.admin = parsed.admin === true || parsed.admin === 1;
+      setUser(parsed);
+    }
+
     if (storedToken) setToken(storedToken);
 
     setLoading(false); // 로딩 종료
@@ -36,10 +42,16 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      sessionStorage.setItem("user", JSON.stringify(data.user));
+      // ⭐ admin → boolean 변환
+      const safeUser = {
+        ...data.user,
+        admin: data.user.admin === 1 || data.user.admin === true,
+      };
+
+      sessionStorage.setItem("user", JSON.stringify(safeUser));
       sessionStorage.setItem("token", data.token);
 
-      setUser(data.user);
+      setUser(safeUser);
       setToken(data.token);
 
       alert(data.message);
@@ -60,7 +72,11 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
-    const updated = { ...user, ...newUser };
+    const updated = {
+      ...user,
+      ...newUser,
+      admin: newUser.admin === 1 || newUser.admin === true,
+    };
 
     setUser(updated);
     setToken(savedToken);
@@ -74,7 +90,7 @@ export const AuthProvider = ({ children }) => {
         isLoggedIn: !!token,
         user,
         token,
-        loading, // 🔥 추가됨
+        loading,
         login,
         logout,
         updateUser,
