@@ -19,23 +19,16 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 function Header() {
-  //  user 추가
   const { isLoggedIn, logout, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
-  //관리자 계정이면 헤더 숨김
-  if (user?.admin) return null;
-
+  // ❗ 훅들 호출 (조건보다 위)
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);
   const btnRef = useRef(null);
-
-  /* -------------------------------
-      B안: 크리미 베이지 감성
-  ------------------------------- */
 
   const light = {
     bg: "#faf7f0ff",
@@ -80,6 +73,9 @@ function Header() {
     setOpen(false);
     setMobileMenu(false);
   }, [location]);
+
+  // ⚡ 여기로 옮김 — 모든 훅 선언 후에 조건문!
+  if (user?.admin) return null;
 
   const handleLogout = () => {
     logout();
@@ -137,7 +133,6 @@ function Header() {
           className="desktop-menu"
           style={{ display: "flex", gap: 14, alignItems: "center" }}
         >
-          {/* 다크모드 버튼 */}
           <button
             onClick={toggleTheme}
             style={{
@@ -152,7 +147,6 @@ function Header() {
             {theme === "dark" ? <FiSun /> : <FiMoon />}
           </button>
 
-          {/* 로그인 버튼 */}
           {!isLoggedIn && (
             <button
               onClick={() => navigate("/login")}
@@ -175,7 +169,6 @@ function Header() {
             </button>
           )}
 
-          {/* 로그인 상태 */}
           {isLoggedIn && (
             <div style={{ position: "relative" }}>
               <button
@@ -231,7 +224,6 @@ function Header() {
                       <FiUserCheck /> 설정
                     </Link>
 
-                    {/* ⭐ 관리자 전용 메뉴 */}
                     {user?.admin && (
                       <Link to="/admin" style={dropItem(colors)}>
                         <FiShield /> 관리자 페이지
@@ -331,6 +323,7 @@ function Header() {
                 >
                   내 정보 보기
                 </Link>
+
                 <Link
                   to="/reservations"
                   onClick={() => setMobileMenu(false)}
@@ -339,7 +332,6 @@ function Header() {
                   예약 내역
                 </Link>
 
-                {/* ⭐ 모바일 관리자 메뉴 */}
                 {user?.admin && (
                   <Link
                     to="/admin"
