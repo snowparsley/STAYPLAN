@@ -110,16 +110,16 @@ function AdminPage() {
             style={quickBtn(c)}
             onClick={() => navigate("/admin/listings")}
           >
-            숙소 등록하기
+            숙소 등록
           </button>
           <button
             style={quickBtn(c)}
             onClick={() => navigate("/admin/reservations")}
           >
-            예약 현황 보기
+            예약 현황
           </button>
           <button style={quickBtn(c)} onClick={() => navigate("/admin/users")}>
-            유저 리스트 보기
+            유저 리스트
           </button>
         </div>
       </main>
