@@ -24,12 +24,6 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  /* 🔥 로딩 중에는 헤더 숨김 (초기 "0" 문제 해결) */
-  if (loading) return null;
-
-  /* 🔥 관리자(admin) 계정이면 헤더 완전 숨김 */
-  if (user?.admin) return null;
-
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);
@@ -86,6 +80,12 @@ function Header() {
     navigate("/");
     window.scrollTo(0, 0);
   };
+
+  /* 🔥 로딩 중에는 헤더 숨김 (초기 "0" 문제 해결) */
+  if (loading) return null;
+
+  /* 🔥 관리자(admin) 계정이면 헤더 완전 숨김 */
+  if (user?.admin) return null;
 
   return (
     <header
