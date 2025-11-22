@@ -1,22 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ⭐ 수정 페이지 이동
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 
 function AdminListings() {
-  const listings = [
-    // 추후 서버 데이터 연동 예정
-    { id: 1, title: "서울 하우스", location: "서울", price: "120,000원" },
-    { id: 2, title: "부산 하우스", location: "부산", price: "95,000원" },
-    { id: 3, title: "여수 하우스", location: "여수", price: "110,000원" },
-  ];
+  const [listings, setListings] = useState([]);
+  const navigate = useNavigate();
+
+  /* =============================
+        1) 숙소 목록 불러오기
+  ============================= */
+  const fetchListings = async () => {
+    try {
+      const res = await fetch(
+        "https://stayplanserver.onrender.com/api/admin/listings",
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await res.json();
+      setListings(data);
+    } catch (err) {
+      console.error("숙소 불러오기 오류:", err);
+    }
+  };
+
+  /* =============================
+        2) 첫 마운트 시 실행
+  ============================= */
+  useEffect(() => {
+    fetchListings();
+  }, []);
+
+  /* =============================
+        3) 삭제 기능
+  ============================= */
+  const deleteListing = async (id) => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+    try {
+      await fetch(
+        `https://stayplanserver.onrender.com/api/admin/listings/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      alert("숙소 삭제 완료");
+      fetchListings(); // 다시 불러오기
+    } catch (err) {
+      alert("삭제 실패");
+      console.error(err);
+    }
+  };
 
   return (
     <div style={{ display: "flex", height: "100vh", background: "#F4F4F4" }}>
       {/* 사이드바 */}
       <AdminSidebar />
 
-      {/* 메인 */}
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <AdminHeader />
 
@@ -87,7 +131,7 @@ function AdminListings() {
                     <td>{item.id}</td>
                     <td>{item.title}</td>
                     <td>{item.location}</td>
-                    <td>{item.price}</td>
+                    <td>{item.price?.toLocaleString()}원</td>
 
                     <td>
                       <div
@@ -97,10 +141,20 @@ function AdminListings() {
                           justifyContent: "center",
                         }}
                       >
-                        <button style={editBtn}>
+                        {/* ⭐ 수정 버튼 → 수정 페이지 이동 */}
+                        <button
+                          style={editBtn}
+                          onClick={() =>
+                            navigate(`/admin/listings/edit/${item.id}`)
+                          }
+                        >
                           <FiEdit2 />
                         </button>
-                        <button style={deleteBtn}>
+
+                        <button
+                          style={deleteBtn}
+                          onClick={() => deleteListing(item.id)}
+                        >
                           <FiTrash2 />
                         </button>
                       </div>
@@ -136,7 +190,7 @@ const editBtn = {
 
 /* 삭제 버튼 */
 const deleteBtn = {
-  background: "#d9534f",
+  background: "#B33A3A",
   border: "none",
   borderRadius: 6,
   padding: "6px 10px",

@@ -8,10 +8,22 @@ import {
   FiLogOut,
 } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 function AdminSidebar() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { theme } = useTheme();
+
+  const isDark = theme === "dark";
+
+  const c = {
+    bg: isDark ? "#2A2926" : "#ffffff",
+    text: isDark ? "#EFEDE8" : "#4a3f35",
+    line: isDark ? "#44413c" : "#e5e1d8",
+    hover: isDark ? "#3A3834" : "#f7f5ef",
+    logoutBg: "#d9534f",
+  };
 
   const menuItems = [
     { label: "대시보드", icon: <FiHome />, path: "/admin" },
@@ -30,12 +42,13 @@ function AdminSidebar() {
       style={{
         width: 240,
         height: "100vh",
-        background: "#ffffff",
-        borderRight: "1px solid #e5e1d8",
+        background: c.bg,
+        borderRight: `1px solid ${c.line}`,
         padding: "24px 16px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
+        transition: "0.3s ease",
       }}
     >
       {/* Top Section */}
@@ -44,9 +57,10 @@ function AdminSidebar() {
           style={{
             fontSize: 22,
             fontWeight: 800,
-            color: "#4a3f35",
+            color: c.text,
             marginBottom: 40,
             letterSpacing: "-0.5px",
+            transition: "0.3s",
           }}
         >
           Admin Panel
@@ -69,16 +83,14 @@ function AdminSidebar() {
                 gap: 12,
                 padding: "12px 16px",
                 background: "none",
-                border: "1px solid #ece7df",
+                border: `1px solid ${c.line}`,
                 borderRadius: 10,
                 cursor: "pointer",
-                color: "#5c564f",
+                color: c.text,
                 fontWeight: 600,
                 transition: "0.2s",
               }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = "#f7f5ef")
-              }
+              onMouseEnter={(e) => (e.currentTarget.style.background = c.hover)}
               onMouseLeave={(e) =>
                 (e.currentTarget.style.background = "transparent")
               }
@@ -96,7 +108,7 @@ function AdminSidebar() {
         style={{
           marginTop: 30,
           padding: "12px 16px",
-          background: "#d9534f",
+          background: c.logoutBg,
           border: "none",
           borderRadius: 10,
           color: "#fff",

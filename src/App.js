@@ -42,7 +42,7 @@ function App() {
           <Route
             path="/admin"
             element={
-              <PrivateRoute>
+              <PrivateRoute adminOnly>
                 <AdminDashboard />
               </PrivateRoute>
             }
@@ -51,7 +51,7 @@ function App() {
           <Route
             path="/admin/listings"
             element={
-              <PrivateRoute>
+              <PrivateRoute adminOnly>
                 <AdminListings />
               </PrivateRoute>
             }
@@ -60,7 +60,7 @@ function App() {
           <Route
             path="/admin/reservations"
             element={
-              <PrivateRoute>
+              <PrivateRoute adminOnly>
                 <AdminReservations />
               </PrivateRoute>
             }
@@ -69,7 +69,7 @@ function App() {
           <Route
             path="/admin/users"
             element={
-              <PrivateRoute>
+              <PrivateRoute adminOnly>
                 <AdminUsers />
               </PrivateRoute>
             }
