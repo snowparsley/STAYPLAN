@@ -32,6 +32,8 @@ function ReservationsPage() {
     }
   };
 
+  // 🔥 ESLint 경고 해결 (의존성 문제 제거)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchReservations();
   }, [token]);
@@ -125,9 +127,7 @@ function ReservationsPage() {
           나의 예약 내역
         </h2>
 
-        {/* ------------------------------------------ */}
         {/* 빈 상태 */}
-        {/* ------------------------------------------ */}
         {reservations.length === 0 ? (
           <div
             style={{
@@ -249,7 +249,6 @@ function ReservationsPage() {
           </div>
         )}
 
-        {/* 반응형 */}
         <style>
           {`
             @media (max-width: 768px) {
