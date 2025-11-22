@@ -24,9 +24,7 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  /** 🔥 관리자(admin)라면 Header는 렌더링하지 않음 */
-  if (user?.admin) return null;
-
+  // ⛳ 모든 Hooks는 최상단에서 실행되어야 함
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);
@@ -84,6 +82,9 @@ function Header() {
     window.scrollTo(0, 0);
     window.location.reload();
   };
+
+  // ⛳ 모든 Hooks 실행 후, JSX return 바로 전에 체크
+  if (user?.admin) return null;
 
   return (
     <header
@@ -350,18 +351,16 @@ function Header() {
         )}
       </AnimatePresence>
 
-      <style>
-        {`
-          @media (max-width: 768px) {
-            .desktop-menu {
-              display: none !important;
-            }
-            .mobile-toggle {
-              display: block !important;
-            }
+      <style>{`
+        @media (max-width: 768px) {
+          .desktop-menu {
+            display: none !important;
           }
-        `}
-      </style>
+          .mobile-toggle {
+            display: block !important;
+          }
+        }
+      `}</style>
     </header>
   );
 }
