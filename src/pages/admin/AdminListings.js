@@ -1,0 +1,147 @@
+import React from "react";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
+import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+
+function AdminListings() {
+  const listings = [
+    // 추후 서버 데이터 연동 예정
+    { id: 1, title: "서울 하우스", location: "서울", price: "120,000원" },
+    { id: 2, title: "부산 하우스", location: "부산", price: "95,000원" },
+    { id: 3, title: "여수 하우스", location: "여수", price: "110,000원" },
+  ];
+
+  return (
+    <div style={{ display: "flex", height: "100vh", background: "#F4F4F4" }}>
+      {/* 사이드바 */}
+      <AdminSidebar />
+
+      {/* 메인 */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <AdminHeader />
+
+        <main style={{ padding: "40px 50px" }}>
+          {/* 상단 제목 + 새 숙소 등록 버튼 */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 30,
+            }}
+          >
+            <h2 style={{ fontSize: 24, color: "#4a3f35", fontWeight: 800 }}>
+              숙소 관리
+            </h2>
+
+            <button
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "12px 20px",
+                background: "#A47A6B",
+                border: "none",
+                borderRadius: 10,
+                color: "#fff",
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+              onClick={() => alert("숙소 등록 기능은 추후 추가됩니다.")}
+            >
+              <FiPlus /> 숙소 등록
+            </button>
+          </div>
+
+          {/* 숙소 리스트 테이블 */}
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 14,
+              padding: "20px 24px",
+              border: "1px solid #e5e1d8",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+            }}
+          >
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid #e5e1d8" }}>
+                  <th style={thStyle}>ID</th>
+                  <th style={thStyle}>숙소명</th>
+                  <th style={thStyle}>지역</th>
+                  <th style={thStyle}>가격(1박)</th>
+                  <th style={thStyle}>관리</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {listings.map((item) => (
+                  <tr
+                    key={item.id}
+                    style={{
+                      textAlign: "center",
+                      borderBottom: "1px solid #f1eee9",
+                      height: 60,
+                    }}
+                  >
+                    <td>{item.id}</td>
+                    <td>{item.title}</td>
+                    <td>{item.location}</td>
+                    <td>{item.price}</td>
+
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 12,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <button style={editBtn}>
+                          <FiEdit2 />
+                        </button>
+                        <button style={deleteBtn}>
+                          <FiTrash2 />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+/* 테이블 헤더 스타일 */
+const thStyle = {
+  padding: "14px 0",
+  fontSize: 15,
+  color: "#7a746d",
+  fontWeight: 700,
+};
+
+/* 수정 버튼 */
+const editBtn = {
+  background: "#fff",
+  border: "1px solid #c7c2ba",
+  borderRadius: 6,
+  padding: "6px 10px",
+  cursor: "pointer",
+  color: "#6f5f55",
+};
+
+/* 삭제 버튼 */
+const deleteBtn = {
+  background: "#d9534f",
+  border: "none",
+  borderRadius: 6,
+  padding: "6px 10px",
+  cursor: "pointer",
+  color: "#fff",
+};
+
+export default AdminListings;

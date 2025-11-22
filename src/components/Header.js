@@ -24,7 +24,6 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ❗ 훅들 호출 (조건보다 위)
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);

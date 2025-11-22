@@ -19,27 +19,64 @@ import Header from "./components/Header";
 import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
 import ReservationComplete from "./pages/ReservationComplete";
-import AdminPage from "./pages/AdminPage";
+
+// ⭐ 새 관리자 시스템 import
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminListings from "./pages/admin/AdminListings";
+import AdminReservations from "./pages/admin/AdminReservations";
+import AdminUsers from "./pages/admin/AdminUsers";
 
 function App() {
   const { user } = useAuth();
 
+  /* -------------------------------------------------------
+      관리자 모드
+  ------------------------------------------------------- */
   if (user?.admin) {
     return (
       <Router>
-        {/* 관리자 페이지에서는 헤더 제거 */}
         <Routes>
-          {/* admin 루트로 강제 이동 */}
-          <Route path="*" element={<Navigate to="/admin" replace />} />
+          {/* 기본 admin 경로 */}
+          <Route path="/" element={<Navigate to="/admin" replace />} />
 
           <Route
             path="/admin"
             element={
               <PrivateRoute>
-                <AdminPage />
+                <AdminDashboard />
               </PrivateRoute>
             }
           />
+
+          <Route
+            path="/admin/listings"
+            element={
+              <PrivateRoute>
+                <AdminListings />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin/reservations"
+            element={
+              <PrivateRoute>
+                <AdminReservations />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin/users"
+            element={
+              <PrivateRoute>
+                <AdminUsers />
+              </PrivateRoute>
+            }
+          />
+
+          {/* 그 외 모든 경로는 관리자 대시보드로 */}
+          <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </Router>
     );
