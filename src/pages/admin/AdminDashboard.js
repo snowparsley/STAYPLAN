@@ -92,44 +92,6 @@ function AdminDashboard() {
             />
           </div>
 
-          {/* 빠른 메뉴 */}
-          <h2
-            style={{
-              fontSize: 22,
-              fontWeight: 800,
-              marginBottom: 20,
-              color: c.text,
-            }}
-          >
-            빠른 메뉴
-          </h2>
-
-          <div
-            style={{
-              display: "flex",
-              gap: 18,
-              flexWrap: "wrap",
-            }}
-          >
-            <button
-              style={quickBtn}
-              onClick={() => navigate("/admin/listings")}
-            >
-              숙소 등록
-            </button>
-
-            <button
-              style={quickBtn}
-              onClick={() => navigate("/admin/reservations")}
-            >
-              예약 현황
-            </button>
-
-            <button style={quickBtn} onClick={() => navigate("/admin/users")}>
-              유저 리스트
-            </button>
-          </div>
-
           {/* 최근 예약 */}
           <h2
             style={{
