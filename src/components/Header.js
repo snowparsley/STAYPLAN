@@ -19,12 +19,17 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 function Header() {
-  const { isLoggedIn, logout, user } = useAuth();
+  const { isLoggedIn, logout, user, loading } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ⛳ 모든 Hooks는 최상단에서 실행되어야 함
+  /* 🔥 로딩 중에는 헤더 숨김 (초기 "0" 문제 해결) */
+  if (loading) return null;
+
+  /* 🔥 관리자(admin) 계정이면 헤더 완전 숨김 */
+  if (user?.admin) return null;
+
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);
@@ -54,6 +59,7 @@ function Header() {
     exit: { opacity: 0, y: -6, transition: { duration: 0.12 } },
   };
 
+  /* 🔥 클릭 외부 감지 → 드롭다운 닫기 */
   useEffect(() => {
     const onMouseDown = (e) => {
       if (
@@ -69,6 +75,7 @@ function Header() {
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
+  /* 페이지 이동 시 드롭다운 닫힘 */
   useEffect(() => {
     setOpen(false);
     setMobileMenu(false);
@@ -76,15 +83,9 @@ function Header() {
 
   const handleLogout = () => {
     logout();
-    setOpen(false);
-    setMobileMenu(false);
     navigate("/");
     window.scrollTo(0, 0);
-    window.location.reload();
   };
-
-  // ⛳ 모든 Hooks 실행 후, JSX return 바로 전에 체크
-  if (user?.admin) return null;
 
   return (
     <header
@@ -112,15 +113,11 @@ function Header() {
           onClick={() => {
             navigate("/");
             window.scrollTo({ top: 0, behavior: "smooth" });
-            setTimeout(() => {
-              window.location.reload();
-            }, 200);
           }}
           style={{
             fontSize: 24,
             fontWeight: 700,
             color: colors.text,
-            textDecoration: "none",
             letterSpacing: "0.45px",
             cursor: "pointer",
           }}
@@ -133,6 +130,7 @@ function Header() {
           className="desktop-menu"
           style={{ display: "flex", gap: 14, alignItems: "center" }}
         >
+          {/* 다크모드 버튼 */}
           <button
             onClick={toggleTheme}
             style={{
@@ -141,12 +139,12 @@ function Header() {
               cursor: "pointer",
               fontSize: 22,
               color: colors.text,
-              marginRight: 4,
             }}
           >
             {theme === "dark" ? <FiSun /> : <FiMoon />}
           </button>
 
+          {/* 로그인 전 */}
           {!isLoggedIn && (
             <button
               onClick={() => navigate("/login")}
@@ -159,16 +157,16 @@ function Header() {
                 fontWeight: 600,
                 color: colors.text,
                 display: "flex",
-                gap: 8,
                 alignItems: "center",
-                transition: "0.2s",
+                gap: 8,
               }}
             >
               <FiLogIn />
-              <span>LOGIN</span>
+              LOGIN
             </button>
           )}
 
+          {/* 로그인 후 */}
           {isLoggedIn && (
             <div style={{ position: "relative" }}>
               <button
@@ -188,10 +186,11 @@ function Header() {
                 }}
               >
                 <FiUser />
-                <span>마이페이지</span>
+                마이페이지
                 <FiChevronDown />
               </button>
 
+              {/* 드롭다운 메뉴 */}
               <AnimatePresence>
                 {open && (
                   <motion.div
@@ -224,18 +223,11 @@ function Header() {
                       <FiUserCheck /> 설정
                     </Link>
 
-                    {user?.admin && (
-                      <Link to="/admin" style={dropItem(colors)}>
-                        <FiShield /> 관리자 페이지
-                      </Link>
-                    )}
-
                     <hr
                       style={{
                         border: 0,
                         height: 1,
                         background: colors.line,
-                        margin: 0,
                       }}
                     />
 
@@ -277,13 +269,13 @@ function Header() {
             style={{
               background: colors.bg,
               borderTop: `1px solid ${colors.line}`,
-              boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
               padding: "18px 20px",
               display: "flex",
               flexDirection: "column",
-              gap: "16px",
+              gap: 16,
             }}
           >
+            {/* 다크모드 */}
             <button
               onClick={toggleTheme}
               style={{
@@ -292,25 +284,16 @@ function Header() {
                 textAlign: "left",
                 color: colors.text,
                 fontWeight: 600,
-                fontSize: "16px",
               }}
             >
               {theme === "dark" ? "☀ 라이트 모드" : "🌙 다크 모드"}
             </button>
 
+            {/* 로그인 전 */}
             {!isLoggedIn ? (
               <button
                 onClick={() => navigate("/login")}
-                style={{
-                  background: "none",
-                  border: `1px solid ${colors.line}`,
-                  padding: "10px 14px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  color: colors.text,
-                  fontWeight: 600,
-                  textAlign: "left",
-                }}
+                style={mobileItem(colors)}
               >
                 로그인
               </button>
@@ -332,16 +315,6 @@ function Header() {
                   예약 내역
                 </Link>
 
-                {user?.admin && (
-                  <Link
-                    to="/admin"
-                    onClick={() => setMobileMenu(false)}
-                    style={mobileItem(colors)}
-                  >
-                    관리자 페이지
-                  </Link>
-                )}
-
                 <button onClick={handleLogout} style={mobileItem(colors)}>
                   로그아웃
                 </button>
@@ -351,6 +324,7 @@ function Header() {
         )}
       </AnimatePresence>
 
+      {/* 반응형 */}
       <style>{`
         @media (max-width: 768px) {
           .desktop-menu {
@@ -365,14 +339,13 @@ function Header() {
   );
 }
 
-/* 드롭다운 item */
+/* 드롭다운 item 스타일 */
 const dropItem = (colors) => ({
   display: "flex",
   alignItems: "center",
   gap: 10,
   padding: "12px 16px",
   width: "100%",
-  border: "none",
   background: "none",
   color: colors.text,
   fontSize: 15,
@@ -380,13 +353,13 @@ const dropItem = (colors) => ({
   textDecoration: "none",
 });
 
-/* 모바일 메뉴 item */
+/* 모바일 item 스타일 */
 const mobileItem = (colors) => ({
   color: colors.text,
   fontWeight: 600,
-  textAlign: "left",
   padding: "6px 0",
   cursor: "pointer",
+  textAlign: "left",
 });
 
 export default Header;

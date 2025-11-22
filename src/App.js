@@ -30,10 +30,13 @@ import AdminReservations from "./pages/admin/AdminReservations";
 import AdminUsers from "./pages/admin/AdminUsers";
 
 function App() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // 🔥 로딩 동안 렌더 차단 → 0 뜨는 문제 해결
+  if (loading) return null;
 
   /* -------------------------------------------------------
-      관리자 모드
+      관리자 모드 (admin = 1)
   ------------------------------------------------------- */
   if (user?.admin) {
     return (

@@ -1,13 +1,25 @@
 // src/contexts/AuthContext.js
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(
-    JSON.parse(sessionStorage.getItem("user")) || null
-  );
-  const [token, setToken] = useState(sessionStorage.getItem("token") || null);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+
+  // 🔥 추가: user 로딩 여부
+  const [loading, setLoading] = useState(true);
+
+  // 🔥 첫 로딩: sessionStorage에서 유저 정보 가져오기
+  useEffect(() => {
+    const storedUser = sessionStorage.getItem("user");
+    const storedToken = sessionStorage.getItem("token");
+
+    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedToken) setToken(storedToken);
+
+    setLoading(false); // 로딩 종료
+  }, []);
 
   const login = async (userId, password) => {
     try {
@@ -18,9 +30,6 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await res.json();
-
-      // ⭐ 추가한 부분: 서버에서 받은 user 데이터 확인
-      console.log("🔍 서버에서 받은 user 데이터:", data.user);
 
       if (!res.ok) {
         alert(data.message);
@@ -44,17 +53,18 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
+
     setUser(null);
     setToken(null);
   };
 
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
-
     const updated = { ...user, ...newUser };
 
     setUser(updated);
     setToken(savedToken);
+
     sessionStorage.setItem("user", JSON.stringify(updated));
   };
 
@@ -64,6 +74,7 @@ export const AuthProvider = ({ children }) => {
         isLoggedIn: !!token,
         user,
         token,
+        loading, // 🔥 추가됨
         login,
         logout,
         updateUser,
