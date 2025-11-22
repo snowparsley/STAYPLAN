@@ -1,3 +1,4 @@
+// src/components/Header.js
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -13,11 +14,13 @@ import {
   FiX,
   FiMoon,
   FiSun,
+  FiShield, // ⭐ 관리자 아이콘 추가
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Header() {
-  const { isLoggedIn, logout } = useAuth();
+  // ⭐ user 추가
+  const { isLoggedIn, logout, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -225,6 +228,13 @@ function Header() {
                       <FiUserCheck /> 설정
                     </Link>
 
+                    {/* ⭐ 관리자 전용 메뉴 */}
+                    {user?.admin && (
+                      <Link to="/admin" style={dropItem(colors)}>
+                        <FiShield /> 관리자 페이지
+                      </Link>
+                    )}
+
                     <hr
                       style={{
                         border: 0,
@@ -325,6 +335,18 @@ function Header() {
                 >
                   예약 내역
                 </Link>
+
+                {/* ⭐ 모바일 관리자 메뉴 */}
+                {user?.admin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => setMobileMenu(false)}
+                    style={mobileItem(colors)}
+                  >
+                    관리자 페이지
+                  </Link>
+                )}
+
                 <button onClick={handleLogout} style={mobileItem(colors)}>
                   로그아웃
                 </button>
