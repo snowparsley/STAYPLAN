@@ -35,6 +35,7 @@ function Header() {
     sub: "#6F6A62",
     line: "#E6E1D8",
     menuBg: "#FFFFFF",
+    hover: "#f1ebe2",
   };
 
   const dark = {
@@ -43,6 +44,7 @@ function Header() {
     sub: "#CFCAC0",
     line: "#4A4743",
     menuBg: "#34322D",
+    hover: "#3d3c38",
   };
 
   const colors = theme === "dark" ? dark : light;
@@ -53,7 +55,6 @@ function Header() {
     exit: { opacity: 0, y: -6, transition: { duration: 0.12 } },
   };
 
-  /* 🔥 클릭 외부 감지 → 드롭다운 닫기 */
   useEffect(() => {
     const onMouseDown = (e) => {
       if (
@@ -69,7 +70,6 @@ function Header() {
     return () => document.removeEventListener("mousedown", onMouseDown);
   }, []);
 
-  /* 페이지 이동 시 드롭다운 닫힘 */
   useEffect(() => {
     setOpen(false);
     setMobileMenu(false);
@@ -81,10 +81,7 @@ function Header() {
     window.scrollTo(0, 0);
   };
 
-  /* 🔥 로딩 중에는 헤더 숨김 (초기 "0" 문제 해결) */
   if (loading) return null;
-
-  /* 🔥 관리자(admin) 계정이면 헤더 완전 숨김 */
   if (user?.admin) return null;
 
   return (
@@ -108,7 +105,6 @@ function Header() {
           alignItems: "center",
         }}
       >
-        {/* 로고 */}
         <div
           onClick={() => {
             navigate("/");
@@ -125,12 +121,10 @@ function Header() {
           STAYPLAN
         </div>
 
-        {/* PC 메뉴 */}
         <div
           className="desktop-menu"
           style={{ display: "flex", gap: 14, alignItems: "center" }}
         >
-          {/* 다크모드 버튼 */}
           <button
             onClick={toggleTheme}
             style={{
@@ -144,7 +138,6 @@ function Header() {
             {theme === "dark" ? <FiSun /> : <FiMoon />}
           </button>
 
-          {/* 로그인 전 */}
           {!isLoggedIn && (
             <button
               onClick={() => navigate("/login")}
@@ -166,7 +159,6 @@ function Header() {
             </button>
           )}
 
-          {/* 로그인 후 */}
           {isLoggedIn && (
             <div style={{ position: "relative" }}>
               <button
@@ -190,7 +182,6 @@ function Header() {
                 <FiChevronDown />
               </button>
 
-              {/* 드롭다운 메뉴 */}
               <AnimatePresence>
                 {open && (
                   <motion.div
@@ -211,15 +202,27 @@ function Header() {
                       overflow: "hidden",
                     }}
                   >
-                    <Link to="/profile" style={dropItem(colors)}>
+                    <Link
+                      to="/profile"
+                      style={dropItem(colors)}
+                      className="hover-item"
+                    >
                       <FiUserCheck /> 내 정보
                     </Link>
 
-                    <Link to="/reservations" style={dropItem(colors)}>
+                    <Link
+                      to="/reservations"
+                      style={dropItem(colors)}
+                      className="hover-item"
+                    >
                       <FiClipboard /> 예약 내역
                     </Link>
 
-                    <Link to="/settings" style={dropItem(colors)}>
+                    <Link
+                      to="/settings"
+                      style={dropItem(colors)}
+                      className="hover-item"
+                    >
                       <FiUserCheck /> 설정
                     </Link>
 
@@ -231,7 +234,14 @@ function Header() {
                       }}
                     />
 
-                    <button onClick={handleLogout} style={dropItem(colors)}>
+                    <button
+                      onClick={handleLogout}
+                      style={{
+                        ...dropItem(colors),
+                        outline: "none",
+                      }}
+                      className="hover-item"
+                    >
                       <FiLogOut /> 로그아웃
                     </button>
                   </motion.div>
@@ -241,7 +251,6 @@ function Header() {
           )}
         </div>
 
-        {/* 모바일 메뉴 버튼 */}
         <button
           className="mobile-toggle"
           onClick={() => setMobileMenu((p) => !p)}
@@ -258,7 +267,21 @@ function Header() {
         </button>
       </div>
 
-      {/* 모바일 메뉴 */}
+      {/* 💛 Hover 효과 추가 */}
+      <style>{`
+        .hover-item:hover {
+          background: ${colors.hover};
+        }
+        @media (max-width: 768px) {
+          .desktop-menu {
+            display: none !important;
+          }
+          .mobile-toggle {
+            display: block !important;
+          }
+        }
+      `}</style>
+
       <AnimatePresence>
         {mobileMenu && (
           <motion.div
@@ -275,7 +298,6 @@ function Header() {
               gap: 16,
             }}
           >
-            {/* 다크모드 */}
             <button
               onClick={toggleTheme}
               style={{
@@ -289,7 +311,6 @@ function Header() {
               {theme === "dark" ? "☀ 라이트 모드" : "🌙 다크 모드"}
             </button>
 
-            {/* 로그인 전 */}
             {!isLoggedIn ? (
               <button
                 onClick={() => navigate("/login")}
@@ -323,23 +344,11 @@ function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* 반응형 */}
-      <style>{`
-        @media (max-width: 768px) {
-          .desktop-menu {
-            display: none !important;
-          }
-          .mobile-toggle {
-            display: block !important;
-          }
-        }
-      `}</style>
     </header>
   );
 }
 
-/* 드롭다운 item 스타일 */
+/* Drop-down item */
 const dropItem = (colors) => ({
   display: "flex",
   alignItems: "center",
@@ -354,7 +363,7 @@ const dropItem = (colors) => ({
   outline: "none",
 });
 
-/* 모바일 item 스타일 */
+/* Mobile menu item */
 const mobileItem = (colors) => ({
   color: colors.text,
   fontWeight: 600,
