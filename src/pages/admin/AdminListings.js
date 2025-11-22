@@ -8,9 +8,6 @@ function AdminListings() {
   const [listings, setListings] = useState([]);
   const navigate = useNavigate();
 
-  /* =============================
-        1) 숙소 목록 불러오기
-  ============================= */
   const fetchListings = async () => {
     try {
       const res = await fetch(
@@ -31,9 +28,6 @@ function AdminListings() {
     fetchListings();
   }, []);
 
-  /* =============================
-        2) 삭제 기능
-  ============================= */
   const deleteListing = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -54,14 +48,13 @@ function AdminListings() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#F4F4F4" }}>
+    <div style={{ display: "flex", height: "100vh", background: "#faf8ef" }}>
       <AdminSidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <AdminHeader />
 
         <main style={{ padding: "40px 50px" }}>
-          {/* 상단 제목 */}
           <div
             style={{
               display: "flex",
@@ -75,19 +68,18 @@ function AdminListings() {
             </h2>
           </div>
 
-          {/* 숙소 리스트 테이블 */}
           <div
             style={{
-              background: "#fff",
+              background: "#ffffff",
               borderRadius: 14,
               padding: "20px 24px",
-              border: "1px solid #e5e1d8",
+              border: "1px solid #e8e4d9",
               boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
             }}
           >
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ borderBottom: "1px solid #e5e1d8" }}>
+                <tr style={{ borderBottom: "1px solid #e8e4d9" }}>
                   <th style={thStyle}>ID</th>
                   <th style={thStyle}>숙소명</th>
                   <th style={thStyle}>지역</th>
@@ -102,8 +94,9 @@ function AdminListings() {
                     key={item.id}
                     style={{
                       textAlign: "center",
-                      borderBottom: "1px solid #f1eee9",
+                      borderBottom: "1px solid #f3efe4",
                       height: 60,
+                      color: "#4a3f35",
                     }}
                   >
                     <td>{item.id}</td>
@@ -119,7 +112,6 @@ function AdminListings() {
                           justifyContent: "center",
                         }}
                       >
-                        {/* 수정 버튼 */}
                         <button
                           style={editBtn}
                           onClick={() =>
@@ -129,7 +121,6 @@ function AdminListings() {
                           <FiEdit2 />
                         </button>
 
-                        {/* 삭제 버튼 */}
                         <button
                           style={deleteBtn}
                           onClick={() => deleteListing(item.id)}
@@ -149,7 +140,6 @@ function AdminListings() {
   );
 }
 
-/* 스타일 */
 const thStyle = {
   padding: "14px 0",
   fontSize: 15,
@@ -158,7 +148,7 @@ const thStyle = {
 };
 
 const editBtn = {
-  background: "#fff",
+  background: "#ffffff",
   border: "1px solid #c7c2ba",
   borderRadius: 6,
   padding: "6px 10px",

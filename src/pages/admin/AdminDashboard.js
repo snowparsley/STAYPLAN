@@ -11,14 +11,14 @@ import { useAuth } from "../../contexts/AuthContext";
 function AdminDashboard() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { token } = useAuth(); // ⭐ token 가져오기
+  const { token } = useAuth();
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#2A2926" : "#F4F4F4",
+    bg: isDark ? "#2A2926" : "#faf8ef",
     text: isDark ? "#EFEDE8" : "#4a3f35",
-    card: isDark ? "#34322D" : "#FFFFFF",
-    line: isDark ? "#3F3C38" : "#e5e1d8",
+    card: isDark ? "#34322D" : "#ffffff",
+    line: isDark ? "#3F3C38" : "#e8e4d9",
     sub: isDark ? "#CFCAC0" : "#7a746d",
   };
 
@@ -37,14 +37,13 @@ function AdminDashboard() {
         "https://stayplanserver.onrender.com/api/admin/stats",
         {
           headers: {
-            Authorization: `Bearer ${token}`, // ⭐ 관리자 인증 추가
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       const data = await res.json();
 
-      // ⭐ undefined 안전 처리
       setStats({
         totalUsers: data.totalUsers ?? 0,
         totalReservations: data.totalReservations ?? 0,
@@ -149,7 +148,7 @@ function AdminDashboard() {
                       <td>{r.id}</td>
                       <td>{r.user}</td>
                       <td>{r.listing}</td>
-                      <td>{r.check_in}</td>
+                      <td>{r.check_in?.slice(0, 10)}</td>
                       <td>{r.total_price?.toLocaleString()}원</td>
                     </tr>
                   ))}

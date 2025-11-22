@@ -17,16 +17,13 @@ function AdminReservations() {
 
   const isDark = theme === "dark";
   const c = {
-    bg: isDark ? "#2A2926" : "#F4F4F4",
+    bg: isDark ? "#2A2926" : "#F7F5EF", // 변경된 라이트모드 배경
     card: isDark ? "#34322D" : "#FFFFFF",
-    text: isDark ? "#EFEDE8" : "#4a3f35",
-    sub: isDark ? "#CFCAC0" : "#7a746d",
-    line: isDark ? "#3F3C38" : "#e5e1d8",
+    text: isDark ? "#EFEDE8" : "#4A3F35",
+    sub: isDark ? "#CFCAC0" : "#7A746D",
+    line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
-  /* ------------------------------------------
-        예약 목록 불러오기
-  ------------------------------------------ */
   const fetchReservations = async () => {
     try {
       setLoading(true);
@@ -62,9 +59,6 @@ function AdminReservations() {
     fetchReservations();
   }, []);
 
-  /* ------------------------------------------
-        예약 삭제
-  ------------------------------------------ */
   const deleteReservation = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -151,10 +145,7 @@ function AdminReservations() {
                         <td>{r.id}</td>
                         <td>{r.user}</td>
                         <td>{r.listing}</td>
-
-                        {/* 🌟 체크인 날짜 YYYY-MM-DD로 표시 */}
                         <td>{r.check_in?.slice(0, 10)}</td>
-
                         <td>{r.total_price?.toLocaleString()}원</td>
                         <td>{r.status}</td>
 
@@ -166,7 +157,6 @@ function AdminReservations() {
                               justifyContent: "center",
                             }}
                           >
-                            {/* ✨ 수정 버튼 제거됨 */}
                             <button
                               style={deleteBtn}
                               onClick={() => deleteReservation(r.id)}
@@ -201,9 +191,6 @@ const trStyle = (c) => ({
   height: 60,
   color: c.text,
 });
-
-/* 수정 버튼 제거됨 */
-/* const editBtn = {...} */
 
 const deleteBtn = {
   background: "#B33A3A",

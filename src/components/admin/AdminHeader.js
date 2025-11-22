@@ -15,10 +15,11 @@ function AdminHeader() {
     return "관리자 대시보드";
   };
 
+  // 🎨 라이트모드 → 홈 화면과 같은 베이지 톤 적용
   const c = {
-    bg: theme === "dark" ? "#2A2926" : "#ffffff",
+    bg: theme === "dark" ? "#2A2926" : "#F6F3E7", // 베이지 톤
     text: theme === "dark" ? "#EFEDE8" : "#4a3f35",
-    line: theme === "dark" ? "#44413c" : "#e5e1d8",
+    line: theme === "dark" ? "#44413c" : "#E3DDD2", // 부드러운 베이지 라인
   };
 
   return (
@@ -56,14 +57,15 @@ function AdminHeader() {
         >
           {theme === "dark" ? <FiSun /> : <FiMoon />}
         </button>
-        {/* 관리자 아이콘 */}
+        {/* 관리자 텍스트 */}
         admin
+        {/* 관리자 아이콘 */}
         <div
           style={{
             width: 38,
             height: 38,
             borderRadius: "50%",
-            background: "#d7ccc5",
+            background: "#D9D2C8", // 아이콘 배경도 베이지 톤 맞춤
             display: "flex",
             justifyContent: "center",
             alignItems: "center",

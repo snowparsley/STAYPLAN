@@ -18,16 +18,13 @@ function AdminUsers() {
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#2A2926" : "#F4F4F4",
+    bg: isDark ? "#2A2926" : "#F7F5EF",
     card: isDark ? "#34322D" : "#FFFFFF",
-    text: isDark ? "#EFEDE8" : "#4a3f35",
-    sub: isDark ? "#CFCAC0" : "#7a746d",
-    line: isDark ? "#3F3C38" : "#e5e1d8",
+    text: isDark ? "#EFEDE8" : "#4A3F35",
+    sub: isDark ? "#CFCAC0" : "#7A746D",
+    line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
-  /* -------------------------------------
-        1) 유저 목록 불러오기
-  ------------------------------------- */
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -36,9 +33,7 @@ function AdminUsers() {
       const res = await fetch(
         "https://stayplanserver.onrender.com/api/admin/users",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -62,9 +57,6 @@ function AdminUsers() {
     fetchUsers();
   }, []);
 
-  /* -------------------------------------
-        2) 삭제 기능
-  ------------------------------------- */
   const deleteUser = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -73,18 +65,12 @@ function AdminUsers() {
         `https://stayplanserver.onrender.com/api/admin/users/${id}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "삭제 실패");
-        return;
-      }
+      if (!res.ok) return alert(data.message || "삭제 실패");
 
       alert("유저 삭제 완료");
       fetchUsers();
@@ -93,9 +79,6 @@ function AdminUsers() {
     }
   };
 
-  /* -------------------------------------
-        3) 수정 페이지로 이동
-  ------------------------------------- */
   const goEditUser = (id) => {
     navigate(`/admin/users/edit/${id}`);
   };
@@ -160,6 +143,7 @@ function AdminUsers() {
                         <td>{u.name}</td>
                         <td>{u.email}</td>
                         <td>{u.created_at?.slice(0, 10)}</td>
+
                         <td>
                           {u.admin ? (
                             <span style={adminBadge}>
@@ -200,7 +184,6 @@ function AdminUsers() {
   );
 }
 
-/* 스타일 */
 const thStyle = (c) => ({
   padding: "14px 0",
   fontSize: 15,
@@ -215,9 +198,10 @@ const trStyle = (c) => ({
   color: c.text,
 });
 
+/* 관리자/일반 배지 */
 const adminBadge = {
-  background: "#cce5ff",
-  color: "#004085",
+  background: "#d5e8ff",
+  color: "#003b7a",
   padding: "4px 10px",
   borderRadius: 10,
   fontWeight: 700,
@@ -227,8 +211,8 @@ const adminBadge = {
 };
 
 const userBadge = {
-  background: "#f7f5ef",
-  color: "#6a645b",
+  background: "#EFE8D8",
+  color: "#6A645B",
   padding: "4px 10px",
   borderRadius: 10,
   fontWeight: 700,

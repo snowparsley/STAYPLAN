@@ -6,6 +6,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+
 import { useAuth } from "./contexts/AuthContext";
 
 // 공용 페이지
@@ -32,69 +33,17 @@ import AdminUsers from "./pages/admin/AdminUsers";
 function App() {
   const { user, loading } = useAuth();
 
-  // 🔥 로딩 중일 때 깜빡임 문제 해결
   if (loading) return null;
 
-  /* -------------------------------------------------------
-      관리자 모드
-  ------------------------------------------------------- */
-  if (user?.admin) {
-    return (
-      <Router>
-        <Routes>
-          {/* 기본 admin redirect */}
-          <Route path="/" element={<Navigate to="/admin" replace />} />
-
-          <Route
-            path="/admin"
-            element={
-              <PrivateRoute adminOnly>
-                <AdminDashboard />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/listings"
-            element={
-              <PrivateRoute adminOnly>
-                <AdminListings />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/reservations"
-            element={
-              <PrivateRoute adminOnly>
-                <AdminReservations />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/admin/users"
-            element={
-              <PrivateRoute adminOnly>
-                <AdminUsers />
-              </PrivateRoute>
-            }
-          />
-
-          {/* 없는 admin 페이지 */}
-          <Route path="*" element={<Navigate to="/admin" replace />} />
-        </Routes>
-      </Router>
-    );
-  }
-
-  /* -------------------------------------------------------
-      일반 유저 모드
-  ------------------------------------------------------- */
   return (
     <Router>
-      <Header />
+      {/* 일반 사용자일 때만 헤더 표시 */}
+      {!user?.admin && <Header />}
+
       <Routes>
+        {/* -----------------------------------------
+              일반 유저 라우트
+        ------------------------------------------ */}
         <Route path="/" element={<HomePage />} />
         <Route path="/listing/:id" element={<ListingDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -145,8 +94,58 @@ function App() {
           }
         />
 
-        {/* 없는 일반 유저 페이지 */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* -----------------------------------------
+              관리자 라우트 (항상 별도로 유지)
+        ------------------------------------------ */}
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute adminOnly>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/listings"
+          element={
+            <PrivateRoute adminOnly>
+              <AdminListings />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/reservations"
+          element={
+            <PrivateRoute adminOnly>
+              <AdminReservations />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={
+            <PrivateRoute adminOnly>
+              <AdminUsers />
+            </PrivateRoute>
+          }
+        />
+
+        {/* -----------------------------------------
+              잘못된 URL → 홈 또는 대시보드
+        ------------------------------------------ */}
+        <Route
+          path="*"
+          element={
+            user?.admin ? (
+              <Navigate to="/admin" replace />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
       </Routes>
     </Router>
   );

@@ -18,10 +18,10 @@ function AdminSidebar() {
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#2A2926" : "#ffffff",
+    bg: isDark ? "#2A2926" : "#faf8ef",
     text: isDark ? "#EFEDE8" : "#4a3f35",
-    line: isDark ? "#44413c" : "#e5e1d8",
-    hover: isDark ? "#3A3834" : "#f7f5ef",
+    line: isDark ? "#44413c" : "#e8e4d9",
+    hover: isDark ? "#3A3834" : "#f3efe4",
     logoutBg: "#d9534f",
   };
 
@@ -51,7 +51,6 @@ function AdminSidebar() {
         transition: "0.3s ease",
       }}
     >
-      {/* Top Section */}
       <div>
         <h2
           style={{
@@ -102,7 +101,6 @@ function AdminSidebar() {
         </nav>
       </div>
 
-      {/* Logout Button */}
       <button
         onClick={handleLogout}
         style={{

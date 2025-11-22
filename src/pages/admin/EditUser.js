@@ -1,3 +1,4 @@
+// src/pages/admin/EditUser.js
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
@@ -13,11 +14,11 @@ function EditUser() {
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#2A2926" : "#F4F4F4",
+    bg: isDark ? "#2A2926" : "#F7F5EF",
     card: isDark ? "#34322D" : "#FFFFFF",
-    text: isDark ? "#EFEDE8" : "#4a3f35",
-    sub: isDark ? "#CFCAC0" : "#7a746d",
-    line: isDark ? "#3F3C38" : "#e5e1d8",
+    text: isDark ? "#EFEDE8" : "#4A3F35",
+    sub: isDark ? "#CFCAC0" : "#7A746D",
+    line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
   const [form, setForm] = useState({
@@ -31,9 +32,6 @@ function EditUser() {
 
   const [loading, setLoading] = useState(true);
 
-  /* -------------------------------------------
-        1) 유저 정보 불러오기
-  ------------------------------------------- */
   const fetchUser = async () => {
     try {
       const res = await fetch(
@@ -70,9 +68,6 @@ function EditUser() {
     fetchUser();
   }, []);
 
-  /* -------------------------------------------
-        2) input 변경 핸들러
-  ------------------------------------------- */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -81,9 +76,6 @@ function EditUser() {
     }));
   };
 
-  /* -------------------------------------------
-        3) 유저 정보 수정
-  ------------------------------------------- */
   const saveUser = async () => {
     if (!form.user_id.trim()) return alert("유저 ID를 입력해주세요.");
     if (!form.name.trim()) return alert("이름을 입력해주세요.");
@@ -120,9 +112,6 @@ function EditUser() {
     }
   };
 
-  /* -------------------------------------------
-        4) 비밀번호 재설정
-  ------------------------------------------- */
   const resetPassword = async () => {
     if (form.newPassword.length < 4)
       return alert("비밀번호는 최소 4자리 이상이어야 합니다.");
@@ -193,7 +182,6 @@ function EditUser() {
               boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
             }}
           >
-            {/* 유저 ID */}
             <label style={labelStyle(c)}>유저 ID</label>
             <input
               name="user_id"
@@ -202,7 +190,6 @@ function EditUser() {
               style={inputStyle(c)}
             />
 
-            {/* 이름 */}
             <label style={labelStyle(c)}>이름</label>
             <input
               name="name"
@@ -211,7 +198,6 @@ function EditUser() {
               style={inputStyle(c)}
             />
 
-            {/* 이메일 */}
             <label style={labelStyle(c)}>이메일</label>
             <input
               name="email"
@@ -220,7 +206,6 @@ function EditUser() {
               style={inputStyle(c)}
             />
 
-            {/* 관리자 권한 */}
             <label style={labelStyle(c)}>관리자 권한</label>
             <div style={{ marginBottom: 20 }}>
               <input
@@ -233,9 +218,6 @@ function EditUser() {
               <span style={{ color: c.text }}>관리자 여부</span>
             </div>
 
-            {/* ---------------------------- */}
-            {/* 🔥 비밀번호 재설정 UI 추가 */}
-            {/* ---------------------------- */}
             <h3 style={{ marginTop: 25, marginBottom: 10, color: c.text }}>
               비밀번호 재설정
             </h3>
@@ -264,7 +246,6 @@ function EditUser() {
               비밀번호 재설정
             </button>
 
-            {/* 저장 버튼 */}
             <button style={saveBtn} onClick={saveUser}>
               정보 저장하기
             </button>
@@ -275,7 +256,6 @@ function EditUser() {
   );
 }
 
-/* ------------------ 스타일 ------------------- */
 const labelStyle = (c) => ({
   color: c.sub,
   fontWeight: 700,
@@ -296,6 +276,19 @@ const inputStyle = (c) => ({
   outline: "none",
 });
 
+const resetBtn = {
+  width: "100%",
+  padding: "12px 0",
+  borderRadius: 10,
+  background: "#6D8BB8",
+  color: "#fff",
+  fontWeight: 700,
+  border: "none",
+  marginTop: 10,
+  cursor: "pointer",
+  fontSize: 15,
+};
+
 const saveBtn = {
   width: "100%",
   padding: "14px 0",
@@ -307,19 +300,6 @@ const saveBtn = {
   marginTop: 20,
   cursor: "pointer",
   fontSize: 16,
-};
-
-const resetBtn = {
-  width: "100%",
-  padding: "12px 0",
-  borderRadius: 10,
-  background: "#4A6FA5",
-  color: "#fff",
-  fontWeight: 700,
-  border: "none",
-  marginTop: 10,
-  cursor: "pointer",
-  fontSize: 15,
 };
 
 export default EditUser;
