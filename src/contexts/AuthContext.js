@@ -55,6 +55,14 @@ export const AuthProvider = ({ children }) => {
       setToken(data.token);
 
       alert(data.message);
+
+      // ⭐ 관리자면 곧바로 관리자 대시보드로 이동
+      if (safeUser.admin) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/";
+      }
+
       return true;
     } catch (err) {
       alert("서버 연결 실패 ❌");
