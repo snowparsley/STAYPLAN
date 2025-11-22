@@ -5,7 +5,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
 function AdminPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth(); // ⭐ logout 가져오기
   const { theme } = useTheme();
   const navigate = useNavigate();
 
@@ -27,6 +27,12 @@ function AdminPage() {
     accent: "#A47A6B",
   };
 
+  // ⭐ 로그아웃 함수
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <div style={{ display: "flex", height: "100vh", background: c.bg }}>
       {/* ◾ LEFT SIDEBAR */}
@@ -36,35 +42,58 @@ function AdminPage() {
           background: c.card,
           borderRight: `1px solid ${c.line}`,
           padding: 24,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between", // ⭐ 아래에 로그아웃 배치
         }}
       >
-        <h2 style={{ color: c.text, margin: 0, marginBottom: 30 }}>
-          Admin Panel
-        </h2>
+        <div>
+          <h2 style={{ color: c.text, margin: 0, marginBottom: 30 }}>
+            Admin Panel
+          </h2>
 
-        <nav style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          <button style={navItemStyle(c)} onClick={() => navigate("/admin")}>
-            📊 대시보드
-          </button>
-          <button
-            style={navItemStyle(c)}
-            onClick={() => navigate("/admin/reservations")}
-          >
-            📝 예약 관리
-          </button>
-          <button
-            style={navItemStyle(c)}
-            onClick={() => navigate("/admin/listings")}
-          >
-            🏡 숙소 관리
-          </button>
-          <button
-            style={navItemStyle(c)}
-            onClick={() => navigate("/admin/users")}
-          >
-            👤 유저 관리
-          </button>
-        </nav>
+          <nav style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <button style={navItemStyle(c)} onClick={() => navigate("/admin")}>
+              📊 대시보드
+            </button>
+            <button
+              style={navItemStyle(c)}
+              onClick={() => navigate("/admin/reservations")}
+            >
+              📝 예약 관리
+            </button>
+            <button
+              style={navItemStyle(c)}
+              onClick={() => navigate("/admin/listings")}
+            >
+              🏡 숙소 관리
+            </button>
+            <button
+              style={navItemStyle(c)}
+              onClick={() => navigate("/admin/users")}
+            >
+              👤 유저 관리
+            </button>
+          </nav>
+        </div>
+
+        {/* ◾ 로그아웃 버튼 (사이드바 맨 아래) */}
+        <button
+          onClick={handleLogout}
+          style={{
+            marginTop: 30,
+            padding: "12px 16px",
+            background: "#D9534F",
+            color: "#fff",
+            borderRadius: 8,
+            border: "none",
+            fontWeight: 700,
+            cursor: "pointer",
+            width: "100%",
+          }}
+        >
+          🚪 로그아웃
+        </button>
       </aside>
 
       {/* ◾ MAIN CONTENT */}
