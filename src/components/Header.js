@@ -10,8 +10,6 @@ import {
   FiLogOut,
   FiClipboard,
   FiUserCheck,
-  FiMenu,
-  FiX,
   FiMoon,
   FiSun,
 } from "react-icons/fi";
@@ -24,7 +22,6 @@ function Header() {
   const location = useLocation();
 
   const [open, setOpen] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);
   const btnRef = useRef(null);
 
@@ -71,7 +68,6 @@ function Header() {
 
   useEffect(() => {
     setOpen(false);
-    setMobileMenu(false);
   }, [location]);
 
   const handleLogout = () => {
@@ -124,6 +120,7 @@ function Header() {
           className="desktop-menu"
           style={{ display: "flex", gap: 14, alignItems: "center" }}
         >
+          {/* 테마 토글 */}
           <button
             onClick={toggleTheme}
             style={{
@@ -137,6 +134,7 @@ function Header() {
             {theme === "dark" ? <FiSun /> : <FiMoon />}
           </button>
 
+          {/* 로그인 버튼 */}
           {!isLoggedIn && (
             <button
               onClick={() => navigate("/login")}
@@ -158,6 +156,7 @@ function Header() {
             </button>
           )}
 
+          {/* 드롭다운 */}
           {isLoggedIn && (
             <div style={{ position: "relative" }}>
               <button
@@ -238,7 +237,6 @@ function Header() {
                       className="dropdown-item"
                       style={{
                         ...dropItem(colors),
-                        outline: "none",
                       }}
                     >
                       <FiLogOut /> 로그아웃
@@ -251,24 +249,35 @@ function Header() {
         </div>
       </div>
 
-      {/* Hover & Focus 스타일 */}
+      {/* 테두리 제거 CSS */}
       <style>{`
         .dropdown-item:hover {
           background: ${colors.hover} !important;
           transition: 0.2s;
         }
 
-        button:focus {
+        /* 버튼 기본 테두리 제거 */
+        button {
+          border: none !important;
           outline: none !important;
           box-shadow: none !important;
         }
 
+        button:focus,
+        button:active,
         button:focus-visible {
+          border: none !important;
           outline: none !important;
           box-shadow: none !important;
         }
 
-        .dropdown-item:focus-visible {
+        /* 드롭다운 항목 모든 상태에서 테두리 제거 */
+        .dropdown-item,
+        .dropdown-item:focus,
+        .dropdown-item:active,
+        .dropdown-item:focus-visible,
+        .dropdown-item:visited {
+          border: none !important;
           outline: none !important;
           box-shadow: none !important;
         }
@@ -288,7 +297,12 @@ const dropItem = (colors) => ({
   fontSize: 15,
   cursor: "pointer",
   textDecoration: "none",
+
+  /* 🔥 여기서도 테두리 제거 */
+  border: "none",
   outline: "none",
+  boxShadow: "none",
+
   transition: "0.2s",
 });
 
