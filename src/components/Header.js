@@ -202,27 +202,15 @@ function Header() {
                       overflow: "hidden",
                     }}
                   >
-                    <Link
-                      to="/profile"
-                      style={dropItem(colors)}
-                      className="hover-item"
-                    >
+                    <Link to="/profile" style={dropItem(colors)}>
                       <FiUserCheck /> 내 정보
                     </Link>
 
-                    <Link
-                      to="/reservations"
-                      style={dropItem(colors)}
-                      className="hover-item"
-                    >
+                    <Link to="/reservations" style={dropItem(colors)}>
                       <FiClipboard /> 예약 내역
                     </Link>
 
-                    <Link
-                      to="/settings"
-                      style={dropItem(colors)}
-                      className="hover-item"
-                    >
+                    <Link to="/settings" style={dropItem(colors)}>
                       <FiUserCheck /> 설정
                     </Link>
 
@@ -240,7 +228,6 @@ function Header() {
                         ...dropItem(colors),
                         outline: "none",
                       }}
-                      className="hover-item"
                     >
                       <FiLogOut /> 로그아웃
                     </button>
@@ -266,21 +253,6 @@ function Header() {
           {mobileMenu ? <FiX /> : <FiMenu />}
         </button>
       </div>
-
-      {/* 💛 Hover 효과 추가 */}
-      <style>{`
-        .hover-item:hover {
-          background: ${colors.hover};
-        }
-        @media (max-width: 768px) {
-          .desktop-menu {
-            display: none !important;
-          }
-          .mobile-toggle {
-            display: block !important;
-          }
-        }
-      `}</style>
 
       <AnimatePresence>
         {mobileMenu && (
@@ -336,19 +308,39 @@ function Header() {
                   예약 내역
                 </Link>
 
-                <button onClick={handleLogout} style={mobileItem(colors)}>
-                  로그아웃
+                <button
+                  onClick={handleLogout}
+                  style={{
+                    ...dropItem(colors),
+                    outline: "none", // 🔥 추가
+                  }}
+                >
+                  <FiLogOut /> 로그아웃
                 </button>
               </>
             )}
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 🔥 hover CSS 추가 */}
+      <style>{`
+        .dropdown-hover:hover {
+          background: ${colors.hover} !important;
+        }
+        @media (max-width: 768px) {
+          .desktop-menu {
+            display: none !important;
+          }
+          .mobile-toggle {
+            display: block !important;
+          }
+        }
+      `}</style>
     </header>
   );
 }
 
-/* Drop-down item */
 const dropItem = (colors) => ({
   display: "flex",
   alignItems: "center",
@@ -361,9 +353,10 @@ const dropItem = (colors) => ({
   cursor: "pointer",
   textDecoration: "none",
   outline: "none",
+  transition: "0.2s",
+  className: "dropdown-hover",
 });
 
-/* Mobile menu item */
 const mobileItem = (colors) => ({
   color: colors.text,
   fontWeight: 600,
