@@ -1,9 +1,11 @@
+// src/pages/admin/AdminUsers.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 import { FiEdit2, FiTrash2, FiShield } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -11,6 +13,8 @@ function AdminUsers() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { token } = useAuth();
+
   const isDark = theme === "dark";
 
   const c = {
@@ -26,16 +30,30 @@ function AdminUsers() {
   ------------------------------------- */
   const fetchUsers = async () => {
     try {
+      setLoading(true);
+      setError("");
+
       const res = await fetch(
-        "https://stayplanserver.onrender.com/api/admin/users"
+        "https://stayplanserver.onrender.com/api/admin/users",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       const data = await res.json();
 
-      // 서버 응답이 배열이므로 그대로 저장
-      setUsers(data);
-      setLoading(false);
+      if (!res.ok) {
+        setError(data.message || "유저 목록을 불러오지 못했습니다.");
+        setUsers([]);
+      } else {
+        setUsers(Array.isArray(data) ? data : []);
+      }
     } catch (err) {
       setError("서버 연결 오류");
+      setUsers([]);
+    } finally {
       setLoading(false);
     }
   };
@@ -51,13 +69,27 @@ function AdminUsers() {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      await fetch(`https://stayplanserver.onrender.com/api/admin/users/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `https://stayplanserver.onrender.com/api/admin/users/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "삭제 실패");
+        return;
+      }
+
       alert("유저 삭제 완료");
-      fetchUsers(); // 다시 목록 불러오기
+      fetchUsers();
     } catch (err) {
-      alert("삭제 실패");
+      alert("삭제 실패 (서버 오류)");
     }
   };
 
@@ -89,7 +121,7 @@ function AdminUsers() {
 
           {loading && <p style={{ color: c.sub }}>불러오는 중...</p>}
           {error && (
-            <p style={{ fontSize: 18, color: "red", marginBottom: 20 }}>
+            <p style={{ fontSize: 16, color: "red", marginBottom: 20 }}>
               {error}
             </p>
           )}
@@ -104,58 +136,62 @@ function AdminUsers() {
                 boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
               }}
             >
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                    <th style={thStyle(c)}>ID</th>
-                    <th style={thStyle(c)}>유저 ID</th>
-                    <th style={thStyle(c)}>이름</th>
-                    <th style={thStyle(c)}>이메일</th>
-                    <th style={thStyle(c)}>가입일</th>
-                    <th style={thStyle(c)}>권한</th>
-                    <th style={thStyle(c)}>관리</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {users.map((u) => (
-                    <tr key={u.id} style={trStyle(c)}>
-                      <td>{u.id}</td>
-                      <td>{u.user_id}</td>
-                      <td>{u.name}</td>
-                      <td>{u.email}</td>
-                      <td>{u.created_at?.slice(0, 10)}</td>
-                      <td>
-                        {u.admin ? (
-                          <span style={adminBadge}>
-                            <FiShield /> 관리자
-                          </span>
-                        ) : (
-                          <span style={userBadge}>일반</span>
-                        )}
-                      </td>
-
-                      <td>
-                        <div style={{ display: "flex", gap: 12 }}>
-                          <button
-                            style={editBtn}
-                            onClick={() => goEditUser(u.id)}
-                          >
-                            <FiEdit2 />
-                          </button>
-
-                          <button
-                            style={deleteBtn}
-                            onClick={() => deleteUser(u.id)}
-                          >
-                            <FiTrash2 />
-                          </button>
-                        </div>
-                      </td>
+              {users.length === 0 ? (
+                <p style={{ color: c.sub }}>등록된 유저가 없습니다.</p>
+              ) : (
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                      <th style={thStyle(c)}>ID</th>
+                      <th style={thStyle(c)}>유저 ID</th>
+                      <th style={thStyle(c)}>이름</th>
+                      <th style={thStyle(c)}>이메일</th>
+                      <th style={thStyle(c)}>가입일</th>
+                      <th style={thStyle(c)}>권한</th>
+                      <th style={thStyle(c)}>관리</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody>
+                    {users.map((u) => (
+                      <tr key={u.id} style={trStyle(c)}>
+                        <td>{u.id}</td>
+                        <td>{u.user_id}</td>
+                        <td>{u.name}</td>
+                        <td>{u.email}</td>
+                        <td>{u.created_at?.slice(0, 10)}</td>
+                        <td>
+                          {u.admin ? (
+                            <span style={adminBadge}>
+                              <FiShield /> 관리자
+                            </span>
+                          ) : (
+                            <span style={userBadge}>일반</span>
+                          )}
+                        </td>
+
+                        <td>
+                          <div style={{ display: "flex", gap: 12 }}>
+                            <button
+                              style={editBtn}
+                              onClick={() => goEditUser(u.id)}
+                            >
+                              <FiEdit2 />
+                            </button>
+
+                            <button
+                              style={deleteBtn}
+                              onClick={() => deleteUser(u.id)}
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           )}
         </main>

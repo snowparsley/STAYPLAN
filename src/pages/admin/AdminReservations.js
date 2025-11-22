@@ -1,14 +1,18 @@
+// src/pages/admin/AdminReservations.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 function AdminReservations() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const { theme } = useTheme();
+  const { token } = useAuth();
   const navigate = useNavigate();
 
   const isDark = theme === "dark";
@@ -25,14 +29,31 @@ function AdminReservations() {
   ------------------------------------------ */
   const fetchReservations = async () => {
     try {
+      setLoading(true);
+      setError("");
+
       const res = await fetch(
-        "https://stayplanserver.onrender.com/api/admin/reservations"
+        "https://stayplanserver.onrender.com/api/admin/reservations",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       const data = await res.json();
-      setReservations(data);
-      setLoading(false);
+
+      if (!res.ok) {
+        setError(data.message || "예약 목록을 불러오지 못했습니다.");
+        setReservations([]);
+      } else {
+        setReservations(Array.isArray(data) ? data : []);
+      }
     } catch (err) {
       console.error("예약 불러오기 오류:", err);
+      setError("서버 연결 오류");
+      setReservations([]);
+    } finally {
       setLoading(false);
     }
   };
@@ -48,16 +69,27 @@ function AdminReservations() {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
     try {
-      await fetch(
+      const res = await fetch(
         `https://stayplanserver.onrender.com/api/admin/reservations/${id}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "삭제 실패");
+        return;
+      }
+
       alert("예약 삭제 완료");
       fetchReservations();
     } catch (err) {
-      alert("삭제 실패");
+      alert("삭제 실패 (서버 오류)");
     }
   };
 
@@ -81,8 +113,13 @@ function AdminReservations() {
           </h2>
 
           {loading && <p style={{ color: c.sub }}>불러오는 중...</p>}
+          {error && (
+            <p style={{ color: "red", marginBottom: 16, fontSize: 15 }}>
+              {error}
+            </p>
+          )}
 
-          {!loading && (
+          {!loading && !error && (
             <div
               style={{
                 background: c.card,
@@ -92,60 +129,62 @@ function AdminReservations() {
                 boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
               }}
             >
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                    <th style={thStyle(c)}>ID</th>
-                    <th style={thStyle(c)}>유저명</th>
-                    <th style={thStyle(c)}>숙소</th>
-                    <th style={thStyle(c)}>체크인</th>
-                    <th style={thStyle(c)}>금액</th>
-                    <th style={thStyle(c)}>상태</th>
-                    <th style={thStyle(c)}>관리</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {reservations.map((r) => (
-                    <tr key={r.id} style={trStyle(c)}>
-                      <td>{r.id}</td>
-                      <td>{r.user}</td>
-                      <td>{r.listing}</td>
-                      <td>{r.check_in}</td>
-                      <td>{r.total_price?.toLocaleString()}원</td>
-                      <td>{r.status}</td>
-
-                      <td>
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: 12,
-                            justifyContent: "center",
-                          }}
-                        >
-                          {/* 수정 버튼 */}
-                          <button
-                            style={editBtn}
-                            onClick={() =>
-                              navigate(`/admin/reservations/edit/${r.id}`)
-                            }
-                          >
-                            <FiEdit2 />
-                          </button>
-
-                          {/* 삭제 버튼 */}
-                          <button
-                            style={deleteBtn}
-                            onClick={() => deleteReservation(r.id)}
-                          >
-                            <FiTrash2 />
-                          </button>
-                        </div>
-                      </td>
+              {reservations.length === 0 ? (
+                <p style={{ color: c.sub }}>예약 내역이 없습니다.</p>
+              ) : (
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                      <th style={thStyle(c)}>ID</th>
+                      <th style={thStyle(c)}>유저명</th>
+                      <th style={thStyle(c)}>숙소</th>
+                      <th style={thStyle(c)}>체크인</th>
+                      <th style={thStyle(c)}>금액</th>
+                      <th style={thStyle(c)}>상태</th>
+                      <th style={thStyle(c)}>관리</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody>
+                    {reservations.map((r) => (
+                      <tr key={r.id} style={trStyle(c)}>
+                        <td>{r.id}</td>
+                        <td>{r.user}</td>
+                        <td>{r.listing}</td>
+                        <td>{r.check_in}</td>
+                        <td>{r.total_price?.toLocaleString()}원</td>
+                        <td>{r.status}</td>
+
+                        <td>
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: 12,
+                              justifyContent: "center",
+                            }}
+                          >
+                            <button
+                              style={editBtn}
+                              onClick={() =>
+                                navigate(`/admin/reservations/edit/${r.id}`)
+                              }
+                            >
+                              <FiEdit2 />
+                            </button>
+
+                            <button
+                              style={deleteBtn}
+                              onClick={() => deleteReservation(r.id)}
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           )}
         </main>
