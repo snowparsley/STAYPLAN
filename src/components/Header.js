@@ -251,13 +251,24 @@ function Header() {
         </div>
       </div>
 
-      {/* Hover 스타일 */}
+      {/* Hover & Focus 스타일 */}
       <style>{`
         .dropdown-item:hover {
           background: ${colors.hover} !important;
           transition: 0.2s;
         }
+
         button:focus {
+          outline: none !important;
+          box-shadow: none !important;
+        }
+
+        button:focus-visible {
+          outline: none !important;
+          box-shadow: none !important;
+        }
+
+        .dropdown-item:focus-visible {
           outline: none !important;
           box-shadow: none !important;
         }
