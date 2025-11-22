@@ -6,13 +6,14 @@ import AdminCard from "../../components/admin/AdminCard";
 import { FiUsers, FiClipboard, FiDollarSign } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 function AdminDashboard() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { token } = useAuth(); // ⭐ token 가져오기
   const isDark = theme === "dark";
 
-  // 테마 컬러셋
   const c = {
     bg: isDark ? "#2A2926" : "#F4F4F4",
     text: isDark ? "#EFEDE8" : "#4a3f35",
@@ -30,21 +31,27 @@ function AdminDashboard() {
 
   const [loading, setLoading] = useState(true);
 
-  /* -----------------------------------------
-      1) 대시보드 통계 불러오기
-  ----------------------------------------- */
   const fetchStats = async () => {
     try {
       const res = await fetch(
-        "https://stayplanserver.onrender.com/api/admin/stats"
+        "https://stayplanserver.onrender.com/api/admin/stats",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ⭐ 관리자 인증 추가
+          },
+        }
       );
+
       const data = await res.json();
 
+      // ⭐ undefined 안전 처리
       setStats({
-        totalUsers: data.totalUsers,
-        totalReservations: data.totalReservations,
-        totalRevenue: data.totalRevenue.toLocaleString() + "원",
-        recentReservations: data.recentReservations,
+        totalUsers: data.totalUsers ?? 0,
+        totalReservations: data.totalReservations ?? 0,
+        totalRevenue: data.totalRevenue
+          ? data.totalRevenue.toLocaleString() + "원"
+          : "0원",
+        recentReservations: data.recentReservations ?? [],
       });
 
       setLoading(false);
@@ -66,7 +73,6 @@ function AdminDashboard() {
         <AdminHeader />
 
         <main style={{ padding: "40px 50px", color: c.text }}>
-          {/* 대시보드 카드 */}
           <div
             style={{
               display: "grid",
@@ -92,7 +98,6 @@ function AdminDashboard() {
             />
           </div>
 
-          {/* 최근 예약 */}
           <h2
             style={{
               fontSize: 22,
@@ -145,7 +150,7 @@ function AdminDashboard() {
                       <td>{r.user}</td>
                       <td>{r.listing}</td>
                       <td>{r.check_in}</td>
-                      <td>{r.total_price.toLocaleString()}원</td>
+                      <td>{r.total_price?.toLocaleString()}원</td>
                     </tr>
                   ))}
                 </tbody>
@@ -158,25 +163,11 @@ function AdminDashboard() {
   );
 }
 
-/* 테이블 헤더 스타일 */
 const thStyle = (c) => ({
   padding: "12px 0",
   color: c.sub,
   fontSize: 15,
   fontWeight: 700,
 });
-
-/* 빠른 메뉴 버튼 */
-const quickBtn = {
-  padding: "14px 26px",
-  background: "#A47A6B",
-  color: "#fff",
-  border: "none",
-  borderRadius: 12,
-  fontSize: 16,
-  fontWeight: 700,
-  cursor: "pointer",
-  transition: "0.25s ease",
-};
 
 export default AdminDashboard;
