@@ -11,7 +11,6 @@ function AdminPage() {
 
   const isDark = theme === "dark";
 
-  // 관리자 아닌 경우 접근 차단
   useEffect(() => {
     if (!user?.admin) {
       alert("관리자만 접근할 수 있는 페이지입니다.");

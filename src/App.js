@@ -1,6 +1,13 @@
 // src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useAuth } from "./contexts/AuthContext";
+
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -15,6 +22,35 @@ import ReservationComplete from "./pages/ReservationComplete";
 import AdminPage from "./pages/AdminPage";
 
 function App() {
+  const { user } = useAuth();
+
+  /* -------------------------------------------------------
+      🔥 관리자 계정이면 → 일반 화면 전부 무시 + Admin만 렌더
+  ------------------------------------------------------- */
+  if (user?.admin) {
+    return (
+      <Router>
+        {/* 관리자 페이지에서는 헤더 제거 */}
+        <Routes>
+          {/* admin 루트로 강제 이동 */}
+          <Route path="*" element={<Navigate to="/admin" replace />} />
+
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <AdminPage />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    );
+  }
+
+  /* -------------------------------------------------------
+      일반 사용자 모드
+  ------------------------------------------------------- */
   return (
     <Router>
       <Header />
@@ -24,7 +60,6 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
 
-        {/* 결제 관련 */}
         <Route
           path="/payment"
           element={
@@ -42,7 +77,6 @@ function App() {
           }
         />
 
-        {/* 사용자 관련 */}
         <Route
           path="/profile"
           element={
@@ -64,16 +98,6 @@ function App() {
           element={
             <PrivateRoute>
               <SettingsPage />
-            </PrivateRoute>
-          }
-        />
-
-        {/* 관리자 페이지 */}
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute>
-              <AdminPage />
             </PrivateRoute>
           }
         />

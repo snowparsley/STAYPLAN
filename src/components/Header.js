@@ -14,16 +14,19 @@ import {
   FiX,
   FiMoon,
   FiSun,
-  FiShield, // ⭐ 관리자 아이콘 추가
+  FiShield,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Header() {
-  // ⭐ user 추가
+  //  user 추가
   const { isLoggedIn, logout, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+
+  //관리자 계정이면 헤더 숨김
+  if (user?.admin) return null;
 
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
