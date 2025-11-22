@@ -24,6 +24,9 @@ function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  /** 🔥 관리자(admin)라면 Header는 렌더링하지 않음 */
+  if (user?.admin) return null;
+
   const [open, setOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const dropdownRef = useRef(null);
@@ -72,9 +75,6 @@ function Header() {
     setOpen(false);
     setMobileMenu(false);
   }, [location]);
-
-  // ⚡ 여기로 옮김 — 모든 훅 선언 후에 조건문!
-  if (user?.admin) return null;
 
   const handleLogout = () => {
     logout();
