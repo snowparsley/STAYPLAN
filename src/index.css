@@ -14,6 +14,20 @@ button {
   cursor: pointer;
 }
 
+.dropdown-hover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.dropdown-hover:focus,
+.dropdown-hover:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+
 /* ---------------------------------------
    🌙 다크 모드 (전역 스타일)
 ---------------------------------------- */
