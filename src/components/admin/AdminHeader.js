@@ -71,6 +71,7 @@ function AdminHeader() {
             fontSize: 20,
           }}
         >
+          관리자
           <FiUser />
         </div>
       </div>
