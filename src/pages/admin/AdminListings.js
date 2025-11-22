@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ⭐ 수정 페이지 이동
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
-import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 function AdminListings() {
   const [listings, setListings] = useState([]);
@@ -27,15 +27,12 @@ function AdminListings() {
     }
   };
 
-  /* =============================
-        2) 첫 마운트 시 실행
-  ============================= */
   useEffect(() => {
     fetchListings();
   }, []);
 
   /* =============================
-        3) 삭제 기능
+        2) 삭제 기능
   ============================= */
   const deleteListing = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
@@ -49,7 +46,7 @@ function AdminListings() {
       );
 
       alert("숙소 삭제 완료");
-      fetchListings(); // 다시 불러오기
+      fetchListings();
     } catch (err) {
       alert("삭제 실패");
       console.error(err);
@@ -58,14 +55,13 @@ function AdminListings() {
 
   return (
     <div style={{ display: "flex", height: "100vh", background: "#F4F4F4" }}>
-      {/* 사이드바 */}
       <AdminSidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <AdminHeader />
 
         <main style={{ padding: "40px 50px" }}>
-          {/* 상단 제목 + 새 숙소 등록 버튼 */}
+          {/* 상단 제목 */}
           <div
             style={{
               display: "flex",
@@ -77,24 +73,6 @@ function AdminListings() {
             <h2 style={{ fontSize: 24, color: "#4a3f35", fontWeight: 800 }}>
               숙소 관리
             </h2>
-
-            <button
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "12px 20px",
-                background: "#A47A6B",
-                border: "none",
-                borderRadius: 10,
-                color: "#fff",
-                fontWeight: 700,
-                cursor: "pointer",
-              }}
-              onClick={() => alert("숙소 등록 기능은 추후 추가됩니다.")}
-            >
-              <FiPlus /> 숙소 등록
-            </button>
           </div>
 
           {/* 숙소 리스트 테이블 */}
@@ -141,7 +119,7 @@ function AdminListings() {
                           justifyContent: "center",
                         }}
                       >
-                        {/* ⭐ 수정 버튼 → 수정 페이지 이동 */}
+                        {/* 수정 버튼 */}
                         <button
                           style={editBtn}
                           onClick={() =>
@@ -151,6 +129,7 @@ function AdminListings() {
                           <FiEdit2 />
                         </button>
 
+                        {/* 삭제 버튼 */}
                         <button
                           style={deleteBtn}
                           onClick={() => deleteListing(item.id)}
@@ -170,7 +149,7 @@ function AdminListings() {
   );
 }
 
-/* 테이블 헤더 스타일 */
+/* 스타일 */
 const thStyle = {
   padding: "14px 0",
   fontSize: 15,
@@ -178,7 +157,6 @@ const thStyle = {
   fontWeight: 700,
 };
 
-/* 수정 버튼 */
 const editBtn = {
   background: "#fff",
   border: "1px solid #c7c2ba",
@@ -188,7 +166,6 @@ const editBtn = {
   color: "#6f5f55",
 };
 
-/* 삭제 버튼 */
 const deleteBtn = {
   background: "#B33A3A",
   border: "none",

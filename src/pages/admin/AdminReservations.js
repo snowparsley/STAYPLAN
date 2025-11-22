@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -151,7 +151,10 @@ function AdminReservations() {
                         <td>{r.id}</td>
                         <td>{r.user}</td>
                         <td>{r.listing}</td>
-                        <td>{r.check_in}</td>
+
+                        {/* 🌟 체크인 날짜 YYYY-MM-DD로 표시 */}
+                        <td>{r.check_in?.slice(0, 10)}</td>
+
                         <td>{r.total_price?.toLocaleString()}원</td>
                         <td>{r.status}</td>
 
@@ -163,15 +166,7 @@ function AdminReservations() {
                               justifyContent: "center",
                             }}
                           >
-                            <button
-                              style={editBtn}
-                              onClick={() =>
-                                navigate(`/admin/reservations/edit/${r.id}`)
-                              }
-                            >
-                              <FiEdit2 />
-                            </button>
-
+                            {/* ✨ 수정 버튼 제거됨 */}
                             <button
                               style={deleteBtn}
                               onClick={() => deleteReservation(r.id)}
@@ -207,14 +202,8 @@ const trStyle = (c) => ({
   color: c.text,
 });
 
-const editBtn = {
-  background: "#fff",
-  border: "1px solid #c7c2ba",
-  borderRadius: 6,
-  padding: "6px 10px",
-  cursor: "pointer",
-  color: "#6f5f55",
-};
+/* 수정 버튼 제거됨 */
+/* const editBtn = {...} */
 
 const deleteBtn = {
   background: "#B33A3A",
