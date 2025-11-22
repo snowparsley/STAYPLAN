@@ -351,6 +351,7 @@ const dropItem = (colors) => ({
   fontSize: 15,
   cursor: "pointer",
   textDecoration: "none",
+  outline: "none",
 });
 
 /* 모바일 item 스타일 */
