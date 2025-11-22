@@ -56,8 +56,8 @@ function AdminHeader() {
         >
           {theme === "dark" ? <FiSun /> : <FiMoon />}
         </button>
-
         {/* 관리자 아이콘 */}
+        admin
         <div
           style={{
             width: 38,
@@ -71,7 +71,6 @@ function AdminHeader() {
             fontSize: 20,
           }}
         >
-          관리자
           <FiUser />
         </div>
       </div>

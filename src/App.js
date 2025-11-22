@@ -32,16 +32,17 @@ import AdminUsers from "./pages/admin/AdminUsers";
 function App() {
   const { user, loading } = useAuth();
 
-  // 🔥 로딩 동안 렌더 차단 → 0 뜨는 문제 해결
+  // 🔥 로딩 중일 때 깜빡임 문제 해결
   if (loading) return null;
 
   /* -------------------------------------------------------
-      관리자 모드 (admin = 1)
+      관리자 모드
   ------------------------------------------------------- */
   if (user?.admin) {
     return (
       <Router>
         <Routes>
+          {/* 기본 admin redirect */}
           <Route path="/" element={<Navigate to="/admin" replace />} />
 
           <Route
@@ -80,7 +81,7 @@ function App() {
             }
           />
 
-          {/* 예외 처리 */}
+          {/* 없는 admin 페이지 */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </Router>
@@ -88,7 +89,7 @@ function App() {
   }
 
   /* -------------------------------------------------------
-      일반 사용자 모드
+      일반 유저 모드
   ------------------------------------------------------- */
   return (
     <Router>
@@ -143,6 +144,9 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        {/* 없는 일반 유저 페이지 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
