@@ -1,5 +1,5 @@
 // src/components/admin/AdminSidebar.js
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiHome,
@@ -8,38 +8,23 @@ import {
   FiFileText,
   FiLogOut,
 } from "react-icons/fi";
+
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 
-function AdminSidebar({ open, setOpen }) {
+function AdminSidebar({ open, setOpen, isMobile }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { theme } = useTheme();
 
   const isDark = theme === "dark";
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-  // 반응형 감지
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-
-      if (!mobile) setOpen(true); // PC에서는 항상 열려야 함
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [setOpen]);
-
   const c = {
-    bg: isDark ? "#2A2926" : "#faf8ef",
-    text: isDark ? "#EFEDE8" : "#4a3f35",
-    line: isDark ? "#44413c" : "#e8e4d9",
-    hover: isDark ? "#3A3834" : "#f3efe4",
-    logoutBg: "#d9534f",
+    bg: isDark ? "#1F1E1C" : "#F6F3EB",
+    card: isDark ? "#2A2926" : "#FFFFFF",
+    text: isDark ? "#EDEAE3" : "#4A3F35",
+    border: isDark ? "#3D3A36" : "#E5E0D7",
+    hover: isDark ? "#34322D" : "#F3EFE8",
   };
 
   const menuItems = [
@@ -55,119 +40,94 @@ function AdminSidebar({ open, setOpen }) {
   };
 
   return (
-    <>
-      {/* 👉 모바일 배경 오버레이 */}
-      {isMobile && open && (
-        <div
-          onClick={() => setOpen(false)}
+    <div
+      style={{
+        width: isMobile ? "100%" : 240,
+        maxHeight: open ? "1000px" : isMobile ? "0px" : "100vh",
+        overflow: "hidden",
+        background: c.bg,
+        borderRight: isMobile ? "none" : `1px solid ${c.border}`,
+        transition: "max-height 0.35s ease",
+        boxShadow: isMobile && open ? "0 6px 16px rgba(0,0,0,0.15)" : "none",
+        zIndex: 8,
+        position: isMobile ? "relative" : "sticky",
+        top: 0,
+      }}
+    >
+      {/* 제목 */}
+      {!isMobile && (
+        <h2
           style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0,0,0,0.45)",
-            zIndex: 9,
+            fontSize: 22,
+            fontWeight: 700,
+            padding: "24px 20px",
+            color: c.text,
           }}
-        />
+        >
+          관리자 메뉴
+        </h2>
       )}
 
-      {/* 👉 사이드바 */}
-      <div
+      {/* 메뉴 목록 */}
+      <nav
         style={{
-          width: open ? 240 : isMobile ? 0 : 240,
-          height: "100vh",
-          background: c.bg,
-          borderRight: `1px solid ${c.line}`,
-          padding: open ? "24px 16px" : "24px 0px",
-          overflowX: "hidden",
-          position: isMobile ? "fixed" : "relative",
-          left: 0,
-          top: 0,
-          zIndex: 10,
-          transition: "0.3s ease",
+          display: "flex",
+          flexDirection: "column",
+          padding: isMobile ? "10px 16px 20px" : "0 16px",
+          gap: 10,
         }}
       >
-        <div>
-          {/* 모바일에서 제목 숨김 */}
-          {open && (
-            <h2
-              style={{
-                fontSize: 22,
-                fontWeight: 800,
-                color: c.text,
-                marginBottom: 40,
-                letterSpacing: "-0.5px",
-              }}
-            >
-              Admin Panel
-            </h2>
-          )}
-
-          <nav
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-            }}
-          >
-            {menuItems.map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  navigate(item.path);
-                  if (isMobile) setOpen(false); // 모바일에서는 자동 닫힘
-                }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  padding: "12px 16px",
-                  background: "none",
-                  border: `1px solid ${c.line}`,
-                  borderRadius: 10,
-                  cursor: "pointer",
-                  color: c.text,
-                  fontWeight: 600,
-                  transition: "0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = c.hover)
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "transparent")
-                }
-              >
-                {item.icon}
-                {open && item.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* 로그아웃 버튼 */}
-        {open && (
+        {menuItems.map((item, idx) => (
           <button
-            onClick={handleLogout}
+            key={idx}
+            onClick={() => {
+              navigate(item.path);
+              if (isMobile) setOpen(false);
+            }}
             style={{
-              marginTop: 30,
-              padding: "12px 16px",
-              background: c.logoutBg,
-              border: "none",
-              borderRadius: 10,
-              color: "#fff",
-              fontWeight: 700,
-              cursor: "pointer",
               display: "flex",
               alignItems: "center",
-              gap: 8,
+              gap: 12,
+              background: c.card,
+              color: c.text,
+              padding: "14px 16px",
+              borderRadius: 12,
+              border: `1px solid ${c.border}`,
+              fontSize: 15,
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "0.2s",
             }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = c.hover)}
+            onMouseLeave={(e) => (e.currentTarget.style.background = c.card)}
           >
-            <FiLogOut size={18} /> 로그아웃
+            {item.icon}
+            {item.label}
           </button>
-        )}
+        ))}
+      </nav>
+
+      {/* 로그아웃 */}
+      <div style={{ padding: "6px 16px 24px" }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            width: "100%",
+            padding: "14px 16px",
+            background: "#C94141",
+            borderRadius: 12,
+            color: "#fff",
+            fontSize: 15,
+            fontWeight: 700,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <FiLogOut style={{ marginRight: 6 }} />
+          로그아웃
+        </button>
       </div>
-    </>
+    </div>
   );
 }
 

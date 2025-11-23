@@ -11,7 +11,8 @@ function AdminLayout({ children }) {
     const onResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      if (!mobile) setOpen(true); // 데스크탑에서는 항상 열림
+
+      if (!mobile) setOpen(true); // PC는 항상 열림
     };
     window.addEventListener("resize", onResize);
     onResize();
@@ -21,15 +22,23 @@ function AdminLayout({ children }) {
   const toggleSidebar = () => setOpen((prev) => !prev);
 
   return (
-    <div style={{ display: "flex", width: "100%" }}>
-      {/* 사이드바 */}
-      <AdminSidebar open={open} setOpen={setOpen} />
+    <div style={{ width: "100%" }}>
+      {/* 항상 상단 고정 헤더 */}
+      <AdminHeader onMenuToggle={toggleSidebar} />
 
-      {/* 메인 영역 */}
-      <div style={{ flex: 1, minHeight: "100vh" }}>
-        <AdminHeader onMenuToggle={toggleSidebar} />
-        <div style={{ padding: "24px" }}>{children}</div>
-      </div>
+      {/* 모바일: 사이드바는 헤더 아래로 내려감 */}
+      {isMobile ? (
+        <>
+          <AdminSidebar open={open} setOpen={setOpen} isMobile={true} />
+          <div style={{ padding: "20px" }}>{children}</div>
+        </>
+      ) : (
+        // PC: 좌측 고정 사이드바 + 우측 내용
+        <div style={{ display: "flex" }}>
+          <AdminSidebar open={open} setOpen={setOpen} isMobile={false} />
+          <div style={{ flex: 1, padding: "40px" }}>{children}</div>
+        </div>
+      )}
     </div>
   );
 }
