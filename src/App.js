@@ -30,6 +30,8 @@ import AdminListings from "./pages/admin/AdminListings";
 import AdminReservations from "./pages/admin/AdminReservations";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminNotices from "./pages/admin/AdminNotices";
+import AdminNoticeNew from "./pages/admin/AdminNoticeNew";
+import AdminNoticeEdit from "./pages/admin/AdminNoticeEdit";
 
 function App() {
   const { user, loading } = useAuth();
