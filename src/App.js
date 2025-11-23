@@ -35,15 +35,29 @@ function App() {
 
   if (loading) return null;
 
+  // ⭐ 관리자 로그인 시 일반 유저 UI를 아예 렌더하지 않고 관리자 라우트만 표시
+  if (user?.admin) {
+    return (
+      <Router>
+        <Routes>
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/listings" element={<AdminListings />} />
+          <Route path="/admin/reservations" element={<AdminReservations />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+
+          {/* 없는 관리자 URL → /admin */}
+          <Route path="*" element={<Navigate to="/admin" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
+
+  // ⭐ 일반 유저 라우트
   return (
     <Router>
-      {/* 일반 사용자일 때만 헤더 표시 */}
-      {!user?.admin && <Header />}
+      <Header />
 
       <Routes>
-        {/* -----------------------------------------
-              일반 유저 라우트
-        ------------------------------------------ */}
         <Route path="/" element={<HomePage />} />
         <Route path="/listing/:id" element={<ListingDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -94,58 +108,8 @@ function App() {
           }
         />
 
-        {/* -----------------------------------------
-              관리자 라우트 (항상 별도로 유지)
-        ------------------------------------------ */}
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute adminOnly>
-              <AdminDashboard />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admin/listings"
-          element={
-            <PrivateRoute adminOnly>
-              <AdminListings />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admin/reservations"
-          element={
-            <PrivateRoute adminOnly>
-              <AdminReservations />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admin/users"
-          element={
-            <PrivateRoute adminOnly>
-              <AdminUsers />
-            </PrivateRoute>
-          }
-        />
-
-        {/* -----------------------------------------
-              잘못된 URL → 홈 또는 대시보드
-        ------------------------------------------ */}
-        <Route
-          path="*"
-          element={
-            user?.admin ? (
-              <Navigate to="/admin" replace />
-            ) : (
-              <Navigate to="/" replace />
-            )
-          }
-        />
+        {/* 잘못된 URL → 홈 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
