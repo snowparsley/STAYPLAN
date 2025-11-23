@@ -17,7 +17,7 @@ function AdminReservations() {
 
   const isDark = theme === "dark";
   const c = {
-    bg: isDark ? "#2A2926" : "#F7F5EF", // 변경된 라이트모드 배경
+    bg: isDark ? "#2A2926" : "#F7F5EF",
     card: isDark ? "#34322D" : "#FFFFFF",
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#CFCAC0" : "#7A746D",
@@ -121,55 +121,59 @@ function AdminReservations() {
                 padding: "20px 24px",
                 border: `1px solid ${c.line}`,
                 boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+                overflowX: "auto", // ⭐ 모바일 가로 스크롤 활성화
+                WebkitOverflowScrolling: "touch",
               }}
             >
-              {reservations.length === 0 ? (
-                <p style={{ color: c.sub }}>예약 내역이 없습니다.</p>
-              ) : (
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                      <th style={thStyle(c)}>ID</th>
-                      <th style={thStyle(c)}>유저명</th>
-                      <th style={thStyle(c)}>숙소</th>
-                      <th style={thStyle(c)}>체크인</th>
-                      <th style={thStyle(c)}>금액</th>
-                      <th style={thStyle(c)}>상태</th>
-                      <th style={thStyle(c)}>관리</th>
-                    </tr>
-                  </thead>
+              <table
+                style={{
+                  width: "100%",
+                  minWidth: 650, // ⭐ 모바일에서 테이블이 깨지지 않도록 최소 너비 설정
+                  borderCollapse: "collapse",
+                }}
+              >
+                <thead>
+                  <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                    <th style={thStyle(c)}>ID</th>
+                    <th style={thStyle(c)}>유저명</th>
+                    <th style={thStyle(c)}>숙소</th>
+                    <th style={thStyle(c)}>체크인</th>
+                    <th style={thStyle(c)}>금액</th>
+                    <th style={thStyle(c)}>상태</th>
+                    <th style={thStyle(c)}>관리</th>
+                  </tr>
+                </thead>
 
-                  <tbody>
-                    {reservations.map((r) => (
-                      <tr key={r.id} style={trStyle(c)}>
-                        <td>{r.id}</td>
-                        <td>{r.user}</td>
-                        <td>{r.listing}</td>
-                        <td>{r.check_in?.slice(0, 10)}</td>
-                        <td>{r.total_price?.toLocaleString()}원</td>
-                        <td>{r.status}</td>
+                <tbody>
+                  {reservations.map((r) => (
+                    <tr key={r.id} style={trStyle(c)}>
+                      <td>{r.id}</td>
+                      <td>{r.user}</td>
+                      <td>{r.listing}</td>
+                      <td>{r.check_in?.slice(0, 10)}</td>
+                      <td>{r.total_price?.toLocaleString()}원</td>
+                      <td>{r.status}</td>
 
-                        <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: 12,
-                              justifyContent: "center",
-                            }}
+                      <td>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: 12,
+                            justifyContent: "center",
+                          }}
+                        >
+                          <button
+                            style={deleteBtn}
+                            onClick={() => deleteReservation(r.id)}
                           >
-                            <button
-                              style={deleteBtn}
-                              onClick={() => deleteReservation(r.id)}
-                            >
-                              <FiTrash2 />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+                            <FiTrash2 />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </main>

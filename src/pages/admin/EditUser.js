@@ -49,13 +49,14 @@ function EditUser() {
         return;
       }
 
-      setForm((prev) => ({
-        ...prev,
+      setForm({
         user_id: data.user_id,
         name: data.name,
         email: data.email,
         admin: data.admin === 1,
-      }));
+        newPassword: "",
+        confirmPassword: "",
+      });
 
       setLoading(false);
     } catch (err) {
@@ -168,7 +169,14 @@ function EditUser() {
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         <AdminHeader />
 
-        <main style={{ padding: "40px 50px", maxWidth: 600, color: c.text }}>
+        <main
+          style={{
+            padding: "40px 50px",
+            maxWidth: 600,
+            width: "100%",
+            color: c.text,
+          }}
+        >
           <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 30 }}>
             유저 수정
           </h2>
@@ -256,6 +264,8 @@ function EditUser() {
   );
 }
 
+/* ====== 스타일 ====== */
+
 const labelStyle = (c) => ({
   color: c.sub,
   fontWeight: 700,
@@ -276,6 +286,7 @@ const inputStyle = (c) => ({
   outline: "none",
 });
 
+/* 버튼 */
 const resetBtn = {
   width: "100%",
   padding: "12px 0",

@@ -15,11 +15,11 @@ function AdminDashboard() {
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#2A2926" : "#faf8ef",
-    text: isDark ? "#EFEDE8" : "#4a3f35",
-    card: isDark ? "#34322D" : "#ffffff",
-    line: isDark ? "#3F3C38" : "#e8e4d9",
-    sub: isDark ? "#CFCAC0" : "#7a746d",
+    bg: isDark ? "#2A2926" : "#F7F5EF",
+    text: isDark ? "#EFEDE8" : "#4A3F35",
+    card: isDark ? "#34322D" : "#FFFFFF",
+    line: isDark ? "#3F3C38" : "#E5E1D8",
+    sub: isDark ? "#CFCAC0" : "#7A746D",
   };
 
   const [stats, setStats] = useState({
@@ -72,6 +72,7 @@ function AdminDashboard() {
         <AdminHeader />
 
         <main style={{ padding: "40px 50px", color: c.text }}>
+          {/* 카드 그리드 */}
           <div
             style={{
               display: "grid",
@@ -97,6 +98,7 @@ function AdminDashboard() {
             />
           </div>
 
+          {/* 최근 예약 */}
           <h2
             style={{
               fontSize: 22,

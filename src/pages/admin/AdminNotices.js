@@ -1,4 +1,3 @@
-//공지사항페이지
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
@@ -24,7 +23,6 @@ function AdminNotices() {
     line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
-  // 🔥 공지사항 목록 불러오기
   const fetchNotices = async () => {
     try {
       const res = await fetch(
@@ -44,7 +42,6 @@ function AdminNotices() {
       setLoading(false);
     } catch (err) {
       alert("서버 연결 실패");
-      console.error(err);
     }
   };
 
@@ -52,7 +49,6 @@ function AdminNotices() {
     fetchNotices();
   }, []);
 
-  // 🔥 공지사항 삭제
   const deleteNotice = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -86,7 +82,6 @@ function AdminNotices() {
         <AdminHeader />
 
         <main style={{ padding: "40px 50px", color: c.text }}>
-          {/* 제목 + 작성 버튼 */}
           <div
             style={{
               display: "flex",
@@ -116,7 +111,6 @@ function AdminNotices() {
             </button>
           </div>
 
-          {/* 테이블 */}
           <div
             style={{
               background: c.card,

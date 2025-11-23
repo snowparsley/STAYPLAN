@@ -25,9 +25,7 @@ function AdminListings() {
     try {
       const res = await fetch(
         "https://stayplanserver.onrender.com/api/admin/listings",
-        {
-          credentials: "include",
-        }
+        { credentials: "include" }
       );
 
       const data = await res.json();
@@ -47,9 +45,7 @@ function AdminListings() {
     try {
       await fetch(
         `https://stayplanserver.onrender.com/api/admin/listings/${id}`,
-        {
-          method: "DELETE",
-        }
+        { method: "DELETE" }
       );
 
       alert("숙소 삭제 완료");
@@ -88,9 +84,17 @@ function AdminListings() {
               padding: "20px 24px",
               border: `1px solid ${c.line}`,
               boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+              overflowX: "auto", // ⭐ 모바일에서 가로 스크롤
+              WebkitOverflowScrolling: "touch",
             }}
           >
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table
+              style={{
+                width: "100%",
+                minWidth: 700, // ⭐ 테이블 깨짐 방지
+                borderCollapse: "collapse",
+              }}
+            >
               <thead>
                 <tr style={{ borderBottom: `1px solid ${c.line}` }}>
                   <th style={thStyle(c)}>ID</th>

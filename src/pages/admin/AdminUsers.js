@@ -1,4 +1,3 @@
-// src/pages/admin/AdminUsers.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
@@ -198,7 +197,6 @@ const trStyle = (c) => ({
   color: c.text,
 });
 
-/* 관리자/일반 배지 */
 const adminBadge = {
   background: "#d5e8ff",
   color: "#003b7a",
