@@ -19,7 +19,7 @@ import ReservationsPage from "./pages/ReservationsPage";
 import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
 import ReservationComplete from "./pages/ReservationComplete";
-
+import EditUser from "./pages/admin/EditUser";
 // 컴포넌트
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
@@ -44,6 +44,7 @@ function App() {
           <Route path="/admin/listings" element={<AdminListings />} />
           <Route path="/admin/reservations" element={<AdminReservations />} />
           <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/users/edit/:id" element={<EditUser />} />
 
           {/* 없는 관리자 URL → /admin */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
