@@ -4,7 +4,7 @@ import {
   FiHome,
   FiClipboard,
   FiUsers,
-  FiLayers,
+  FiFileText,
   FiLogOut,
 } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
@@ -25,10 +25,11 @@ function AdminSidebar() {
     logoutBg: "#d9534f",
   };
 
+  // ⭐ 공지사항 관리 메뉴 추가됨
   const menuItems = [
     { label: "대시보드", icon: <FiHome />, path: "/admin" },
     { label: "예약 관리", icon: <FiClipboard />, path: "/admin/reservations" },
-    { label: "숙소 관리", icon: <FiLayers />, path: "/admin/listings" },
+    { label: "공지사항 관리", icon: <FiFileText />, path: "/admin/notices" },
     { label: "유저 관리", icon: <FiUsers />, path: "/admin/users" },
   ];
 

@@ -76,7 +76,9 @@ function AdminHeader() {
         </div>
 
         {/* 관리자 텍스트 */}
-        <p style={{ fontWeight: 800, color: c.text, fontSize: 16 }}>관리자</p>
+        <p style={{ fontWeight: 800, color: c.text, fontSize: 16 }}>
+          {user.name}
+        </p>
       </div>
     </header>
   );

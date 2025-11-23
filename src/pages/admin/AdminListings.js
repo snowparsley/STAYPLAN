@@ -3,10 +3,23 @@ import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../../components/admin/AdminSidebar";
 import AdminHeader from "../../components/admin/AdminHeader";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { useTheme } from "../../contexts/ThemeContext";
 
 function AdminListings() {
   const [listings, setListings] = useState([]);
   const navigate = useNavigate();
+  const { theme } = useTheme();
+
+  const isDark = theme === "dark";
+
+  const c = {
+    bg: isDark ? "#2A2926" : "#F7F5EF",
+    card: isDark ? "#34322D" : "#FFFFFF",
+    text: isDark ? "#EFEDE8" : "#4A3F35",
+    sub: isDark ? "#CFCAC0" : "#7A746D",
+    line: isDark ? "#3F3C38" : "#E8E4D9",
+    rowLine: isDark ? "#47433E" : "#F3EFE4",
+  };
 
   const fetchListings = async () => {
     try {
@@ -48,7 +61,7 @@ function AdminListings() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#faf8ef" }}>
+    <div style={{ display: "flex", height: "100vh", background: c.bg }}>
       <AdminSidebar />
 
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
@@ -63,28 +76,28 @@ function AdminListings() {
               marginBottom: 30,
             }}
           >
-            <h2 style={{ fontSize: 24, color: "#4a3f35", fontWeight: 800 }}>
+            <h2 style={{ fontSize: 24, color: c.text, fontWeight: 800 }}>
               숙소 관리
             </h2>
           </div>
 
           <div
             style={{
-              background: "#ffffff",
+              background: c.card,
               borderRadius: 14,
               padding: "20px 24px",
-              border: "1px solid #e8e4d9",
+              border: `1px solid ${c.line}`,
               boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
             }}
           >
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ borderBottom: "1px solid #e8e4d9" }}>
-                  <th style={thStyle}>ID</th>
-                  <th style={thStyle}>숙소명</th>
-                  <th style={thStyle}>지역</th>
-                  <th style={thStyle}>가격(1박)</th>
-                  <th style={thStyle}>관리</th>
+                <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                  <th style={thStyle(c)}>ID</th>
+                  <th style={thStyle(c)}>숙소명</th>
+                  <th style={thStyle(c)}>지역</th>
+                  <th style={thStyle(c)}>가격(1박)</th>
+                  <th style={thStyle(c)}>관리</th>
                 </tr>
               </thead>
 
@@ -94,9 +107,9 @@ function AdminListings() {
                     key={item.id}
                     style={{
                       textAlign: "center",
-                      borderBottom: "1px solid #f3efe4",
+                      borderBottom: `1px solid ${c.rowLine}`,
                       height: 60,
-                      color: "#4a3f35",
+                      color: c.text,
                     }}
                   >
                     <td>{item.id}</td>
@@ -113,7 +126,7 @@ function AdminListings() {
                         }}
                       >
                         <button
-                          style={editBtn}
+                          style={editBtn(c)}
                           onClick={() =>
                             navigate(`/admin/listings/edit/${item.id}`)
                           }
@@ -140,21 +153,21 @@ function AdminListings() {
   );
 }
 
-const thStyle = {
+const thStyle = (c) => ({
   padding: "14px 0",
   fontSize: 15,
-  color: "#7a746d",
+  color: c.sub,
   fontWeight: 700,
-};
+});
 
-const editBtn = {
-  background: "#ffffff",
-  border: "1px solid #c7c2ba",
+const editBtn = (c) => ({
+  background: c.card,
+  border: `1px solid ${c.line}`,
   borderRadius: 6,
   padding: "6px 10px",
   cursor: "pointer",
-  color: "#6f5f55",
-};
+  color: c.text,
+});
 
 const deleteBtn = {
   background: "#B33A3A",
