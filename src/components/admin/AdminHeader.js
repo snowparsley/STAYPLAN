@@ -1,10 +1,11 @@
+// src/components/admin/AdminHeader.js
 import React from "react";
-import { FiUser, FiSun, FiMoon } from "react-icons/fi";
+import { FiUser, FiSun, FiMoon, FiMenu } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
-function AdminHeader() {
+function AdminHeader({ onMenuToggle }) {
   const { theme, toggleTheme } = useTheme();
   const { user } = useAuth();
   const location = useLocation();
@@ -27,7 +28,7 @@ function AdminHeader() {
     <header
       style={{
         width: "100%",
-        padding: "20px 32px",
+        padding: "16px 22px",
         background: c.bg,
         borderBottom: `1px solid ${c.line}`,
         display: "flex",
@@ -38,11 +39,28 @@ function AdminHeader() {
         zIndex: 50,
       }}
     >
-      <h1 style={{ fontSize: 26, fontWeight: 800, color: c.text }}>
+      {/* 👉 모바일 메뉴 버튼 */}
+      <button
+        onClick={onMenuToggle}
+        style={{
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          color: c.text,
+          fontSize: 26,
+          marginRight: 12,
+          display: "flex",
+        }}
+        className="mobile-only"
+      >
+        <FiMenu />
+      </button>
+
+      <h1 style={{ fontSize: 24, fontWeight: 800, color: c.text }}>
         {getPageTitle()}
       </h1>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
         <button
           onClick={toggleTheme}
           style={{
@@ -58,21 +76,21 @@ function AdminHeader() {
 
         <div
           style={{
-            width: 38,
-            height: 38,
+            width: 36,
+            height: 36,
             borderRadius: "50%",
             background: "#D9D2C8",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             color: "#4a3f35",
-            fontSize: 20,
+            fontSize: 18,
           }}
         >
           <FiUser />
         </div>
 
-        <p style={{ fontWeight: 800, color: c.text, fontSize: 16 }}>
+        <p style={{ fontWeight: 800, color: c.text, fontSize: 15 }}>
           {user?.name || "관리자"}
         </p>
       </div>

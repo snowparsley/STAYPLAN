@@ -1,3 +1,4 @@
+// src/components/admin/AdminSidebar.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,7 +11,7 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 
-function AdminSidebar() {
+function AdminSidebar({ open, setOpen }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { theme } = useTheme();
@@ -18,18 +19,20 @@ function AdminSidebar() {
   const isDark = theme === "dark";
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [open, setOpen] = useState(false);
 
   // 반응형 감지
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth > 768) setOpen(true); // PC는 항상 열림
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+
+      if (!mobile) setOpen(true); // PC에서는 항상 열려야 함
     };
+
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [setOpen]);
 
   const c = {
     bg: isDark ? "#2A2926" : "#faf8ef",

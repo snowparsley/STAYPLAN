@@ -144,3 +144,17 @@ body.light {
 #root {
   background-color: inherit !important;
 }
+
+/* ---------------------------------------
+   📱 모바일 전용: 햄버거 메뉴 버튼 표시
+---------------------------------------- */
+.mobile-only {
+  display: none; /* 기본: 숨김 */
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: flex !important; /* 모바일에서 표시 */
+    align-items: center;
+  }
+}

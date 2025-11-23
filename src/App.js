@@ -20,9 +20,13 @@ import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
 import ReservationComplete from "./pages/ReservationComplete";
 import EditUser from "./pages/admin/EditUser";
+
 // 컴포넌트
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
+
+// 관리자 레이아웃
+import AdminLayout from "./components/admin/AdminLayout";
 
 // 관리자 페이지
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -38,20 +42,82 @@ function App() {
 
   if (loading) return null;
 
-  // ⭐ 관리자 로그인 시 일반 유저 UI를 아예 렌더하지 않고 관리자 라우트만 표시
+  // ⭐ 관리자 라우트
   if (user?.admin) {
     return (
       <Router>
         <Routes>
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/listings" element={<AdminListings />} />
-          <Route path="/admin/reservations" element={<AdminReservations />} />
-          <Route path="/admin/notices" element={<AdminNotices />} />
-          <Route path="/admin/notices/new" element={<AdminNoticeNew />} />
-          <Route path="/admin/notices/edit/:id" element={<AdminNoticeEdit />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            }
+          />
 
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/users/edit/:id" element={<EditUser />} />
+          <Route
+            path="/admin/listings"
+            element={
+              <AdminLayout>
+                <AdminListings />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/admin/reservations"
+            element={
+              <AdminLayout>
+                <AdminReservations />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/admin/notices"
+            element={
+              <AdminLayout>
+                <AdminNotices />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/admin/notices/new"
+            element={
+              <AdminLayout>
+                <AdminNoticeNew />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/admin/notices/edit/:id"
+            element={
+              <AdminLayout>
+                <AdminNoticeEdit />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/admin/users"
+            element={
+              <AdminLayout>
+                <AdminUsers />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/admin/users/edit/:id"
+            element={
+              <AdminLayout>
+                <EditUser />
+              </AdminLayout>
+            }
+          />
 
           {/* 없는 관리자 URL → /admin */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
