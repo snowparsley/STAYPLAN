@@ -9,6 +9,9 @@ function AdminReservations() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false
+  );
 
   const { theme } = useTheme();
   const { token } = useAuth();
@@ -20,10 +23,18 @@ function AdminReservations() {
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#CFCAC0" : "#7A746D",
     line: isDark ? "#3F3C38" : "#E5E1D8",
-    rowLine: isDark ? "#47433E" : "#F3EFE4",
   };
 
-  const isMobile = window.innerWidth <= 768;
+  // 화면 크기 감지 (모바일 여부)
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window === "undefined") return;
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchReservations = async () => {
     try {
@@ -86,19 +97,12 @@ function AdminReservations() {
 
   return (
     <AdminLayout>
-      <main
-        style={{
-          padding: isMobile ? "14px" : "20px",
-          color: c.text,
-          width: "100%",
-          boxSizing: "border-box",
-        }}
-      >
+      <main style={{ padding: "20px", color: c.text }}>
         <h2
           style={{
-            fontSize: isMobile ? 20 : 24,
+            fontSize: 24,
             fontWeight: 800,
-            marginBottom: 24,
+            marginBottom: 30,
             color: c.text,
           }}
         >
@@ -114,7 +118,7 @@ function AdminReservations() {
 
         {!loading && !error && (
           <>
-            {/* 📱 모바일 카드 UI */}
+            {/* 📱 모바일: 카드형 리스트 */}
             {isMobile ? (
               <div
                 style={{
@@ -145,6 +149,7 @@ function AdminReservations() {
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
+                          marginBottom: 4,
                           fontWeight: 700,
                         }}
                       >
@@ -153,29 +158,33 @@ function AdminReservations() {
                       </div>
 
                       <div style={{ color: c.sub }}>
-                        유저명 : <span style={{ color: c.text }}>{r.user}</span>
+                        유저명&nbsp;:&nbsp;
+                        <span style={{ color: c.text }}>{r.user}</span>
                       </div>
-
                       <div style={{ color: c.sub }}>
-                        숙소 :{" "}
+                        숙소&nbsp;:&nbsp;
                         <span style={{ color: c.text }}>{r.listing}</span>
                       </div>
-
                       <div style={{ color: c.sub }}>
-                        체크인 :{" "}
+                        체크인&nbsp;:&nbsp;
                         <span style={{ color: c.text }}>
                           {r.check_in?.slice(0, 10)}
                         </span>
                       </div>
-
                       <div style={{ color: c.sub }}>
-                        금액 :{" "}
+                        금액&nbsp;:&nbsp;
                         <span style={{ color: c.text }}>
                           {r.total_price?.toLocaleString()}원
                         </span>
                       </div>
 
-                      <div style={{ textAlign: "right", marginTop: 6 }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          marginTop: 8,
+                        }}
+                      >
                         <button
                           style={deleteBtn}
                           onClick={() => deleteReservation(r.id)}
@@ -188,7 +197,7 @@ function AdminReservations() {
                 )}
               </div>
             ) : (
-              /* 💻 데스크탑 테이블 UI */
+              // 💻 데스크탑: 테이블 형식
               <div
                 style={{
                   background: c.card,
@@ -197,6 +206,7 @@ function AdminReservations() {
                   border: `1px solid ${c.line}`,
                   boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
                   overflowX: "auto",
+                  WebkitOverflowScrolling: "touch",
                 }}
               >
                 <table
@@ -227,13 +237,22 @@ function AdminReservations() {
                         <td>{r.check_in?.slice(0, 10)}</td>
                         <td>{r.total_price?.toLocaleString()}원</td>
                         <td>{r.status}</td>
+
                         <td>
-                          <button
-                            style={deleteBtn}
-                            onClick={() => deleteReservation(r.id)}
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: 12,
+                              justifyContent: "center",
+                            }}
                           >
-                            <FiTrash2 />
-                          </button>
+                            <button
+                              style={deleteBtn}
+                              onClick={() => deleteReservation(r.id)}
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -257,7 +276,7 @@ const thStyle = (c) => ({
 
 const trStyle = (c) => ({
   textAlign: "center",
-  borderBottom: `1px solid ${c.rowLine}`,
+  borderBottom: `1px solid ${c.line}`,
   height: 60,
   color: c.text,
 });
