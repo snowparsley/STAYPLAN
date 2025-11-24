@@ -1,15 +1,12 @@
+// src/pages/admin/AdminDashboard.js
 import React, { useEffect, useState } from "react";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import AdminHeader from "../../components/admin/AdminHeader";
 import AdminCard from "../../components/admin/AdminCard";
 
 import { FiUsers, FiClipboard, FiDollarSign } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
 function AdminDashboard() {
-  const navigate = useNavigate();
   const { theme } = useTheme();
   const { token } = useAuth();
   const isDark = theme === "dark";
@@ -65,102 +62,94 @@ function AdminDashboard() {
   }, []);
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: c.bg }}>
-      <AdminSidebar />
-
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <AdminHeader />
-
-        <main style={{ padding: "40px 50px", color: c.text }}>
-          {/* 카드 그리드 */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: 24,
-              marginBottom: 50,
-            }}
-          >
-            <AdminCard
-              title="총 유저"
-              value={stats.totalUsers}
-              icon={<FiUsers />}
-            />
-            <AdminCard
-              title="총 예약"
-              value={stats.totalReservations}
-              icon={<FiClipboard />}
-            />
-            <AdminCard
-              title="총 매출"
-              value={stats.totalRevenue}
-              icon={<FiDollarSign />}
-            />
-          </div>
-
-          {/* 최근 예약 */}
-          <h2
-            style={{
-              fontSize: 22,
-              fontWeight: 800,
-              marginTop: 50,
-              marginBottom: 20,
-              color: c.text,
-            }}
-          >
-            최근 예약
-          </h2>
-
-          <div
-            style={{
-              background: c.card,
-              borderRadius: 14,
-              padding: "20px 24px",
-              border: `1px solid ${c.line}`,
-              boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-            }}
-          >
-            {loading ? (
-              <p style={{ color: c.sub }}>불러오는 중...</p>
-            ) : stats.recentReservations.length === 0 ? (
-              <p style={{ color: c.sub }}>최근 예약이 없습니다.</p>
-            ) : (
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                    <th style={thStyle(c)}>ID</th>
-                    <th style={thStyle(c)}>유저명</th>
-                    <th style={thStyle(c)}>숙소</th>
-                    <th style={thStyle(c)}>체크인</th>
-                    <th style={thStyle(c)}>금액</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {stats.recentReservations.map((r) => (
-                    <tr
-                      key={r.id}
-                      style={{
-                        textAlign: "center",
-                        borderBottom: `1px solid ${c.line}`,
-                        height: 60,
-                        color: c.text,
-                      }}
-                    >
-                      <td>{r.id}</td>
-                      <td>{r.user}</td>
-                      <td>{r.listing}</td>
-                      <td>{r.check_in?.slice(0, 10)}</td>
-                      <td>{r.total_price?.toLocaleString()}원</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </main>
+    <main style={{ padding: "40px 50px", color: c.text }}>
+      {/* 카드 그리드 */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: 24,
+          marginBottom: 50,
+        }}
+      >
+        <AdminCard
+          title="총 유저"
+          value={stats.totalUsers}
+          icon={<FiUsers />}
+        />
+        <AdminCard
+          title="총 예약"
+          value={stats.totalReservations}
+          icon={<FiClipboard />}
+        />
+        <AdminCard
+          title="총 매출"
+          value={stats.totalRevenue}
+          icon={<FiDollarSign />}
+        />
       </div>
-    </div>
+
+      {/* 최근 예약 */}
+      <h2
+        style={{
+          fontSize: 22,
+          fontWeight: 800,
+          marginTop: 50,
+          marginBottom: 20,
+          color: c.text,
+        }}
+      >
+        최근 예약
+      </h2>
+
+      <div
+        style={{
+          background: c.card,
+          borderRadius: 14,
+          padding: "20px 24px",
+          border: `1px solid ${c.line}`,
+          boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+        }}
+      >
+        {loading ? (
+          <p style={{ color: c.sub }}>불러오는 중...</p>
+        ) : stats.recentReservations.length === 0 ? (
+          <p style={{ color: c.sub }}>최근 예약이 없습니다.</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                <th style={thStyle(c)}>ID</th>
+                <th style={thStyle(c)}>유저명</th>
+                <th style={thStyle(c)}>숙소</th>
+                <th style={thStyle(c)}>체크인</th>
+                <th style={thStyle(c)}>금액</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {stats.recentReservations.map((r) => (
+                <tr
+                  key={r.id}
+                  style={{
+                    textAlign: "center",
+                    borderBottom: `1px solid ${c.line}`,
+                    height: 60,
+                    color: c.text,
+                  }}
+                >
+                  <td>{r.id}</td>
+                  <td>{r.user}</td>
+                  <td>{r.listing}</td>
+                  <td>{r.check_in?.slice(0, 10)}</td>
+                  <td>{r.total_price?.toLocaleString()}원</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </main>
   );
 }
 
