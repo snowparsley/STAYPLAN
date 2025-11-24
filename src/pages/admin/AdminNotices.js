@@ -1,7 +1,6 @@
 // src/pages/admin/AdminNotices.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AdminLayout from "../../components/admin/AdminLayout";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
@@ -26,7 +25,7 @@ function AdminNotices() {
     line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
-  // 모바일 여부 감지
+  // 모바일 감지
   useEffect(() => {
     const onResize = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -36,6 +35,7 @@ function AdminNotices() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // 공지 목록 가져오기
   const fetchNotices = async () => {
     try {
       const res = await fetch(
@@ -84,185 +84,180 @@ function AdminNotices() {
   };
 
   return (
-    <AdminLayout>
-      <main style={{ padding: "20px", color: c.text }}>
-        {/* 상단 헤더 */}
-        <div
+    <main style={{ padding: "20px", color: c.text }}>
+      {/* 상단 헤더 */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 20,
+        }}
+      >
+        <h2 style={{ fontSize: 22, fontWeight: 800 }}>공지사항 관리</h2>
+
+        <button
+          onClick={() => navigate("/admin/notices/new")}
           style={{
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 20,
+            gap: 8,
+            padding: "10px 18px",
+            background: "#A47A6B",
+            color: "#fff",
+            border: "none",
+            borderRadius: 10,
+            cursor: "pointer",
+            fontWeight: 700,
+            fontSize: 14,
           }}
         >
-          <h2 style={{ fontSize: 22, fontWeight: 800 }}>공지사항 관리</h2>
+          <FiPlus /> 공지 작성
+        </button>
+      </div>
 
-          <button
-            onClick={() => navigate("/admin/notices/new")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "10px 18px",
-              background: "#A47A6B",
-              color: "#fff",
-              border: "none",
-              borderRadius: 10,
-              cursor: "pointer",
-              fontWeight: 700,
-              fontSize: 14,
-            }}
-          >
-            <FiPlus /> 공지 작성
-          </button>
-        </div>
-
-        {/* 📱 모바일: 카드 */}
-        {isMobile ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {loading ? (
-              <p style={{ color: c.sub }}>불러오는 중...</p>
-            ) : notices.length === 0 ? (
-              <p style={{ color: c.sub }}>등록된 공지사항이 없습니다.</p>
-            ) : (
-              notices.map((n) => (
-                <div
-                  key={n.id}
-                  style={{
-                    background: c.card,
-                    borderRadius: 12,
-                    padding: "16px 18px",
-                    border: `1px solid ${c.line}`,
-                    boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 6,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 700,
-                      marginBottom: 4,
-                      color: c.text,
-                    }}
-                  >
-                    {n.title}
-                  </div>
-
-                  <div style={{ fontSize: 13, color: c.sub }}>
-                    작성일 : {n.created_at?.slice(0, 10)}
-                  </div>
-
-                  <div style={{ fontSize: 13, color: c.sub }}>
-                    상태 :{" "}
-                    <span style={{ color: c.text }}>
-                      {n.visible ? "공개" : "비공개"}
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      gap: 10,
-                      marginTop: 10,
-                    }}
-                  >
-                    <button
-                      onClick={() => navigate(`/admin/notices/edit/${n.id}`)}
-                      style={editBtn(c)}
-                    >
-                      <FiEdit2 />
-                    </button>
-
-                    <button
-                      onClick={() => deleteNotice(n.id)}
-                      style={deleteBtn}
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        ) : (
-          // 💻 PC: 테이블형 UI
-          <div
-            style={{
-              background: c.card,
-              borderRadius: 14,
-              padding: "20px 24px",
-              border: `1px solid ${c.line}`,
-              boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-              overflowX: "auto",
-            }}
-          >
-            {loading ? (
-              <p style={{ color: c.sub }}>불러오는 중...</p>
-            ) : notices.length === 0 ? (
-              <p style={{ color: c.sub }}>등록된 공지사항이 없습니다.</p>
-            ) : (
-              <table
+      {/* 📱 모바일 */}
+      {isMobile ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {loading ? (
+            <p style={{ color: c.sub }}>불러오는 중...</p>
+          ) : notices.length === 0 ? (
+            <p style={{ color: c.sub }}>등록된 공지사항이 없습니다.</p>
+          ) : (
+            notices.map((n) => (
+              <div
+                key={n.id}
                 style={{
-                  width: "100%",
-                  minWidth: 650,
-                  borderCollapse: "collapse",
+                  background: c.card,
+                  borderRadius: 12,
+                  padding: "16px 18px",
+                  border: `1px solid ${c.line}`,
+                  boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 6,
                 }}
               >
-                <thead>
-                  <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                    <th style={th(c)}>ID</th>
-                    <th style={th(c)}>제목</th>
-                    <th style={th(c)}>작성일</th>
-                    <th style={th(c)}>공개 여부</th>
-                    <th style={th(c)}>관리</th>
-                  </tr>
-                </thead>
+                <div
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 700,
+                    marginBottom: 4,
+                    color: c.text,
+                  }}
+                >
+                  {n.title}
+                </div>
 
-                <tbody>
-                  {notices.map((n) => (
-                    <tr key={n.id} style={tr(c)}>
-                      <td>{n.id}</td>
-                      <td>{n.title}</td>
-                      <td>{n.created_at?.slice(0, 10)}</td>
-                      <td>{n.visible ? "공개" : "비공개"}</td>
+                <div style={{ fontSize: 13, color: c.sub }}>
+                  작성일 : {n.created_at?.slice(0, 10)}
+                </div>
 
-                      <td>
-                        <div
-                          style={{
-                            display: "flex",
-                            gap: 12,
-                            justifyContent: "center",
-                          }}
+                <div style={{ fontSize: 13, color: c.sub }}>
+                  상태 :{" "}
+                  <span style={{ color: c.text }}>
+                    {n.visible ? "공개" : "비공개"}
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 10,
+                    marginTop: 10,
+                  }}
+                >
+                  <button
+                    onClick={() => navigate(`/admin/notices/edit/${n.id}`)}
+                    style={editBtn(c)}
+                  >
+                    <FiEdit2 />
+                  </button>
+
+                  <button onClick={() => deleteNotice(n.id)} style={deleteBtn}>
+                    <FiTrash2 />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      ) : (
+        // 💻 데스크탑
+        <div
+          style={{
+            background: c.card,
+            borderRadius: 14,
+            padding: "20px 24px",
+            border: `1px solid ${c.line}`,
+            boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+            overflowX: "auto",
+          }}
+        >
+          {loading ? (
+            <p style={{ color: c.sub }}>불러오는 중...</p>
+          ) : notices.length === 0 ? (
+            <p style={{ color: c.sub }}>등록된 공지사항이 없습니다.</p>
+          ) : (
+            <table
+              style={{
+                width: "100%",
+                minWidth: 650,
+                borderCollapse: "collapse",
+              }}
+            >
+              <thead>
+                <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                  <th style={th(c)}>ID</th>
+                  <th style={th(c)}>제목</th>
+                  <th style={th(c)}>작성일</th>
+                  <th style={th(c)}>공개 여부</th>
+                  <th style={th(c)}>관리</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {notices.map((n) => (
+                  <tr key={n.id} style={tr(c)}>
+                    <td>{n.id}</td>
+                    <td>{n.title}</td>
+                    <td>{n.created_at?.slice(0, 10)}</td>
+                    <td>{n.visible ? "공개" : "비공개"}</td>
+
+                    <td>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 12,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <button
+                          onClick={() =>
+                            navigate(`/admin/notices/edit/${n.id}`)
+                          }
+                          style={editBtn(c)}
                         >
-                          <button
-                            onClick={() =>
-                              navigate(`/admin/notices/edit/${n.id}`)
-                            }
-                            style={editBtn(c)}
-                          >
-                            <FiEdit2 />
-                          </button>
+                          <FiEdit2 />
+                        </button>
 
-                          <button
-                            onClick={() => deleteNotice(n.id)}
-                            style={deleteBtn}
-                          >
-                            <FiTrash2 />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        )}
-      </main>
-    </AdminLayout>
+                        <button
+                          onClick={() => deleteNotice(n.id)}
+                          style={deleteBtn}
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+    </main>
   );
 }
 

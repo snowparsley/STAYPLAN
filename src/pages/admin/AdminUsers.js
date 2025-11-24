@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiTrash2, FiShield } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
-import AdminLayout from "../../components/admin/AdminLayout";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -101,180 +100,173 @@ function AdminUsers() {
         화면 출력
   ---------------------------- */
   return (
-    <AdminLayout>
-      <main style={{ padding: "20px", color: c.text }}>
-        <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 28 }}>
-          유저 관리
-        </h2>
+    <main style={{ padding: "20px", color: c.text }}>
+      <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 28 }}>
+        유저 관리
+      </h2>
 
-        {loading && <p style={{ color: c.sub }}>불러오는 중...</p>}
-        {error && (
-          <p style={{ fontSize: 16, color: "red", marginBottom: 16 }}>
-            {error}
-          </p>
-        )}
+      {loading && <p style={{ color: c.sub }}>불러오는 중...</p>}
+      {error && (
+        <p style={{ fontSize: 16, color: "red", marginBottom: 16 }}>{error}</p>
+      )}
 
-        {!loading && !error && (
-          <>
-            {/* 📱 모바일: 카드형 UI */}
-            {isMobile ? (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 12 }}
-              >
-                {users.length === 0 ? (
-                  <p style={{ color: c.sub }}>등록된 유저가 없습니다.</p>
-                ) : (
-                  users.map((u) => (
+      {!loading && !error && (
+        <>
+          {/* 📱 모바일 UI */}
+          {isMobile ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {users.length === 0 ? (
+                <p style={{ color: c.sub }}>등록된 유저가 없습니다.</p>
+              ) : (
+                users.map((u) => (
+                  <div
+                    key={u.id}
+                    style={{
+                      background: c.card,
+                      borderRadius: 12,
+                      padding: "14px 16px",
+                      border: `1px solid ${c.line}`,
+                      boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 6,
+                      fontSize: 14,
+                    }}
+                  >
                     <div
-                      key={u.id}
                       style={{
-                        background: c.card,
-                        borderRadius: 12,
-                        padding: "14px 16px",
-                        border: `1px solid ${c.line}`,
-                        boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
                         display: "flex",
-                        flexDirection: "column",
-                        gap: 6,
-                        fontSize: 14,
+                        justifyContent: "space-between",
+                        marginBottom: 6,
+                        fontWeight: 700,
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          marginBottom: 6,
-                          fontWeight: 700,
-                        }}
-                      >
-                        <span>유저 #{u.id}</span>
-                        {u.admin ? (
-                          <span style={adminBadge}>
-                            <FiShield /> 관리자
-                          </span>
-                        ) : (
-                          <span style={userBadge}>일반</span>
-                        )}
-                      </div>
-
-                      <div style={{ color: c.sub }}>
-                        ID : <span style={{ color: c.text }}>{u.user_id}</span>
-                      </div>
-                      <div style={{ color: c.sub }}>
-                        이름 : <span style={{ color: c.text }}>{u.name}</span>
-                      </div>
-                      <div style={{ color: c.sub }}>
-                        이메일 :{" "}
-                        <span style={{ color: c.text }}>{u.email}</span>
-                      </div>
-                      <div style={{ color: c.sub }}>
-                        가입일 :
-                        <span style={{ color: c.text }}>
-                          {u.created_at?.slice(0, 10)}
+                      <span>유저 #{u.id}</span>
+                      {u.admin ? (
+                        <span style={adminBadge}>
+                          <FiShield /> 관리자
                         </span>
-                      </div>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          marginTop: 10,
-                          gap: 10,
-                        }}
-                      >
-                        <button
-                          style={editBtn}
-                          onClick={() => navigate(`/admin/users/edit/${u.id}`)}
-                        >
-                          <FiEdit2 />
-                        </button>
-                        <button
-                          style={deleteBtn}
-                          onClick={() => deleteUser(u.id)}
-                        >
-                          <FiTrash2 />
-                        </button>
-                      </div>
+                      ) : (
+                        <span style={userBadge}>일반</span>
+                      )}
                     </div>
-                  ))
-                )}
-              </div>
-            ) : (
-              /* 💻 데스크탑: 테이블 UI */
-              <div
-                style={{
-                  background: c.card,
-                  borderRadius: 14,
-                  padding: "20px 24px",
-                  border: `1px solid ${c.line}`,
-                  boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-                }}
-              >
-                {users.length === 0 ? (
-                  <p style={{ color: c.sub }}>등록된 유저가 없습니다.</p>
-                ) : (
-                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead>
-                      <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                        <th style={thStyle(c)}>ID</th>
-                        <th style={thStyle(c)}>유저 ID</th>
-                        <th style={thStyle(c)}>이름</th>
-                        <th style={thStyle(c)}>이메일</th>
-                        <th style={thStyle(c)}>가입일</th>
-                        <th style={thStyle(c)}>권한</th>
-                        <th style={thStyle(c)}>관리</th>
+
+                    <div style={{ color: c.sub }}>
+                      ID : <span style={{ color: c.text }}>{u.user_id}</span>
+                    </div>
+                    <div style={{ color: c.sub }}>
+                      이름 : <span style={{ color: c.text }}>{u.name}</span>
+                    </div>
+                    <div style={{ color: c.sub }}>
+                      이메일 : <span style={{ color: c.text }}>{u.email}</span>
+                    </div>
+                    <div style={{ color: c.sub }}>
+                      가입일 :
+                      <span style={{ color: c.text }}>
+                        {u.created_at?.slice(0, 10)}
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        marginTop: 10,
+                        gap: 10,
+                      }}
+                    >
+                      <button
+                        style={editBtn}
+                        onClick={() => navigate(`/admin/users/edit/${u.id}`)}
+                      >
+                        <FiEdit2 />
+                      </button>
+                      <button
+                        style={deleteBtn}
+                        onClick={() => deleteUser(u.id)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          ) : (
+            /* 💻 데스크탑 UI */
+            <div
+              style={{
+                background: c.card,
+                borderRadius: 14,
+                padding: "20px 24px",
+                border: `1px solid ${c.line}`,
+                boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+              }}
+            >
+              {users.length === 0 ? (
+                <p style={{ color: c.sub }}>등록된 유저가 없습니다.</p>
+              ) : (
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                      <th style={thStyle(c)}>ID</th>
+                      <th style={thStyle(c)}>유저 ID</th>
+                      <th style={thStyle(c)}>이름</th>
+                      <th style={thStyle(c)}>이메일</th>
+                      <th style={thStyle(c)}>가입일</th>
+                      <th style={thStyle(c)}>권한</th>
+                      <th style={thStyle(c)}>관리</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {users.map((u) => (
+                      <tr key={u.id} style={trStyle(c)}>
+                        <td>{u.id}</td>
+                        <td>{u.user_id}</td>
+                        <td>{u.name}</td>
+                        <td>{u.email}</td>
+                        <td>{u.created_at?.slice(0, 10)}</td>
+
+                        <td>
+                          {u.admin ? (
+                            <span style={adminBadge}>
+                              <FiShield /> 관리자
+                            </span>
+                          ) : (
+                            <span style={userBadge}>일반</span>
+                          )}
+                        </td>
+
+                        <td>
+                          <div style={{ display: "flex", gap: 12 }}>
+                            <button
+                              style={editBtn}
+                              onClick={() =>
+                                navigate(`/admin/users/edit/${u.id}`)
+                              }
+                            >
+                              <FiEdit2 />
+                            </button>
+
+                            <button
+                              style={deleteBtn}
+                              onClick={() => deleteUser(u.id)}
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
-                    </thead>
-
-                    <tbody>
-                      {users.map((u) => (
-                        <tr key={u.id} style={trStyle(c)}>
-                          <td>{u.id}</td>
-                          <td>{u.user_id}</td>
-                          <td>{u.name}</td>
-                          <td>{u.email}</td>
-                          <td>{u.created_at?.slice(0, 10)}</td>
-
-                          <td>
-                            {u.admin ? (
-                              <span style={adminBadge}>
-                                <FiShield /> 관리자
-                              </span>
-                            ) : (
-                              <span style={userBadge}>일반</span>
-                            )}
-                          </td>
-
-                          <td>
-                            <div style={{ display: "flex", gap: 12 }}>
-                              <button
-                                style={editBtn}
-                                onClick={() =>
-                                  navigate(`/admin/users/edit/${u.id}`)
-                                }
-                              >
-                                <FiEdit2 />
-                              </button>
-
-                              <button
-                                style={deleteBtn}
-                                onClick={() => deleteUser(u.id)}
-                              >
-                                <FiTrash2 />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            )}
-          </>
-        )}
-      </main>
-    </AdminLayout>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </main>
   );
 }
 

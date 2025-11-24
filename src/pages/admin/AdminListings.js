@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import AdminLayout from "../../components/admin/AdminLayout";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -82,170 +81,168 @@ function AdminListings() {
   };
 
   return (
-    <AdminLayout>
-      <main style={{ padding: "20px", color: c.text }}>
-        <h2
-          style={{
-            fontSize: 24,
-            fontWeight: 800,
-            marginBottom: 30,
-            color: c.text,
-          }}
-        >
-          숙소 관리
-        </h2>
+    <main style={{ padding: "20px", color: c.text }}>
+      <h2
+        style={{
+          fontSize: 24,
+          fontWeight: 800,
+          marginBottom: 30,
+          color: c.text,
+        }}
+      >
+        숙소 관리
+      </h2>
 
-        {listings.length === 0 ? (
-          <p style={{ color: c.sub }}>등록된 숙소가 없습니다.</p>
-        ) : isMobile ? (
-          /* ===========================
-             📱 모바일: 카드형 리스트
-          ============================ */
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {listings.map((item) => (
-              <div
-                key={item.id}
-                style={{
-                  background: c.card,
-                  borderRadius: 12,
-                  padding: "14px 16px",
-                  border: `1px solid ${c.line}`,
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 6,
-                  fontSize: 14,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: 4,
-                    fontWeight: 700,
-                  }}
-                >
-                  <span>
-                    #{item.id} {item.title}
-                  </span>
-                </div>
-
-                <div style={{ color: c.sub }}>
-                  지역 : <span style={{ color: c.text }}>{item.location}</span>
-                </div>
-
-                <div style={{ color: c.sub }}>
-                  가격(1박) :
-                  <span style={{ color: c.text }}>
-                    {item.price?.toLocaleString()}원
-                  </span>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    gap: 10,
-                    marginTop: 8,
-                  }}
-                >
-                  <button
-                    style={editBtn(c)}
-                    onClick={() => navigate(`/admin/listings/edit/${item.id}`)}
-                  >
-                    <FiEdit2 />
-                  </button>
-
-                  <button
-                    style={deleteBtn}
-                    onClick={() => deleteListing(item.id)}
-                  >
-                    <FiTrash2 />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          /* ===========================
-             💻 데스크탑: 테이블 UI
-          ============================ */
-          <div
-            style={{
-              background: c.card,
-              borderRadius: 14,
-              padding: "20px 24px",
-              border: `1px solid ${c.line}`,
-              boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-              overflowX: "auto",
-            }}
-          >
-            <table
+      {listings.length === 0 ? (
+        <p style={{ color: c.sub }}>등록된 숙소가 없습니다.</p>
+      ) : isMobile ? (
+        /* ===========================
+           📱 모바일: 카드 UI
+        ============================ */
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {listings.map((item) => (
+            <div
+              key={item.id}
               style={{
-                width: "100%",
-                minWidth: 700,
-                borderCollapse: "collapse",
+                background: c.card,
+                borderRadius: 12,
+                padding: "14px 16px",
+                border: `1px solid ${c.line}`,
+                boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                display: "flex",
+                flexDirection: "column",
+                gap: 6,
+                fontSize: 14,
               }}
             >
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                  <th style={th(c)}>ID</th>
-                  <th style={th(c)}>숙소명</th>
-                  <th style={th(c)}>지역</th>
-                  <th style={th(c)}>가격(1박)</th>
-                  <th style={th(c)}>관리</th>
-                </tr>
-              </thead>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 4,
+                  fontWeight: 700,
+                }}
+              >
+                <span>
+                  #{item.id} {item.title}
+                </span>
+              </div>
 
-              <tbody>
-                {listings.map((item) => (
-                  <tr
-                    key={item.id}
-                    style={{
-                      textAlign: "center",
-                      borderBottom: `1px solid ${c.rowLine}`,
-                      height: 60,
-                      color: c.text,
-                    }}
-                  >
-                    <td>{item.id}</td>
-                    <td>{item.title}</td>
-                    <td>{item.location}</td>
-                    <td>{item.price?.toLocaleString()}원</td>
+              <div style={{ color: c.sub }}>
+                지역 : <span style={{ color: c.text }}>{item.location}</span>
+              </div>
 
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 14,
-                          justifyContent: "center",
-                        }}
+              <div style={{ color: c.sub }}>
+                가격(1박) :
+                <span style={{ color: c.text }}>
+                  {item.price?.toLocaleString()}원
+                </span>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 10,
+                  marginTop: 8,
+                }}
+              >
+                <button
+                  style={editBtn(c)}
+                  onClick={() => navigate(`/admin/listings/edit/${item.id}`)}
+                >
+                  <FiEdit2 />
+                </button>
+
+                <button
+                  style={deleteBtn}
+                  onClick={() => deleteListing(item.id)}
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* ===========================
+           💻 데스크탑: 테이블 UI
+        ============================ */
+        <div
+          style={{
+            background: c.card,
+            borderRadius: 14,
+            padding: "20px 24px",
+            border: `1px solid ${c.line}`,
+            boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+            overflowX: "auto",
+          }}
+        >
+          <table
+            style={{
+              width: "100%",
+              minWidth: 700,
+              borderCollapse: "collapse",
+            }}
+          >
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                <th style={th(c)}>ID</th>
+                <th style={th(c)}>숙소명</th>
+                <th style={th(c)}>지역</th>
+                <th style={th(c)}>가격(1박)</th>
+                <th style={th(c)}>관리</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {listings.map((item) => (
+                <tr
+                  key={item.id}
+                  style={{
+                    textAlign: "center",
+                    borderBottom: `1px solid ${c.rowLine}`,
+                    height: 60,
+                    color: c.text,
+                  }}
+                >
+                  <td>{item.id}</td>
+                  <td>{item.title}</td>
+                  <td>{item.location}</td>
+                  <td>{item.price?.toLocaleString()}원</td>
+
+                  <td>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 14,
+                        justifyContent: "center",
+                      }}
+                    >
+                      <button
+                        style={editBtn(c)}
+                        onClick={() =>
+                          navigate(`/admin/listings/edit/${item.id}`)
+                        }
                       >
-                        <button
-                          style={editBtn(c)}
-                          onClick={() =>
-                            navigate(`/admin/listings/edit/${item.id}`)
-                          }
-                        >
-                          <FiEdit2 />
-                        </button>
+                        <FiEdit2 />
+                      </button>
 
-                        <button
-                          style={deleteBtn}
-                          onClick={() => deleteListing(item.id)}
-                        >
-                          <FiTrash2 />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
-    </AdminLayout>
+                      <button
+                        style={deleteBtn}
+                        onClick={() => deleteListing(item.id)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
   );
 }
 

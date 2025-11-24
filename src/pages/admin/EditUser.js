@@ -1,7 +1,6 @@
 // src/pages/admin/EditUser.js
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import AdminLayout from "../../components/admin/AdminLayout";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -64,7 +63,6 @@ function EditUser() {
 
   useEffect(() => {
     fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (e) => {
@@ -149,115 +147,109 @@ function EditUser() {
   };
 
   if (loading) {
-    return (
-      <AdminLayout>
-        <main style={{ padding: 30, color: c.text }}>불러오는 중...</main>
-      </AdminLayout>
-    );
+    return <main style={{ padding: 30, color: c.text }}>불러오는 중...</main>;
   }
 
   return (
-    <AdminLayout>
-      <main
+    <main
+      style={{
+        padding: "20px",
+        maxWidth: 600,
+        width: "100%",
+        margin: "0 auto",
+        color: c.text,
+      }}
+    >
+      <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 28 }}>
+        유저 수정
+      </h2>
+
+      <div
         style={{
-          padding: "20px",
-          maxWidth: 600,
-          width: "100%",
-          margin: "0 auto",
-          color: c.text,
+          background: c.card,
+          padding: 28,
+          borderRadius: 14,
+          border: `1px solid ${c.line}`,
+          boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
         }}
       >
-        <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 28 }}>
-          유저 수정
-        </h2>
+        <label style={label(c)}>유저 ID</label>
+        <input
+          name="user_id"
+          value={form.user_id}
+          onChange={handleChange}
+          style={input(c)}
+        />
 
-        <div
+        <label style={label(c)}>이름</label>
+        <input
+          name="name"
+          value={form.name}
+          onChange={handleChange}
+          style={input(c)}
+        />
+
+        <label style={label(c)}>이메일</label>
+        <input
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+          style={input(c)}
+        />
+
+        <label style={label(c)}>관리자 권한</label>
+        <div style={{ marginBottom: 18 }}>
+          <input
+            type="checkbox"
+            name="admin"
+            checked={form.admin}
+            onChange={handleChange}
+            style={{ marginRight: 8 }}
+          />
+          <span style={{ color: c.text }}>관리자로 설정</span>
+        </div>
+
+        <h3
           style={{
-            background: c.card,
-            padding: 28,
-            borderRadius: 14,
-            border: `1px solid ${c.line}`,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+            marginTop: 25,
+            marginBottom: 10,
+            color: c.text,
+            fontSize: 18,
+            fontWeight: 700,
           }}
         >
-          <label style={label(c)}>유저 ID</label>
-          <input
-            name="user_id"
-            value={form.user_id}
-            onChange={handleChange}
-            style={input(c)}
-          />
+          비밀번호 재설정
+        </h3>
 
-          <label style={label(c)}>이름</label>
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            style={input(c)}
-          />
+        <label style={label(c)}>새 비밀번호</label>
+        <input
+          type="password"
+          name="newPassword"
+          value={form.newPassword}
+          onChange={handleChange}
+          style={input(c)}
+          placeholder="새 비밀번호 입력"
+        />
 
-          <label style={label(c)}>이메일</label>
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            style={input(c)}
-          />
+        <label style={label(c)}>비밀번호 확인</label>
+        <input
+          type="password"
+          name="confirmPassword"
+          value={form.confirmPassword}
+          onChange={handleChange}
+          style={input(c)}
+          placeholder="다시 입력"
+        />
 
-          <label style={label(c)}>관리자 권한</label>
-          <div style={{ marginBottom: 18 }}>
-            <input
-              type="checkbox"
-              name="admin"
-              checked={form.admin}
-              onChange={handleChange}
-              style={{ marginRight: 8 }}
-            />
-            <span style={{ color: c.text }}>관리자로 설정</span>
-          </div>
+        <button style={resetBtn} onClick={resetPassword}>
+          비밀번호 재설정
+        </button>
 
-          <h3
-            style={{
-              marginTop: 25,
-              marginBottom: 10,
-              color: c.text,
-              fontSize: 18,
-              fontWeight: 700,
-            }}
-          >
-            비밀번호 재설정
-          </h3>
-
-          <label style={label(c)}>새 비밀번호</label>
-          <input
-            type="password"
-            name="newPassword"
-            value={form.newPassword}
-            onChange={handleChange}
-            style={input(c)}
-            placeholder="새 비밀번호 입력"
-          />
-
-          <label style={label(c)}>비밀번호 확인</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            style={input(c)}
-            placeholder="다시 입력"
-          />
-
-          <button style={resetBtn} onClick={resetPassword}>
-            비밀번호 재설정
-          </button>
-
-          <button style={saveBtn} onClick={saveUser}>
-            정보 저장하기
-          </button>
-        </div>
-      </main>
-    </AdminLayout>
+        <button style={saveBtn} onClick={saveUser}>
+          정보 저장하기
+        </button>
+      </div>
+    </main>
   );
 }
 

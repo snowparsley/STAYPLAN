@@ -1,7 +1,6 @@
 // src/pages/admin/AdminDashboard.js
 import React, { useEffect, useState } from "react";
 import AdminCard from "../../components/admin/AdminCard";
-
 import { FiUsers, FiClipboard, FiDollarSign } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
@@ -27,6 +26,7 @@ function AdminDashboard() {
   });
 
   const [loading, setLoading] = useState(true);
+  const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
 
   const fetchStats = async () => {
     try {
@@ -58,8 +58,6 @@ function AdminDashboard() {
   useEffect(() => {
     fetchStats();
   }, []);
-
-  const isMobile = window.innerWidth <= 768;
 
   return (
     <main
@@ -102,7 +100,6 @@ function AdminDashboard() {
           fontSize: isMobile ? 18 : 22,
           fontWeight: 800,
           marginBottom: 16,
-          color: c.text,
         }}
       >
         최근 예약

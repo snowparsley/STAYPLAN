@@ -1,7 +1,6 @@
 // src/pages/admin/AdminNoticeNew.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AdminLayout from "../../components/admin/AdminLayout";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -64,77 +63,65 @@ function AdminNoticeNew() {
   };
 
   return (
-    <AdminLayout>
-      <main
+    <main
+      style={{
+        padding: "20px",
+        maxWidth: 850,
+        margin: "0 auto",
+        color: c.text,
+      }}
+    >
+      <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>
+        공지사항 작성
+      </h2>
+
+      <div
         style={{
-          padding: "20px",
-          maxWidth: 850,
-          margin: "0 auto",
-          color: c.text,
+          background: c.card,
+          padding: 24,
+          borderRadius: 14,
+          border: `1px solid ${c.line}`,
+          boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
         }}
       >
-        <h2
-          style={{
-            fontSize: 24,
-            fontWeight: 800,
-            marginBottom: 24,
-          }}
-        >
-          공지사항 작성
-        </h2>
+        {/* 제목 */}
+        <label style={label(c)}>제목</label>
+        <input
+          name="title"
+          value={form.title}
+          onChange={handleChange}
+          style={input(c)}
+          placeholder="공지 제목을 입력하세요"
+        />
 
-        <div
-          style={{
-            background: c.card,
-            padding: 24,
-            borderRadius: 14,
-            border: `1px solid ${c.line}`,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
-          }}
-        >
-          {/* 제목 */}
-          <label style={label(c)}>제목</label>
+        {/* 내용 */}
+        <label style={label(c)}>내용</label>
+        <textarea
+          name="content"
+          value={form.content}
+          onChange={handleChange}
+          style={{ ...input(c), height: 180, resize: "vertical" }}
+          placeholder="공지 내용을 입력하세요"
+        />
+
+        {/* 공개 여부 */}
+        <label style={{ ...label(c), marginTop: 10 }}>공개 여부</label>
+        <div style={{ marginBottom: 20 }}>
           <input
-            name="title"
-            value={form.title}
+            type="checkbox"
+            name="visible"
+            checked={form.visible}
             onChange={handleChange}
-            style={input(c)}
-            placeholder="공지 제목을 입력하세요"
+            style={{ marginRight: 8 }}
           />
-
-          {/* 내용 */}
-          <label style={label(c)}>내용</label>
-          <textarea
-            name="content"
-            value={form.content}
-            onChange={handleChange}
-            style={{
-              ...input(c),
-              height: 180,
-              resize: "vertical",
-            }}
-            placeholder="공지 내용을 입력하세요"
-          />
-
-          {/* 공개 여부 */}
-          <label style={{ ...label(c), marginTop: 10 }}>공개 여부</label>
-          <div style={{ marginBottom: 20 }}>
-            <input
-              type="checkbox"
-              name="visible"
-              checked={form.visible}
-              onChange={handleChange}
-              style={{ marginRight: 8 }}
-            />
-            <span style={{ color: c.text }}>공개</span>
-          </div>
-
-          <button style={saveBtn} onClick={saveNotice}>
-            공지사항 등록하기
-          </button>
+          <span style={{ color: c.text }}>공개</span>
         </div>
-      </main>
-    </AdminLayout>
+
+        <button style={saveBtn} onClick={saveNotice}>
+          공지사항 등록하기
+        </button>
+      </div>
+    </main>
   );
 }
 
