@@ -11,9 +11,6 @@ function PaymentPage() {
   const { token } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const checkInDate = new Date(form.check_in);
-  const checkOutDate = new Date(form.check_out);
-  const isInvalidDate = checkOutDate <= checkInDate;
 
   const [selectedMethod, setSelectedMethod] = useState("card");
 
@@ -24,6 +21,10 @@ function PaymentPage() {
   if (!state) return null;
 
   const { listing, form, nights } = state;
+
+  const checkInDate = new Date(form.check_in);
+  const checkOutDate = new Date(form.check_out);
+  const isInvalidDate = checkOutDate <= checkInDate;
 
   const nightly = Number(listing.price) || 0;
   const nightsCount = Math.max(1, Number(nights || 1));
