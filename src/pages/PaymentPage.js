@@ -1,4 +1,3 @@
-// 결제 (B안 전체 톤 적용)
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -45,7 +44,7 @@ function PaymentPage() {
         payment_method: selectedMethod,
       };
 
-      // 🔥 Render 서버 URL로 변경됨
+      // Render 서버 URL로 변경됨
       const res = await axios.post(
         "https://stayplanserver.onrender.com/api/reservations",
         payload,
@@ -65,9 +64,6 @@ function PaymentPage() {
     }
   };
 
-  /* -----------------------------------------
-      🎨 B안 컬러톤 (상세페이지와 100% 매칭)
-  ----------------------------------------- */
   const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
   const cardBg = isDark ? "#2A2926" : "#FFFFFF";
   const sideCardBg = isDark ? "#252422" : "#FFFFFF";

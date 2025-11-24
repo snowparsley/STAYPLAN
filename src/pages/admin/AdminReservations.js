@@ -1,4 +1,3 @@
-// src/pages/admin/AdminReservations.js
 import React, { useEffect, useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -114,7 +113,7 @@ function AdminReservations() {
 
       {!loading && !error && (
         <>
-          {/* 📱 모바일: 카드형 리스트 */}
+          {/*  모바일: 카드형 리스트 */}
           {isMobile ? (
             <div
               style={{
@@ -193,7 +192,7 @@ function AdminReservations() {
               )}
             </div>
           ) : (
-            // 💻 데스크탑: 테이블 형식
+            // 데스크탑: 테이블 형식
             <div
               style={{
                 background: c.card,

@@ -1,4 +1,3 @@
-// 상세페이지 (B안 전체 톤 적용)
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -97,7 +96,6 @@ function ListingDetailPage() {
     navigate("/payment", { state: { listing, form, nights } });
   };
 
-  // B안 컬러 구성
   const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
   const mainText = isDark ? "#E3DFD7" : "#46423C";
   const subText = isDark ? "#A9A39A" : "#7A746D";

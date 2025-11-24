@@ -1,4 +1,3 @@
-// src/components/admin/AdminLayout.js
 import React, { useState, useEffect } from "react";
 import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
@@ -9,7 +8,7 @@ function AdminLayout({ children }) {
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#1F1E1C" : "#F7F5EF", // ⭐ 전체 배경 색
+    bg: isDark ? "#1F1E1C" : "#F7F5EF",
   };
 
   const isBrowser = typeof window !== "undefined";
@@ -42,7 +41,7 @@ function AdminLayout({ children }) {
         width: "100vw",
         minHeight: "100vh",
         overflow: "hidden",
-        background: c.bg, // ⭐ 다크모드 배경 적용
+        background: c.bg,
       }}
     >
       <AdminHeader onMenuToggle={toggleSidebar} />
@@ -54,7 +53,7 @@ function AdminLayout({ children }) {
             height: "calc(100vh - 60px)",
             overflowY: "auto",
             WebkitOverflowScrolling: "touch",
-            background: c.bg, // ⭐ 모바일도 배경 적용
+            background: c.bg,
           }}
         >
           <AdminSidebar open={open} setOpen={setOpen} isMobile={true} />
@@ -69,7 +68,7 @@ function AdminLayout({ children }) {
             width: "100%",
             height: "calc(100vh - 60px)",
             overflow: "hidden",
-            background: c.bg, // ⭐ 데스크탑도 배경 적용
+            background: c.bg,
           }}
         >
           <AdminSidebar open={open} setOpen={setOpen} isMobile={false} />

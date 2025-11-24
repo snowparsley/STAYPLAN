@@ -1,4 +1,3 @@
-// src/components/CollectionSection.js
 import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import ListingCard from "./ListingCard";

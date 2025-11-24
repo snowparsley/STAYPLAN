@@ -1,4 +1,3 @@
-// 예약내역 페이지 (B안 전체 톤 적용)
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
@@ -32,8 +31,6 @@ function ReservationsPage() {
     }
   };
 
-  // 🔥 ESLint 경고 해결 (의존성 문제 제거)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     fetchReservations();
   }, [token]);
@@ -78,9 +75,6 @@ function ReservationsPage() {
     );
   }
 
-  /* ---------------------------------------------
-        🎨 B안 전체 색 구성
-  --------------------------------------------- */
   const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
   const titleColor = isDark ? "#E3DFD7" : "#46423C";
   const emptyColor = isDark ? "#A9A39A" : "#7A746D";

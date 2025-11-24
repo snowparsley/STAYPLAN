@@ -40,7 +40,7 @@ function SettingsPage() {
     danger: "#C66A6A",
   };
 
-  /* -------------------------- 저장하기 -------------------------- */
+  //저장
   const saveProfile = async () => {
     try {
       const res = await axios.patch(`${API}/profile/update`, form, {
@@ -54,7 +54,7 @@ function SettingsPage() {
     }
   };
 
-  /* -------------------------- 비밀번호 변경 -------------------------- */
+  //  비밀번호 변경
   const changePassword = async () => {
     if (passwordForm.next !== passwordForm.confirm)
       return alert("새 비밀번호가 일치하지 않습니다.");
@@ -76,7 +76,7 @@ function SettingsPage() {
     }
   };
 
-  /* -------------------------- 회원 탈퇴 -------------------------- */
+  //  회원 탈퇴
   const deleteUser = async () => {
     if (!window.confirm("정말 탈퇴하시겠습니까?")) return;
 

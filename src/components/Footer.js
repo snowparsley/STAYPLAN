@@ -4,7 +4,7 @@ import { useTheme } from "../contexts/ThemeContext";
 function Footer() {
   const { theme } = useTheme();
 
-  /* B안: 크리미 베이지 / 미드나잇 베이지 */
+  /* 크리미 베이지 / 미드나잇 베이지 */
   const light = {
     bg: "#FAF7F0",
     text: "#6F6A62",

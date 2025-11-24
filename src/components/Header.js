@@ -1,4 +1,3 @@
-// src/components/Header.js
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -298,7 +297,6 @@ const dropItem = (colors) => ({
   cursor: "pointer",
   textDecoration: "none",
 
-  /* 🔥 여기서도 테두리 제거 */
   border: "none",
   outline: "none",
   boxShadow: "none",

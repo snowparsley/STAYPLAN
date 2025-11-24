@@ -1,4 +1,3 @@
-// 로그인 (B안 디자인 적용)
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -28,9 +27,6 @@ function LoginPage() {
     if (success) navigate("/");
   };
 
-  /* ------------------------------
-     B안 컬러 시스템
-  ------------------------------ */
   const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
   const cardBg = isDark ? "#2A2926" : "#FFFFFF";
   const cardBorder = isDark ? "#4A4743" : "#E6E1D8";

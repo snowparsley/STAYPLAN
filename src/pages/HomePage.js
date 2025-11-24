@@ -79,7 +79,6 @@ function HomePage() {
     });
   }
 
-  /* 🎨 B안 — 크리미 베이지 감성 */
   const isDark = theme === "dark";
 
   const outerBackground = isDark ? "#2A2926" : "#FAF7F0";

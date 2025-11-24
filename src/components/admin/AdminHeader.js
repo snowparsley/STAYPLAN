@@ -1,4 +1,3 @@
-// src/components/admin/AdminHeader.js
 import React, { useEffect, useState } from "react";
 import { FiUser, FiSun, FiMoon, FiMenu } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -54,7 +53,6 @@ function AdminHeader({ onMenuToggle }) {
         boxSizing: "border-box",
       }}
     >
-      {/* 왼쪽 영역: 모바일 메뉴 버튼 + 제목 */}
       <div
         style={{
           display: "flex",
@@ -63,7 +61,6 @@ function AdminHeader({ onMenuToggle }) {
           minWidth: 0,
         }}
       >
-        {/* 👉 모바일 메뉴 버튼 (CSS에서 .mobile-only 제어) */}
         <button
           onClick={onMenuToggle}
           style={{
@@ -94,7 +91,6 @@ function AdminHeader({ onMenuToggle }) {
         </h1>
       </div>
 
-      {/* 오른쪽 영역: 테마 토글 + 유저 정보 */}
       <div
         style={{
           display: "flex",

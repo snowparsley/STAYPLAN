@@ -1,4 +1,3 @@
-// src/App.js
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -9,7 +8,7 @@ import {
 
 import { useAuth } from "./contexts/AuthContext";
 
-// 공용 페이지
+// 공용
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -20,7 +19,7 @@ import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
 import ReservationComplete from "./pages/ReservationComplete";
 
-// 관리자 레이아웃 + 컴포넌트
+// 관리자 컴포넌트
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminListings from "./pages/admin/AdminListings";
@@ -40,9 +39,8 @@ function App() {
 
   if (loading) return null;
 
-  /* =====================================================
-        관리자 전용 라우트
-  ===================================================== */
+  // 관리자 전용 라우트
+
   if (user?.admin) {
     return (
       <Router>
@@ -119,9 +117,8 @@ function App() {
     );
   }
 
-  /* =====================================================
-        일반 유저 라우트
-  ===================================================== */
+  // 일반 유저 라우트
+
   return (
     <Router>
       <Header />

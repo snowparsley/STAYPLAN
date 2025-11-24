@@ -21,9 +21,6 @@ function ListingCard({ listing }) {
     setTimeout(() => navigate(`/listing/${id}`), 200);
   };
 
-  /* -------------------------------
-      B안: 크림 베이지 / 미드나잇 베이지
-  ------------------------------- */
   const isDark = theme === "dark";
 
   const cardBg = isDark ? "#2A2926" : "#ffffffff";

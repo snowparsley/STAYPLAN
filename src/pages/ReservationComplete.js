@@ -1,4 +1,3 @@
-// 예약내역 완료 (B안 톤 완전 적용)
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -14,7 +13,6 @@ function ReservationComplete() {
     return () => clearTimeout(t);
   }, [navigate]);
 
-  // 🌙 B안 컬러 팔레트
   const pageBg = isDark ? "#1F1E1C" : "#FAF7F0"; // 전체 배경
   const cardBg = isDark ? "#2A2926" : "#FFFFFF"; // 카드 배경
   const lineColor = isDark ? "#4A4743" : "#E6E1D8"; // 카드 선

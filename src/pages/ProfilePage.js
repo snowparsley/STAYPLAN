@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.js
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
@@ -13,17 +12,13 @@ function ProfilePage() {
   const [recommended, setRecommended] = useState([]);
   const [badges, setBadges] = useState([]);
 
-  /* -------------------------------------------------------
-     브라우저 배경
-  ------------------------------------------------------- */
   useEffect(() => {
     document.body.style.backgroundColor = isDark ? "#1A1A18" : "#FAF7F0";
     return () => (document.body.style.backgroundColor = "");
   }, [isDark]);
 
-  /* -------------------------------------------------------
-     예약 데이터 불러오기
-  ------------------------------------------------------- */
+  //  예약 데이터 불러오기
+
   useEffect(() => {
     const loadReservations = async () => {
       try {
@@ -49,9 +44,7 @@ function ProfilePage() {
     loadReservations();
   }, [token]);
 
-  /* -------------------------------------------------------
-     뱃지 계산
-  ------------------------------------------------------- */
+  //뱃지
   const calculateBadges = (list) => {
     const newBadges = [];
 
@@ -76,9 +69,8 @@ function ProfilePage() {
     setBadges(newBadges);
   };
 
-  /* -------------------------------------------------------
-     추천 숙소 로딩
-  ------------------------------------------------------- */
+  //  추천 숙소 로딩
+
   const loadRecommendations = async (list) => {
     if (list.length === 0) return;
 
@@ -104,9 +96,6 @@ function ProfilePage() {
     }
   };
 
-  /* -------------------------------------------------------
-     스타일
-  ------------------------------------------------------- */
   const c = {
     bg: isDark ? "#1A1A18" : "#FAF7F0",
     card: isDark ? "#262522" : "#FFFFFF",
@@ -144,9 +133,8 @@ function ProfilePage() {
     recent: reservations[0] || null,
   };
 
-  /* -------------------------------------------------------
-     JSX
-  ------------------------------------------------------- */
+  //  JSX
+
   return (
     <div
       style={{

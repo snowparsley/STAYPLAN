@@ -1,4 +1,3 @@
-// src/pages/admin/AdminListings.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
@@ -96,9 +95,8 @@ function AdminListings() {
       {listings.length === 0 ? (
         <p style={{ color: c.sub }}>등록된 숙소가 없습니다.</p>
       ) : isMobile ? (
-        /* ===========================
-           📱 모바일: 카드 UI
-        ============================ */
+        //  모바일: 카드 UI
+
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {listings.map((item) => (
             <div
@@ -165,9 +163,8 @@ function AdminListings() {
           ))}
         </div>
       ) : (
-        /* ===========================
-           💻 데스크탑: 테이블 UI
-        ============================ */
+        //  데스크탑: 테이블 UI
+
         <div
           style={{
             background: c.card,

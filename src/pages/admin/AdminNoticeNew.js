@@ -1,4 +1,3 @@
-// src/pages/admin/AdminNoticeNew.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../contexts/ThemeContext";

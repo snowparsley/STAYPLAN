@@ -1,4 +1,3 @@
-// src/pages/admin/AdminNotices.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
@@ -116,7 +115,7 @@ function AdminNotices() {
         </button>
       </div>
 
-      {/* 📱 모바일 */}
+      {/*  모바일 */}
       {isMobile ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {loading ? (
@@ -184,7 +183,7 @@ function AdminNotices() {
           )}
         </div>
       ) : (
-        // 💻 데스크탑
+        //  데스크탑
         <div
           style={{
             background: c.card,

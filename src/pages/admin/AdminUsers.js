@@ -1,4 +1,3 @@
-// src/pages/admin/AdminUsers.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiTrash2, FiShield } from "react-icons/fi";
@@ -26,9 +25,8 @@ function AdminUsers() {
     line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
-  /* ----------------------------
-        화면 크기 감지
-  ---------------------------- */
+  // 화면 크기 감지
+
   useEffect(() => {
     const handleResize = () => {
       if (typeof window === "undefined") return;
@@ -39,9 +37,8 @@ function AdminUsers() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  /* ----------------------------
-        유저 목록 불러오기
-  ---------------------------- */
+  //유저 목록 불러오기
+
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -71,9 +68,8 @@ function AdminUsers() {
     fetchUsers();
   }, []);
 
-  /* ----------------------------
-        유저 삭제
-  ---------------------------- */
+  // 유저 삭제
+
   const deleteUser = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -96,9 +92,8 @@ function AdminUsers() {
     }
   };
 
-  /* ----------------------------
-        화면 출력
-  ---------------------------- */
+  // 화면 출력
+
   return (
     <main style={{ padding: "20px", color: c.text }}>
       <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 28 }}>
@@ -112,7 +107,7 @@ function AdminUsers() {
 
       {!loading && !error && (
         <>
-          {/* 📱 모바일 UI */}
+          {/*  모바일 UI */}
           {isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {users.length === 0 ? (
@@ -193,7 +188,7 @@ function AdminUsers() {
               )}
             </div>
           ) : (
-            /* 💻 데스크탑 UI */
+            /* 데스크탑 UI */
             <div
               style={{
                 background: c.card,
@@ -269,10 +264,6 @@ function AdminUsers() {
     </main>
   );
 }
-
-/* ----------------------------
-      스타일
----------------------------- */
 
 const thStyle = (c) => ({
   padding: "14px 0",

@@ -68,9 +68,6 @@ function HeroSlider() {
     return () => clearInterval(timer);
   }, []);
 
-  /* -------------------------------
-      B안 색감 (크림/미드나잇 베이지)
-  ------------------------------- */
   const shadow = isDark
     ? "0 6px 20px rgba(0,0,0,0.45)"
     : "0 6px 20px rgba(0,0,0,0.10)";

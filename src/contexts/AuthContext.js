@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
@@ -7,10 +6,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
-  // 🔥 유저 로딩 상태
   const [loading, setLoading] = useState(true);
 
-  // 🔥 첫 로딩 시 sessionStorage 불러오기
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
     const storedToken = sessionStorage.getItem("token");
@@ -18,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
 
-      // admin → boolean 통일
+      // admin → boolean
       parsed.admin = parsed.admin === true || parsed.admin === 1;
 
       setUser(parsed);
@@ -29,9 +26,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  /* ======================================================
-        로그인 요청
-  ====================================================== */
+  // 로그인 요청
+
   const login = async (userId, password) => {
     try {
       const res = await fetch("https://stayplanserver.onrender.com/api/login", {
@@ -47,7 +43,7 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      // ⭐ admin → boolean 변환
+      // admin → boolean 변환
       const safeUser = {
         ...data.user,
         admin: data.user.admin === 1 || data.user.admin === true,
@@ -61,7 +57,7 @@ export const AuthProvider = ({ children }) => {
 
       alert(data.message);
 
-      // 👉 관리자면 관리자 페이지로 이동
+      // 관리자면 관리자 페이지로 이동
       if (safeUser.admin) {
         window.location.href = "/admin";
       } else {
@@ -75,9 +71,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /* ======================================================
-        로그아웃
-  ====================================================== */
+  // 로그아웃
+
   const logout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
@@ -86,9 +81,8 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
-  /* ======================================================
-        프론트에서 유저 정보 업데이트
-  ====================================================== */
+  // 프론트에서 유저 정보 업데이트
+
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
     const updated = {

@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboard.js
 import React, { useEffect, useState } from "react";
 import AdminCard from "../../components/admin/AdminCard";
 import { FiUsers, FiClipboard, FiDollarSign } from "react-icons/fi";
