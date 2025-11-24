@@ -21,24 +21,19 @@ function AdminNoticeEdit() {
     line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({
     title: "",
     content: "",
     visible: true,
   });
 
-  const [loading, setLoading] = useState(true);
-
-  /* =====================================================
-        기존 공지 불러오기
-  ===================================================== */
+  /* 📌 기존 공지 불러오기 */
   const fetchNotice = async () => {
     try {
       const res = await fetch(
         `https://stayplanserver.onrender.com/api/admin/notices/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const data = await res.json();
@@ -56,7 +51,7 @@ function AdminNoticeEdit() {
       });
 
       setLoading(false);
-    } catch (err) {
+    } catch {
       alert("서버 오류");
       navigate("/admin/notices");
     }
@@ -66,9 +61,7 @@ function AdminNoticeEdit() {
     fetchNotice();
   }, []);
 
-  /* =====================================================
-        input 핸들러
-  ===================================================== */
+  /* 📌 input 핸들러 */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -77,9 +70,7 @@ function AdminNoticeEdit() {
     }));
   };
 
-  /* =====================================================
-        공지사항 수정 저장
-  ===================================================== */
+  /* 📌 공지 수정 저장 */
   const saveNotice = async () => {
     if (!form.title.trim()) return alert("제목을 입력해주세요.");
     if (!form.content.trim()) return alert("내용을 입력해주세요.");
@@ -104,14 +95,12 @@ function AdminNoticeEdit() {
 
       alert("수정 완료되었습니다!");
       navigate("/admin/notices");
-    } catch (err) {
+    } catch {
       alert("서버 오류: 수정 실패");
     }
   };
 
-  /* =====================================================
-        렌더링
-  ===================================================== */
+  /* 📌 로딩 표시 */
   if (loading) {
     return (
       <AdminLayout>
@@ -120,24 +109,25 @@ function AdminNoticeEdit() {
     );
   }
 
+  /* 📌 화면 렌더 */
   return (
     <AdminLayout>
-      <main style={{ padding: "30px 20px", maxWidth: 850, margin: "0 auto" }}>
-        <h2
-          style={{
-            fontSize: 26,
-            fontWeight: 800,
-            marginBottom: 30,
-            color: c.text,
-          }}
-        >
+      <main
+        style={{
+          padding: "20px",
+          maxWidth: 850,
+          margin: "0 auto",
+          color: c.text,
+        }}
+      >
+        <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 24 }}>
           공지사항 수정
         </h2>
 
         <div
           style={{
             background: c.card,
-            padding: 30,
+            padding: 24,
             borderRadius: 14,
             border: `1px solid ${c.line}`,
             boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
@@ -160,7 +150,7 @@ function AdminNoticeEdit() {
             onChange={handleChange}
             style={{
               ...input(c),
-              height: 200,
+              height: 180,
               resize: "vertical",
             }}
           />
@@ -187,6 +177,7 @@ function AdminNoticeEdit() {
   );
 }
 
+/* 공통 스타일 */
 const label = (c) => ({
   color: c.sub,
   fontWeight: 700,

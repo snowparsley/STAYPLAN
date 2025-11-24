@@ -28,16 +28,12 @@ function AdminNoticeNew() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  /* =====================================================
-        공지사항 등록
-  ===================================================== */
   const saveNotice = async () => {
     if (!form.title.trim()) return alert("제목을 입력해주세요.");
     if (!form.content.trim()) return alert("내용을 입력해주세요.");
@@ -71,20 +67,26 @@ function AdminNoticeNew() {
     <AdminLayout>
       <main
         style={{
-          padding: "30px 20px",
+          padding: "20px",
           maxWidth: 850,
           margin: "0 auto",
           color: c.text,
         }}
       >
-        <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 30 }}>
+        <h2
+          style={{
+            fontSize: 24,
+            fontWeight: 800,
+            marginBottom: 24,
+          }}
+        >
           공지사항 작성
         </h2>
 
         <div
           style={{
             background: c.card,
-            padding: 30,
+            padding: 24,
             borderRadius: 14,
             border: `1px solid ${c.line}`,
             boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
@@ -108,7 +110,7 @@ function AdminNoticeNew() {
             onChange={handleChange}
             style={{
               ...input(c),
-              height: 200,
+              height: 180,
               resize: "vertical",
             }}
             placeholder="공지 내용을 입력하세요"

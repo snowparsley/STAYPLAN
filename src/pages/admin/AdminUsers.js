@@ -27,7 +27,9 @@ function AdminUsers() {
     line: isDark ? "#3F3C38" : "#E5E1D8",
   };
 
-  /* 화면 크기 감지 */
+  /* ----------------------------
+        화면 크기 감지
+  ---------------------------- */
   useEffect(() => {
     const handleResize = () => {
       if (typeof window === "undefined") return;
@@ -38,7 +40,9 @@ function AdminUsers() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  /* 유저 목록 불러오기 */
+  /* ----------------------------
+        유저 목록 불러오기
+  ---------------------------- */
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -56,7 +60,7 @@ function AdminUsers() {
       } else {
         setUsers(Array.isArray(data) ? data : []);
       }
-    } catch (err) {
+    } catch {
       setError("서버 연결 오류");
       setUsers([]);
     } finally {
@@ -68,7 +72,9 @@ function AdminUsers() {
     fetchUsers();
   }, []);
 
-  /* 유저 삭제 */
+  /* ----------------------------
+        유저 삭제
+  ---------------------------- */
   const deleteUser = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -91,23 +97,19 @@ function AdminUsers() {
     }
   };
 
+  /* ----------------------------
+        화면 출력
+  ---------------------------- */
   return (
     <AdminLayout>
       <main style={{ padding: "20px", color: c.text }}>
-        <h2
-          style={{
-            fontSize: 24,
-            fontWeight: 800,
-            marginBottom: 30,
-            color: c.text,
-          }}
-        >
+        <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 28 }}>
           유저 관리
         </h2>
 
         {loading && <p style={{ color: c.sub }}>불러오는 중...</p>}
         {error && (
-          <p style={{ fontSize: 16, color: "red", marginBottom: 20 }}>
+          <p style={{ fontSize: 16, color: "red", marginBottom: 16 }}>
             {error}
           </p>
         )}
@@ -117,11 +119,7 @@ function AdminUsers() {
             {/* 📱 모바일: 카드형 UI */}
             {isMobile ? (
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 12,
-                }}
+                style={{ display: "flex", flexDirection: "column", gap: 12 }}
               >
                 {users.length === 0 ? (
                   <p style={{ color: c.sub }}>등록된 유저가 없습니다.</p>
@@ -236,6 +234,7 @@ function AdminUsers() {
                           <td>{u.name}</td>
                           <td>{u.email}</td>
                           <td>{u.created_at?.slice(0, 10)}</td>
+
                           <td>
                             {u.admin ? (
                               <span style={adminBadge}>
@@ -278,6 +277,10 @@ function AdminUsers() {
     </AdminLayout>
   );
 }
+
+/* ----------------------------
+      스타일
+---------------------------- */
 
 const thStyle = (c) => ({
   padding: "14px 0",
