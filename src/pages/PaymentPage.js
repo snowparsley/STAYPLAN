@@ -11,6 +11,9 @@ function PaymentPage() {
   const { token } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const checkInDate = new Date(form.check_in);
+  const checkOutDate = new Date(form.check_out);
+  const isInvalidDate = checkOutDate <= checkInDate;
 
   const [selectedMethod, setSelectedMethod] = useState("card");
 
@@ -272,23 +275,26 @@ function PaymentPage() {
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={pay}
+            whileHover={isInvalidDate ? {} : { scale: 1.05 }}
+            whileTap={isInvalidDate ? {} : { scale: 0.97 }}
+            onClick={isInvalidDate ? null : pay}
+            disabled={isInvalidDate}
             style={{
               width: "100%",
               marginTop: 30,
-              background: buttonBg,
+              background: isInvalidDate ? "#9e9e9e" : buttonBg,
               padding: "15px 0",
               borderRadius: 14,
               border: "none",
               color: buttonText,
               fontSize: 17,
               fontWeight: 700,
-              cursor: "pointer",
+              cursor: isInvalidDate ? "not-allowed" : "pointer",
+              opacity: isInvalidDate ? 0.6 : 1,
+              transition: "0.3s",
             }}
           >
-            결제하기
+            {isInvalidDate ? "날짜를 다시 선택해주세요" : "결제하기"}
           </motion.button>
         </motion.div>
       </div>
