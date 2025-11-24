@@ -12,7 +12,6 @@ function AdminDashboard() {
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#2A2926" : "#F7F5EF",
     text: isDark ? "#EFEDE8" : "#4A3F35",
     card: isDark ? "#34322D" : "#FFFFFF",
     line: isDark ? "#3F3C38" : "#E5E1D8",
@@ -33,9 +32,7 @@ function AdminDashboard() {
       const res = await fetch(
         "https://stayplanserver.onrender.com/api/admin/stats",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -62,14 +59,21 @@ function AdminDashboard() {
   }, []);
 
   return (
-    <main style={{ padding: "40px 50px", color: c.text }}>
+    <main
+      style={{
+        width: "100%",
+        padding: "20px",
+        color: c.text,
+        boxSizing: "border-box",
+      }}
+    >
       {/* 카드 그리드 */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: 24,
-          marginBottom: 50,
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 20,
+          marginBottom: 40,
         }}
       >
         <AdminCard
@@ -94,8 +98,7 @@ function AdminDashboard() {
         style={{
           fontSize: 22,
           fontWeight: 800,
-          marginTop: 50,
-          marginBottom: 20,
+          marginBottom: 16,
           color: c.text,
         }}
       >
@@ -106,9 +109,10 @@ function AdminDashboard() {
         style={{
           background: c.card,
           borderRadius: 14,
-          padding: "20px 24px",
+          padding: "16px 20px",
           border: `1px solid ${c.line}`,
           boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+          overflowX: "auto",
         }}
       >
         {loading ? (
@@ -116,7 +120,13 @@ function AdminDashboard() {
         ) : stats.recentReservations.length === 0 ? (
           <p style={{ color: c.sub }}>최근 예약이 없습니다.</p>
         ) : (
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              minWidth: 600,
+            }}
+          >
             <thead>
               <tr style={{ borderBottom: `1px solid ${c.line}` }}>
                 <th style={thStyle(c)}>ID</th>
@@ -134,7 +144,7 @@ function AdminDashboard() {
                   style={{
                     textAlign: "center",
                     borderBottom: `1px solid ${c.line}`,
-                    height: 60,
+                    height: 56,
                     color: c.text,
                   }}
                 >

@@ -1,3 +1,4 @@
+// src/components/admin/AdminCard.js
 import React from "react";
 import { useTheme } from "../../contexts/ThemeContext";
 
@@ -5,51 +6,57 @@ function AdminCard({ title, value, icon }) {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  // 테마별 컬러셋
   const c = {
-    bg: isDark ? "#34322D" : "#FFFFFF",
-    text: isDark ? "#EFEDE8" : "#4a3f35",
-    sub: isDark ? "#CFCAC0" : "#7a746d",
-    border: isDark ? "#4A4743" : "#e5e1d8",
-    icon: isDark ? "#D6C0B8" : "#A47A6B",
+    bg: isDark ? "#2F2E2A" : "#FFFFFF",
+    border: isDark ? "#44413C" : "#E4DED4",
+    text: isDark ? "#EFEDE8" : "#4A3F35",
+    sub: isDark ? "#CFCAC0" : "#7A746D",
+    icon: isDark ? "#D6C0B8" : "#B89C8A",
     shadow: isDark
-      ? "0 8px 20px rgba(0,0,0,0.35)"
-      : "0 8px 20px rgba(0,0,0,0.08)",
+      ? "0 4px 12px rgba(0,0,0,0.38)"
+      : "0 4px 14px rgba(0,0,0,0.09)",
     hoverShadow: isDark
-      ? "0 12px 26px rgba(0,0,0,0.45)"
-      : "0 12px 26px rgba(0,0,0,0.16)",
+      ? "0 8px 20px rgba(0,0,0,0.55)"
+      : "0 10px 22px rgba(0,0,0,0.16)",
   };
+
+  const isMobile = window.innerWidth <= 768;
 
   return (
     <div
       style={{
         background: c.bg,
         borderRadius: 16,
-        padding: "24px 22px",
+        padding: isMobile ? "18px 18px" : "24px 22px",
         border: `1px solid ${c.border}`,
         boxShadow: c.shadow,
         transition: "0.25s ease",
         display: "flex",
         flexDirection: "column",
-        gap: 10,
+        gap: 8,
+        width: "100%",
         cursor: "pointer",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-4px)";
-        e.currentTarget.style.boxShadow = c.hoverShadow;
+        if (!isMobile) {
+          e.currentTarget.style.transform = "translateY(-3px)";
+          e.currentTarget.style.boxShadow = c.hoverShadow;
+        }
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = c.shadow;
+        if (!isMobile) {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = c.shadow;
+        }
       }}
     >
       {/* 아이콘 */}
       {icon && (
         <div
           style={{
-            fontSize: 28,
+            fontSize: isMobile ? 24 : 28,
             color: c.icon,
-            marginBottom: 6,
+            marginBottom: isMobile ? 2 : 6,
           }}
         >
           {icon}
@@ -60,7 +67,7 @@ function AdminCard({ title, value, icon }) {
       <h3
         style={{
           margin: 0,
-          fontSize: 16,
+          fontSize: isMobile ? 14 : 16,
           color: c.sub,
           fontWeight: 600,
         }}
@@ -72,9 +79,10 @@ function AdminCard({ title, value, icon }) {
       <p
         style={{
           margin: 0,
-          fontSize: 32,
+          fontSize: isMobile ? 26 : 32,
           fontWeight: 800,
           color: c.text,
+          lineHeight: 1.2,
         }}
       >
         {value}

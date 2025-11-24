@@ -1,25 +1,38 @@
+// src/pages/admin/AdminListings.js
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import AdminHeader from "../../components/admin/AdminHeader";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 
 function AdminListings() {
   const [listings, setListings] = useState([]);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false
+  );
+
   const navigate = useNavigate();
   const { theme } = useTheme();
 
   const isDark = theme === "dark";
 
   const c = {
-    bg: isDark ? "#2A2926" : "#F7F5EF",
     card: isDark ? "#34322D" : "#FFFFFF",
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#CFCAC0" : "#7A746D",
     line: isDark ? "#3F3C38" : "#E8E4D9",
     rowLine: isDark ? "#47433E" : "#F3EFE4",
   };
+
+  // 반응형: 모바일 여부 감지
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window === "undefined") return;
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const fetchListings = async () => {
     try {
@@ -29,7 +42,7 @@ function AdminListings() {
       );
 
       const data = await res.json();
-      setListings(data);
+      setListings(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("숙소 불러오기 오류:", err);
     }
@@ -57,103 +70,188 @@ function AdminListings() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: c.bg }}>
-      <AdminSidebar />
+    <main
+      style={{
+        width: "100%",
+        padding: "20px",
+        color: c.text,
+        boxSizing: "border-box",
+      }}
+    >
+      {/* 상단 타이틀 */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 24,
+        }}
+      >
+        <h2
+          style={{
+            fontSize: 22,
+            color: c.text,
+            fontWeight: 800,
+            margin: 0,
+          }}
+        >
+          숙소 관리
+        </h2>
+      </div>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <AdminHeader />
-
-        <main style={{ padding: "40px 50px" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: 30,
-            }}
-          >
-            <h2 style={{ fontSize: 24, color: c.text, fontWeight: 800 }}>
-              숙소 관리
-            </h2>
-          </div>
-
-          <div
-            style={{
-              background: c.card,
-              borderRadius: 14,
-              padding: "20px 24px",
-              border: `1px solid ${c.line}`,
-              boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-              overflowX: "auto", // ⭐ 모바일에서 가로 스크롤
-              WebkitOverflowScrolling: "touch",
-            }}
-          >
-            <table
+      {/* 데이터 없을 때 처리 */}
+      {listings.length === 0 ? (
+        <p style={{ color: c.sub, fontSize: 14 }}>등록된 숙소가 없습니다.</p>
+      ) : isMobile ? (
+        // 📱 모바일: 카드형 리스트
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}
+        >
+          {listings.map((item) => (
+            <div
+              key={item.id}
               style={{
-                width: "100%",
-                minWidth: 700, // ⭐ 테이블 깨짐 방지
-                borderCollapse: "collapse",
+                background: c.card,
+                borderRadius: 12,
+                padding: "14px 16px",
+                border: `1px solid ${c.line}`,
+                boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                fontSize: 14,
+                display: "flex",
+                flexDirection: "column",
+                gap: 6,
               }}
             >
-              <thead>
-                <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                  <th style={thStyle(c)}>ID</th>
-                  <th style={thStyle(c)}>숙소명</th>
-                  <th style={thStyle(c)}>지역</th>
-                  <th style={thStyle(c)}>가격(1박)</th>
-                  <th style={thStyle(c)}>관리</th>
-                </tr>
-              </thead>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 4,
+                  fontWeight: 700,
+                }}
+              >
+                <span>
+                  #{item.id} {item.title}
+                </span>
+              </div>
 
-              <tbody>
-                {listings.map((item) => (
-                  <tr
-                    key={item.id}
-                    style={{
-                      textAlign: "center",
-                      borderBottom: `1px solid ${c.rowLine}`,
-                      height: 60,
-                      color: c.text,
-                    }}
-                  >
-                    <td>{item.id}</td>
-                    <td>{item.title}</td>
-                    <td>{item.location}</td>
-                    <td>{item.price?.toLocaleString()}원</td>
+              <div style={{ color: c.sub }}>
+                지역&nbsp;:&nbsp;
+                <span style={{ color: c.text }}>{item.location}</span>
+              </div>
+              <div style={{ color: c.sub }}>
+                가격(1박)&nbsp;:&nbsp;
+                <span style={{ color: c.text }}>
+                  {item.price?.toLocaleString()}원
+                </span>
+              </div>
 
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: 12,
-                          justifyContent: "center",
-                        }}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 8,
+                  marginTop: 8,
+                }}
+              >
+                <button
+                  style={editBtn(c)}
+                  onClick={() => navigate(`/admin/listings/edit/${item.id}`)}
+                >
+                  <FiEdit2 />
+                </button>
+                <button
+                  style={deleteBtn}
+                  onClick={() => deleteListing(item.id)}
+                >
+                  <FiTrash2 />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        // 💻 데스크탑: 테이블 형식
+        <div
+          style={{
+            background: c.card,
+            borderRadius: 14,
+            padding: "20px 24px",
+            border: `1px solid ${c.line}`,
+            boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+            overflowX: "auto",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
+          <table
+            style={{
+              width: "100%",
+              minWidth: 700,
+              borderCollapse: "collapse",
+            }}
+          >
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+                <th style={thStyle(c)}>ID</th>
+                <th style={thStyle(c)}>숙소명</th>
+                <th style={thStyle(c)}>지역</th>
+                <th style={thStyle(c)}>가격(1박)</th>
+                <th style={thStyle(c)}>관리</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {listings.map((item) => (
+                <tr
+                  key={item.id}
+                  style={{
+                    textAlign: "center",
+                    borderBottom: `1px solid ${c.rowLine}`,
+                    height: 60,
+                    color: c.text,
+                  }}
+                >
+                  <td>{item.id}</td>
+                  <td>{item.title}</td>
+                  <td>{item.location}</td>
+                  <td>{item.price?.toLocaleString()}원</td>
+
+                  <td>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 12,
+                        justifyContent: "center",
+                      }}
+                    >
+                      <button
+                        style={editBtn(c)}
+                        onClick={() =>
+                          navigate(`/admin/listings/edit/${item.id}`)
+                        }
                       >
-                        <button
-                          style={editBtn(c)}
-                          onClick={() =>
-                            navigate(`/admin/listings/edit/${item.id}`)
-                          }
-                        >
-                          <FiEdit2 />
-                        </button>
+                        <FiEdit2 />
+                      </button>
 
-                        <button
-                          style={deleteBtn}
-                          onClick={() => deleteListing(item.id)}
-                        >
-                          <FiTrash2 />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </main>
-      </div>
-    </div>
+                      <button
+                        style={deleteBtn}
+                        onClick={() => deleteListing(item.id)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </main>
   );
 }
 

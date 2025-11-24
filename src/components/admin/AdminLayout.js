@@ -12,8 +12,10 @@ function AdminLayout({ children }) {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
 
-      if (!mobile) setOpen(true); // PC는 항상 open = true
+      // PC는 항상 열림
+      if (!mobile) setOpen(true);
     };
+
     window.addEventListener("resize", onResize);
     onResize();
     return () => window.removeEventListener("resize", onResize);
@@ -23,36 +25,47 @@ function AdminLayout({ children }) {
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      {/* 항상 상단 고정 */}
+      {/* 상단 고정 헤더 */}
       <AdminHeader onMenuToggle={toggleSidebar} />
 
+      {/* ------------ 모바일 레이아웃 ------------ */}
       {isMobile ? (
-        // --------- 모바일 ---------
         <div
           style={{
             width: "100%",
             height: "calc(100vh - 60px)",
             overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
           }}
         >
+          {/* 펼쳐지는 메뉴 */}
           <AdminSidebar open={open} setOpen={setOpen} isMobile={true} />
 
-          <div style={{ padding: "20px" }}>{children}</div>
+          {/* 본문: 여백 최소화 */}
+          <div style={{ padding: "12px 14px" }}>{children}</div>
         </div>
       ) : (
-        // --------- PC ---------
+        /* ------------ PC 레이아웃 ------------ */
         <div
           style={{
             display: "flex",
             width: "100%",
             height: "calc(100vh - 60px)",
+            overflow: "hidden",
           }}
         >
-          {/* 좌측 사이드바 (고정) */}
+          {/* PC 사이드바 */}
           <AdminSidebar open={open} setOpen={setOpen} isMobile={false} />
 
-          {/* 우측 콘텐츠 영역 (여백 없음) */}
-          <div style={{ flex: 1, overflowY: "auto", padding: "30px" }}>
+          {/* 콘텐츠 */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "30px 40px",
+              boxSizing: "border-box",
+            }}
+          >
             {children}
           </div>
         </div>

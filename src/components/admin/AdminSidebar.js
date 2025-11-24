@@ -43,18 +43,19 @@ function AdminSidebar({ open, setOpen, isMobile }) {
     <div
       style={{
         width: isMobile ? "100%" : 240,
-        maxHeight: open ? "1000px" : isMobile ? "0px" : "100vh",
-        overflow: "hidden",
         background: c.bg,
         borderRight: isMobile ? "none" : `1px solid ${c.border}`,
-        transition: "max-height 0.35s ease",
-        boxShadow: isMobile && open ? "0 6px 16px rgba(0,0,0,0.15)" : "none",
-        zIndex: 8,
+        borderBottom: isMobile ? `1px solid ${c.border}` : "none",
         position: isMobile ? "relative" : "sticky",
         top: 0,
+        zIndex: 8,
+        overflow: "hidden",
+        height: isMobile ? "auto" : "100%",
+        maxHeight: isMobile ? (open ? "1000px" : "0px") : "100%",
+        transition: isMobile ? "max-height 0.35s ease" : "none",
       }}
     >
-      {/* 제목 */}
+      {/* 제목 (PC에서만 표시) */}
       {!isMobile && (
         <h2
           style={{
@@ -62,6 +63,7 @@ function AdminSidebar({ open, setOpen, isMobile }) {
             fontWeight: 700,
             padding: "24px 20px",
             color: c.text,
+            margin: 0,
           }}
         >
           관리자 메뉴
@@ -73,7 +75,7 @@ function AdminSidebar({ open, setOpen, isMobile }) {
         style={{
           display: "flex",
           flexDirection: "column",
-          padding: isMobile ? "10px 16px 20px" : "0 16px",
+          padding: isMobile ? "10px 14px 16px" : "0 16px",
           gap: 10,
         }}
       >
@@ -90,7 +92,7 @@ function AdminSidebar({ open, setOpen, isMobile }) {
               gap: 12,
               background: c.card,
               color: c.text,
-              padding: "14px 16px",
+              padding: "12px 14px",
               borderRadius: 12,
               border: `1px solid ${c.border}`,
               fontSize: 15,
@@ -108,12 +110,12 @@ function AdminSidebar({ open, setOpen, isMobile }) {
       </nav>
 
       {/* 로그아웃 */}
-      <div style={{ padding: "6px 16px 24px" }}>
+      <div style={{ padding: isMobile ? "0 14px 14px" : "6px 16px 24px" }}>
         <button
           onClick={handleLogout}
           style={{
             width: "100%",
-            padding: "14px 16px",
+            padding: "12px 14px",
             background: "#C94141",
             borderRadius: 12,
             color: "#fff",

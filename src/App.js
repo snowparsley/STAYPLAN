@@ -19,16 +19,9 @@ import ReservationsPage from "./pages/ReservationsPage";
 import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
 import ReservationComplete from "./pages/ReservationComplete";
-import EditUser from "./pages/admin/EditUser";
 
-// 컴포넌트
-import Header from "./components/Header";
-import PrivateRoute from "./components/PrivateRoute";
-
-// 관리자 레이아웃
+// 관리자 레이아웃 + 컴포넌트
 import AdminLayout from "./components/admin/AdminLayout";
-
-// 관리자 페이지
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminListings from "./pages/admin/AdminListings";
 import AdminReservations from "./pages/admin/AdminReservations";
@@ -36,13 +29,20 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminNotices from "./pages/admin/AdminNotices";
 import AdminNoticeNew from "./pages/admin/AdminNoticeNew";
 import AdminNoticeEdit from "./pages/admin/AdminNoticeEdit";
+import EditUser from "./pages/admin/EditUser";
+
+// 컴포넌트
+import Header from "./components/Header";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   const { user, loading } = useAuth();
 
   if (loading) return null;
 
-  // ⭐ 관리자 라우트
+  /* =====================================================
+        관리자 전용 라우트
+  ===================================================== */
   if (user?.admin) {
     return (
       <Router>
@@ -55,7 +55,6 @@ function App() {
               </AdminLayout>
             }
           />
-
           <Route
             path="/admin/listings"
             element={
@@ -64,12 +63,27 @@ function App() {
               </AdminLayout>
             }
           />
-
           <Route
             path="/admin/reservations"
             element={
               <AdminLayout>
                 <AdminReservations />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <AdminLayout>
+                <AdminUsers />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/users/edit/:id"
+            element={
+              <AdminLayout>
+                <EditUser />
               </AdminLayout>
             }
           />
@@ -82,7 +96,6 @@ function App() {
               </AdminLayout>
             }
           />
-
           <Route
             path="/admin/notices/new"
             element={
@@ -91,7 +104,6 @@ function App() {
               </AdminLayout>
             }
           />
-
           <Route
             path="/admin/notices/edit/:id"
             element={
@@ -101,32 +113,15 @@ function App() {
             }
           />
 
-          <Route
-            path="/admin/users"
-            element={
-              <AdminLayout>
-                <AdminUsers />
-              </AdminLayout>
-            }
-          />
-
-          <Route
-            path="/admin/users/edit/:id"
-            element={
-              <AdminLayout>
-                <EditUser />
-              </AdminLayout>
-            }
-          />
-
-          {/* 없는 관리자 URL → /admin */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </Router>
     );
   }
 
-  // ⭐ 일반 유저 라우트
+  /* =====================================================
+        일반 유저 라우트
+  ===================================================== */
   return (
     <Router>
       <Header />
@@ -182,7 +177,6 @@ function App() {
           }
         />
 
-        {/* 잘못된 URL → 홈 */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

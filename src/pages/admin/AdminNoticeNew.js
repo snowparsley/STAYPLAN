@@ -1,7 +1,7 @@
+// src/pages/admin/AdminNoticeNew.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import AdminHeader from "../../components/admin/AdminHeader";
+import AdminLayout from "../../components/admin/AdminLayout";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -68,70 +68,71 @@ function AdminNoticeNew() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh", background: c.bg }}>
-      <AdminSidebar />
+    <AdminLayout>
+      <main
+        style={{
+          padding: "30px 20px",
+          maxWidth: 850,
+          margin: "0 auto",
+          color: c.text,
+        }}
+      >
+        <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 30 }}>
+          공지사항 작성
+        </h2>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <AdminHeader />
+        <div
+          style={{
+            background: c.card,
+            padding: 30,
+            borderRadius: 14,
+            border: `1px solid ${c.line}`,
+            boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+          }}
+        >
+          {/* 제목 */}
+          <label style={label(c)}>제목</label>
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            style={input(c)}
+            placeholder="공지 제목을 입력하세요"
+          />
 
-        <main style={{ padding: "40px 50px", maxWidth: 850, color: c.text }}>
-          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 30 }}>
-            공지사항 작성
-          </h2>
-
-          <div
+          {/* 내용 */}
+          <label style={label(c)}>내용</label>
+          <textarea
+            name="content"
+            value={form.content}
+            onChange={handleChange}
             style={{
-              background: c.card,
-              padding: 30,
-              borderRadius: 14,
-              border: `1px solid ${c.line}`,
-              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+              ...input(c),
+              height: 200,
+              resize: "vertical",
             }}
-          >
-            {/* 제목 */}
-            <label style={label(c)}>제목</label>
+            placeholder="공지 내용을 입력하세요"
+          />
+
+          {/* 공개 여부 */}
+          <label style={{ ...label(c), marginTop: 10 }}>공개 여부</label>
+          <div style={{ marginBottom: 20 }}>
             <input
-              name="title"
-              value={form.title}
+              type="checkbox"
+              name="visible"
+              checked={form.visible}
               onChange={handleChange}
-              style={input(c)}
-              placeholder="공지 제목을 입력하세요"
+              style={{ marginRight: 8 }}
             />
-
-            {/* 내용 */}
-            <label style={label(c)}>내용</label>
-            <textarea
-              name="content"
-              value={form.content}
-              onChange={handleChange}
-              style={{
-                ...input(c),
-                height: 200,
-                resize: "vertical",
-              }}
-              placeholder="공지 내용을 입력하세요"
-            />
-
-            {/* 공개 여부 */}
-            <label style={{ ...label(c), marginTop: 10 }}>공개 여부</label>
-            <div style={{ marginBottom: 20 }}>
-              <input
-                type="checkbox"
-                name="visible"
-                checked={form.visible}
-                onChange={handleChange}
-                style={{ marginRight: 8 }}
-              />
-              <span style={{ color: c.text }}>공개</span>
-            </div>
-
-            <button style={saveBtn} onClick={saveNotice}>
-              공지사항 등록하기
-            </button>
+            <span style={{ color: c.text }}>공개</span>
           </div>
-        </main>
-      </div>
-    </div>
+
+          <button style={saveBtn} onClick={saveNotice}>
+            공지사항 등록하기
+          </button>
+        </div>
+      </main>
+    </AdminLayout>
   );
 }
 

@@ -1,5 +1,5 @@
 // src/components/admin/AdminHeader.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FiUser, FiSun, FiMoon, FiMenu } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useLocation } from "react-router-dom";
@@ -9,6 +9,20 @@ function AdminHeader({ onMenuToggle }) {
   const { theme, toggleTheme } = useTheme();
   const { user } = useAuth();
   const location = useLocation();
+
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof window === "undefined") return;
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const getPageTitle = () => {
     if (location.pathname.includes("reservations")) return "예약 관리";
@@ -28,7 +42,7 @@ function AdminHeader({ onMenuToggle }) {
     <header
       style={{
         width: "100%",
-        padding: "16px 22px",
+        padding: isMobile ? "12px 14px" : "16px 22px",
         background: c.bg,
         borderBottom: `1px solid ${c.line}`,
         display: "flex",
@@ -37,30 +51,58 @@ function AdminHeader({ onMenuToggle }) {
         position: "sticky",
         top: 0,
         zIndex: 50,
+        boxSizing: "border-box",
       }}
     >
-      {/* 👉 모바일 메뉴 버튼 */}
-      <button
-        onClick={onMenuToggle}
+      {/* 왼쪽 영역: 모바일 메뉴 버튼 + 제목 */}
+      <div
         style={{
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: c.text,
-          fontSize: 26,
-          marginRight: 12,
           display: "flex",
+          alignItems: "center",
+          gap: 10,
+          minWidth: 0,
         }}
-        className="mobile-only"
       >
-        <FiMenu />
-      </button>
+        {/* 👉 모바일 메뉴 버튼 (CSS에서 .mobile-only 제어) */}
+        <button
+          onClick={onMenuToggle}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: c.text,
+            fontSize: 24,
+            display: "flex",
+          }}
+          className="mobile-only"
+        >
+          <FiMenu />
+        </button>
 
-      <h1 style={{ fontSize: 24, fontWeight: 800, color: c.text }}>
-        {getPageTitle()}
-      </h1>
+        <h1
+          style={{
+            fontSize: isMobile ? 18 : 24,
+            fontWeight: 800,
+            color: c.text,
+            margin: 0,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {getPageTitle()}
+        </h1>
+      </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+      {/* 오른쪽 영역: 테마 토글 + 유저 정보 */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: isMobile ? 10 : 18,
+          flexShrink: 0,
+        }}
+      >
         <button
           onClick={toggleTheme}
           style={{
@@ -68,7 +110,8 @@ function AdminHeader({ onMenuToggle }) {
             border: "none",
             cursor: "pointer",
             color: c.text,
-            fontSize: 22,
+            fontSize: isMobile ? 20 : 22,
+            padding: 4,
           }}
         >
           {theme === "dark" ? <FiSun /> : <FiMoon />}
@@ -76,23 +119,32 @@ function AdminHeader({ onMenuToggle }) {
 
         <div
           style={{
-            width: 36,
-            height: 36,
+            width: isMobile ? 30 : 36,
+            height: isMobile ? 30 : 36,
             borderRadius: "50%",
             background: "#D9D2C8",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             color: "#4a3f35",
-            fontSize: 18,
+            fontSize: isMobile ? 16 : 18,
           }}
         >
           <FiUser />
         </div>
 
-        <p style={{ fontWeight: 800, color: c.text, fontSize: 15 }}>
-          {user?.name || "관리자"}
-        </p>
+        {!isMobile && (
+          <p
+            style={{
+              fontWeight: 800,
+              color: c.text,
+              fontSize: 15,
+              margin: 0,
+            }}
+          >
+            {user?.name || "관리자"}
+          </p>
+        )}
       </div>
     </header>
   );

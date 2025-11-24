@@ -7,26 +7,31 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
-  // 🔥 추가: user 로딩 여부
+  // 🔥 유저 로딩 상태
   const [loading, setLoading] = useState(true);
 
-  // 🔥 첫 로딩: sessionStorage에서 유저 정보 가져오기
+  // 🔥 첫 로딩 시 sessionStorage 불러오기
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
     const storedToken = sessionStorage.getItem("token");
 
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      // admin을 boolean으로 강제 변환
+
+      // admin → boolean 통일
       parsed.admin = parsed.admin === true || parsed.admin === 1;
+
       setUser(parsed);
     }
 
     if (storedToken) setToken(storedToken);
 
-    setLoading(false); // 로딩 종료
+    setLoading(false);
   }, []);
 
+  /* ======================================================
+        로그인 요청
+  ====================================================== */
   const login = async (userId, password) => {
     try {
       const res = await fetch("https://stayplanserver.onrender.com/api/login", {
@@ -56,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
       alert(data.message);
 
-      // ⭐ 관리자면 곧바로 관리자 대시보드로 이동
+      // 👉 관리자면 관리자 페이지로 이동
       if (safeUser.admin) {
         window.location.href = "/admin";
       } else {
@@ -70,6 +75,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /* ======================================================
+        로그아웃
+  ====================================================== */
   const logout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
@@ -78,6 +86,9 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
+  /* ======================================================
+        프론트에서 유저 정보 업데이트
+  ====================================================== */
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
     const updated = {
@@ -88,7 +99,6 @@ export const AuthProvider = ({ children }) => {
 
     setUser(updated);
     setToken(savedToken);
-
     sessionStorage.setItem("user", JSON.stringify(updated));
   };
 

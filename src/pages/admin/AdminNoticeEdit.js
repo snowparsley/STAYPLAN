@@ -1,7 +1,7 @@
+// src/pages/admin/AdminNoticeEdit.js
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import AdminSidebar from "../../components/admin/AdminSidebar";
-import AdminHeader from "../../components/admin/AdminHeader";
+import AdminLayout from "../../components/admin/AdminLayout";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -52,7 +52,7 @@ function AdminNoticeEdit() {
       setForm({
         title: data.title,
         content: data.content,
-        visible: data.visible === 1, // DB tinyint → boolean
+        visible: data.visible === 1,
       });
 
       setLoading(false);
@@ -109,88 +109,84 @@ function AdminNoticeEdit() {
     }
   };
 
+  /* =====================================================
+        렌더링
+  ===================================================== */
   if (loading) {
     return (
-      <div style={{ display: "flex", height: "100vh", background: c.bg }}>
-        <AdminSidebar />
-        <div style={{ flex: 1 }}>
-          <AdminHeader />
-          <main style={{ padding: 40, color: c.text }}>불러오는 중...</main>
-        </div>
-      </div>
+      <AdminLayout>
+        <main style={{ padding: 40, color: c.text }}>불러오는 중...</main>
+      </AdminLayout>
     );
   }
 
-  /* =====================================================
-        화면 출력
-  ===================================================== */
   return (
-    <div style={{ display: "flex", height: "100vh", background: c.bg }}>
-      <AdminSidebar />
+    <AdminLayout>
+      <main style={{ padding: "30px 20px", maxWidth: 850, margin: "0 auto" }}>
+        <h2
+          style={{
+            fontSize: 26,
+            fontWeight: 800,
+            marginBottom: 30,
+            color: c.text,
+          }}
+        >
+          공지사항 수정
+        </h2>
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <AdminHeader />
+        <div
+          style={{
+            background: c.card,
+            padding: 30,
+            borderRadius: 14,
+            border: `1px solid ${c.line}`,
+            boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+          }}
+        >
+          {/* 제목 */}
+          <label style={label(c)}>제목</label>
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            style={input(c)}
+          />
 
-        <main style={{ padding: "40px 50px", maxWidth: 850, color: c.text }}>
-          <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 30 }}>
-            공지사항 수정
-          </h2>
-
-          <div
+          {/* 내용 */}
+          <label style={label(c)}>내용</label>
+          <textarea
+            name="content"
+            value={form.content}
+            onChange={handleChange}
             style={{
-              background: c.card,
-              padding: 30,
-              borderRadius: 14,
-              border: `1px solid ${c.line}`,
-              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+              ...input(c),
+              height: 200,
+              resize: "vertical",
             }}
-          >
-            {/* 제목 */}
-            <label style={label(c)}>제목</label>
+          />
+
+          {/* 공개 여부 */}
+          <label style={{ ...label(c), marginTop: 10 }}>공개 여부</label>
+          <div style={{ marginBottom: 20 }}>
             <input
-              name="title"
-              value={form.title}
+              type="checkbox"
+              name="visible"
+              checked={form.visible}
               onChange={handleChange}
-              style={input(c)}
+              style={{ marginRight: 8 }}
             />
-
-            {/* 내용 */}
-            <label style={label(c)}>내용</label>
-            <textarea
-              name="content"
-              value={form.content}
-              onChange={handleChange}
-              style={{
-                ...input(c),
-                height: 200,
-                resize: "vertical",
-              }}
-            />
-
-            {/* 공개 여부 */}
-            <label style={{ ...label(c), marginTop: 10 }}>공개 여부</label>
-            <div style={{ marginBottom: 20 }}>
-              <input
-                type="checkbox"
-                name="visible"
-                checked={form.visible}
-                onChange={handleChange}
-                style={{ marginRight: 8 }}
-              />
-              <span style={{ color: c.text }}>공개</span>
-            </div>
-
-            <button style={saveBtn} onClick={saveNotice}>
-              공지사항 수정하기
-            </button>
+            <span style={{ color: c.text }}>공개</span>
           </div>
-        </main>
-      </div>
-    </div>
+
+          <button style={saveBtn} onClick={saveNotice}>
+            공지사항 수정하기
+          </button>
+        </div>
+      </main>
+    </AdminLayout>
   );
 }
 
-/* 스타일 */
 const label = (c) => ({
   color: c.sub,
   fontWeight: 700,
