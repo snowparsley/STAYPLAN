@@ -5,7 +5,6 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -14,7 +13,7 @@ export const AuthProvider = ({ children }) => {
 
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      setUser(parsed); // role 그대로 사용 (user / admin / seller)
+      setUser(parsed);
     }
 
     if (storedToken) setToken(storedToken);
@@ -22,7 +21,6 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // ⭐ 로그인 요청
   const login = async (userId, password) => {
     try {
       const res = await fetch("https://stayplanserver.onrender.com/api/login", {
@@ -38,10 +36,13 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      // ⭐ role 문자열 그대로 저장
+      // ⭐ 서버에서 받은 user 정보만 정확히 저장
       const safeUser = {
-        ...data.user,
-        role: data.user.role, // user / admin / seller
+        id: data.user.id,
+        user_id: data.user.user_id,
+        name: data.user.name,
+        email: data.user.email,
+        role: data.user.role, // admin / seller / user
       };
 
       sessionStorage.setItem("user", JSON.stringify(safeUser));
@@ -52,14 +53,10 @@ export const AuthProvider = ({ children }) => {
 
       alert(data.message);
 
-      // ⭐ role 기반 라우팅
-      if (safeUser.role === "admin") {
-        window.location.href = "/admin";
-      } else if (safeUser.role === "seller") {
-        window.location.href = "/seller";
-      } else {
-        window.location.href = "/";
-      }
+      // ⭐ 역할 기반 리디렉션
+      if (safeUser.role === "admin") window.location.href = "/admin";
+      else if (safeUser.role === "seller") window.location.href = "/seller";
+      else window.location.href = "/";
 
       return true;
     } catch (err) {
@@ -68,7 +65,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ⭐ 로그아웃
   const logout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
@@ -77,14 +73,13 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
-  // ⭐ 유저 정보 업데이트 (role 포함)
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
 
     const updated = {
       ...user,
       ...newUser,
-      role: newUser.role || user.role, // role 유지
+      role: newUser.role || user.role,
     };
 
     setUser(updated);
