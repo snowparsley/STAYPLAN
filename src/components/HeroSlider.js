@@ -28,7 +28,7 @@ const slides = [
   {
     id: 57,
     image: "https://loremflickr.com/900/600/building,home,colorful?lock=57",
-    title: "노을을 품은 스테이,\n 로마 하우스",
+    title: "노을을 품은 스테이,\n 하와이 하우스",
     subtitle: "고대 도시의 숨결과 함께 여유로운 하루를 만나보세요",
   },
   {

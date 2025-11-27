@@ -30,7 +30,12 @@ import AdminNoticeNew from "./pages/admin/AdminNoticeNew";
 import AdminNoticeEdit from "./pages/admin/AdminNoticeEdit";
 import EditUser from "./pages/admin/EditUser";
 
-// 컴포넌트
+// 판매자 컴포넌트 (새로 추가 예정)
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import SellerListings from "./pages/seller/SellerListings";
+import SellerAddListing from "./pages/seller/SellerAddListing";
+
+// 공용 컴포넌트
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -39,9 +44,10 @@ function App() {
 
   if (loading) return null;
 
-  // 관리자 전용 라우트
-
-  if (user?.admin) {
+  // ==========================
+  // ⭐ 관리자 라우트
+  // ==========================
+  if (user?.role === "admin") {
     return (
       <Router>
         <Routes>
@@ -53,6 +59,7 @@ function App() {
               </AdminLayout>
             }
           />
+
           <Route
             path="/admin/listings"
             element={
@@ -61,6 +68,7 @@ function App() {
               </AdminLayout>
             }
           />
+
           <Route
             path="/admin/reservations"
             element={
@@ -69,6 +77,7 @@ function App() {
               </AdminLayout>
             }
           />
+
           <Route
             path="/admin/users"
             element={
@@ -77,6 +86,7 @@ function App() {
               </AdminLayout>
             }
           />
+
           <Route
             path="/admin/users/edit/:id"
             element={
@@ -94,6 +104,7 @@ function App() {
               </AdminLayout>
             }
           />
+
           <Route
             path="/admin/notices/new"
             element={
@@ -102,6 +113,7 @@ function App() {
               </AdminLayout>
             }
           />
+
           <Route
             path="/admin/notices/edit/:id"
             element={
@@ -117,8 +129,75 @@ function App() {
     );
   }
 
-  // 일반 유저 라우트
+  // ==========================
+  // ⭐ 판매자 라우트
+  // ==========================
+  if (user?.role === "seller") {
+    return (
+      <Router>
+        <Routes>
+          <Route
+            path="/seller"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerDashboard />
+              </PrivateRoute>
+            }
+          />
 
+          <Route
+            path="/seller/listings"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerListings />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/seller/add-listing"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerAddListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/seller/edit/:id"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerEditListing />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/seller/reservations"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerReservations />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/seller/sales"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerSales />
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/seller" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
+
+  // ==========================
+  // ⭐ 일반 유저 라우트
+  // ==========================
   return (
     <Router>
       <Header />

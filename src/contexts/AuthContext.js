@@ -14,11 +14,7 @@ export const AuthProvider = ({ children }) => {
 
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-
-      // admin → boolean
-      parsed.admin = parsed.admin === true || parsed.admin === 1;
-
-      setUser(parsed);
+      setUser(parsed); // role 그대로 사용 (user / admin / seller)
     }
 
     if (storedToken) setToken(storedToken);
@@ -26,8 +22,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // 로그인 요청
-
+  // ⭐ 로그인 요청
   const login = async (userId, password) => {
     try {
       const res = await fetch("https://stayplanserver.onrender.com/api/login", {
@@ -43,10 +38,10 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      // admin → boolean 변환
+      // ⭐ role 문자열 그대로 저장
       const safeUser = {
         ...data.user,
-        admin: data.user.admin === 1 || data.user.admin === true,
+        role: data.user.role, // user / admin / seller
       };
 
       sessionStorage.setItem("user", JSON.stringify(safeUser));
@@ -57,9 +52,11 @@ export const AuthProvider = ({ children }) => {
 
       alert(data.message);
 
-      // 관리자면 관리자 페이지로 이동
-      if (safeUser.admin) {
+      // ⭐ role 기반 라우팅
+      if (safeUser.role === "admin") {
         window.location.href = "/admin";
+      } else if (safeUser.role === "seller") {
+        window.location.href = "/seller";
       } else {
         window.location.href = "/";
       }
@@ -71,8 +68,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 로그아웃
-
+  // ⭐ 로그아웃
   const logout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
@@ -81,14 +77,14 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
   };
 
-  // 프론트에서 유저 정보 업데이트
-
+  // ⭐ 유저 정보 업데이트 (role 포함)
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
+
     const updated = {
       ...user,
       ...newUser,
-      admin: newUser.admin === 1 || newUser.admin === true,
+      role: newUser.role || user.role, // role 유지
     };
 
     setUser(updated);
