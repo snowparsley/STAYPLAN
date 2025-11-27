@@ -47,8 +47,6 @@ function App() {
 
   if (loading) return null;
 
-  if (!user) return null;
-
   // ==========================
   // ⭐ 관리자 라우트
   // ==========================
