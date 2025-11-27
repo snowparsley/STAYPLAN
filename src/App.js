@@ -30,10 +30,13 @@ import AdminNoticeNew from "./pages/admin/AdminNoticeNew";
 import AdminNoticeEdit from "./pages/admin/AdminNoticeEdit";
 import EditUser from "./pages/admin/EditUser";
 
-// 판매자 컴포넌트 (새로 추가 예정)
+// 판매자 컴포넌트
 import SellerDashboard from "./pages/seller/SellerDashboard";
 import SellerListings from "./pages/seller/SellerListings";
 import SellerAddListing from "./pages/seller/SellerAddListing";
+import SellerEditListing from "./pages/seller/SellerEditListing";
+import SellerReservations from "./pages/seller/SellerReservations";
+import SellerSales from "./pages/seller/SellerSales";
 
 // 공용 컴포넌트
 import Header from "./components/Header";
