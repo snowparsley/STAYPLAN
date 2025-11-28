@@ -17,6 +17,9 @@ function NoticeDetailPage() {
     border: isDark ? "#4A4743" : "#E6E1D8",
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#CFCAC0" : "#7A746D",
+    shadow: isDark
+      ? "0 6px 18px rgba(0,0,0,0.35)"
+      : "0 6px 18px rgba(0,0,0,0.06)",
   };
 
   useEffect(() => {
@@ -25,7 +28,7 @@ function NoticeDetailPage() {
       .then((data) => setNotice(data));
   }, [id]);
 
-  if (!notice)
+  if (!notice) {
     return (
       <p
         style={{
@@ -39,6 +42,7 @@ function NoticeDetailPage() {
         불러오는 중...
       </p>
     );
+  }
 
   return (
     <div
@@ -50,53 +54,79 @@ function NoticeDetailPage() {
         minHeight: "100vh",
       }}
     >
+      {/* 뒤로가기 버튼 */}
       <button
         onClick={() => navigate("/notices")}
         style={{
           marginBottom: 26,
           background: "none",
-          border: `1px solid ${colors.border}`,
-          borderRadius: 8,
-          padding: "8px 14px",
+          border: "none",
           cursor: "pointer",
           color: colors.text,
+          fontSize: 15,
+          fontWeight: 600,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
         }}
       >
-        ← 목록으로 돌아가기
+        ← 공지사항 목록
       </button>
 
+      {/* 상세 카드 */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
         style={{
           background: colors.card,
-          borderRadius: 14,
-          padding: "28px 22px",
+          borderRadius: 16,
+          padding: "32px 26px",
           border: `1px solid ${colors.border}`,
+          boxShadow: colors.shadow,
         }}
       >
-        <h2
+        {/* 제목 / 날짜 */}
+        <div
           style={{
-            fontSize: 26,
-            fontWeight: 800,
-            marginBottom: 14,
-            color: colors.text,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: 16,
           }}
         >
-          {notice.title}
-        </h2>
+          <h2
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              flex: 1,
+              color: colors.text,
+              lineHeight: 1.4,
+            }}
+          >
+            {notice.title}
+          </h2>
 
-        <p style={{ color: colors.sub, marginBottom: 26 }}>
-          {notice.created_at?.slice(0, 10)}
-        </p>
+          <span
+            style={{
+              fontSize: 14,
+              color: colors.sub,
+              whiteSpace: "nowrap",
+              paddingTop: 6,
+            }}
+          >
+            {notice.created_at?.slice(0, 10)}
+          </span>
+        </div>
 
+        {/* 본문 */}
         <div
           style={{
             fontSize: 18,
-            lineHeight: 1.8,
+            lineHeight: 1.9,
             whiteSpace: "pre-line",
             color: colors.text,
+            marginTop: 8,
           }}
         >
           {notice.content}

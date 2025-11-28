@@ -17,6 +17,9 @@ function NoticesPage() {
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#CFCAC0" : "#7A746D",
     hover: isDark ? "#353431" : "#F1EBE2",
+    shadow: isDark
+      ? "0 6px 20px rgba(0,0,0,0.35)"
+      : "0 6px 20px rgba(0,0,0,0.08)",
   };
 
   useEffect(() => {
@@ -54,30 +57,70 @@ function NoticesPage() {
         {notices.map((n) => (
           <motion.div
             key={n.id}
-            whileHover={{ scale: 1.01 }}
+            whileHover={{ y: -3, boxShadow: colors.shadow }}
+            transition={{ duration: 0.2 }}
             onClick={() => navigate(`/notices/${n.id}`)}
             style={{
-              padding: "22px 20px",
-              borderRadius: 12,
+              padding: "22px 22px",
+              borderRadius: 14,
               background: colors.card,
               border: `1px solid ${colors.border}`,
               cursor: "pointer",
               transition: "0.2s",
             }}
           >
-            <h3
+            {/* 제목 + 날짜 */}
+            <div
               style={{
-                fontSize: 19,
-                fontWeight: 700,
-                marginBottom: 6,
-                color: colors.text,
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 16,
+                alignItems: "flex-start",
               }}
             >
-              {n.title}
-            </h3>
+              <h3
+                style={{
+                  fontSize: 18,
+                  fontWeight: 700,
+                  flex: 1,
+                  color: colors.text,
+                  lineHeight: 1.45,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                }}
+              >
+                {n.title}
+              </h3>
 
-            <p style={{ color: colors.sub, fontSize: 14 }}>
-              {n.created_at?.slice(0, 10)}
+              <span
+                style={{
+                  fontSize: 14,
+                  color: colors.sub,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {n.created_at?.slice(0, 10)}
+              </span>
+            </div>
+
+            {/* 내용 일부 미리보기 */}
+            <p
+              style={{
+                marginTop: 10,
+                color: colors.sub,
+                fontSize: 14,
+                lineHeight: 1.5,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+              }}
+            >
+              {n.content}
             </p>
           </motion.div>
         ))}
