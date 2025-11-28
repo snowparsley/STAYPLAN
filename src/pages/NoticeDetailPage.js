@@ -11,15 +11,18 @@ function NoticeDetailPage() {
 
   const isDark = theme === "dark";
 
+  // 🔥 NoticesPage와 완전히 동일한 컬러셋
   const colors = {
-    bg: isDark ? "#1F1E1C" : "#FAF7F0",
-    card: isDark ? "#2A2926" : "#FFFFFF",
-    border: isDark ? "#4A4743" : "#E6E1D8",
-    text: isDark ? "#EFEDE8" : "#4A3F35",
+    pageBg: isDark ? "#1F1E1C" : "#FAF7F0",
+    sideBg: isDark ? "#2A2926" : "#F6F4E7",
+    card: isDark ? "#34322D" : "#FFFFFF",
+    border: isDark ? "#4A4743" : "rgba(0,0,0,0.06)",
+    text: isDark ? "#F4F3EF" : "#2A2926",
     sub: isDark ? "#CFCAC0" : "#7A746D",
     shadow: isDark
-      ? "0 6px 18px rgba(0,0,0,0.35)"
-      : "0 6px 18px rgba(0,0,0,0.06)",
+      ? "0 4px 14px rgba(0,0,0,0.4)"
+      : "0 4px 14px rgba(0,0,0,0.08)",
+    dateTag: isDark ? "#3B3A37" : "#EEE9E0",
   };
 
   useEffect(() => {
@@ -35,7 +38,7 @@ function NoticeDetailPage() {
           textAlign: "center",
           padding: 30,
           color: colors.sub,
-          background: colors.bg,
+          background: colors.pageBg,
           minHeight: "100vh",
         }}
       >
@@ -47,91 +50,112 @@ function NoticeDetailPage() {
   return (
     <div
       style={{
-        maxWidth: 800,
-        margin: "0 auto",
-        padding: "40px 20px",
-        background: colors.bg,
+        background: colors.pageBg,
         minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      {/* 뒤로가기 버튼 */}
-      <button
-        onClick={() => navigate("/notices")}
+      {/* 🔥 사이드 배경 (좌우 라이트톤 유지) */}
+      <div
         style={{
-          marginBottom: 26,
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: colors.text,
-          fontSize: 15,
-          fontWeight: 600,
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: colors.sideBg,
+          zIndex: -1,
         }}
-      >
-        ← 공지사항 목록
-      </button>
+      />
 
-      {/* 상세 카드 */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        style={{
-          background: colors.card,
-          borderRadius: 16,
-          padding: "32px 26px",
-          border: `1px solid ${colors.border}`,
-          boxShadow: colors.shadow,
-        }}
-      >
-        {/* 제목 / 날짜 */}
-        <div
+      {/* 메인 컨테이너 */}
+      <div style={{ maxWidth: 820, width: "100%", padding: "50px 24px" }}>
+        {/* 🔙 뒤로가기 버튼 */}
+        <button
+          onClick={() => navigate("/notices")}
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            marginBottom: 16,
-          }}
-        >
-          <h2
-            style={{
-              fontSize: 28,
-              fontWeight: 800,
-              flex: 1,
-              color: colors.text,
-              lineHeight: 1.4,
-            }}
-          >
-            {notice.title}
-          </h2>
-
-          <span
-            style={{
-              fontSize: 14,
-              color: colors.sub,
-              whiteSpace: "nowrap",
-              paddingTop: 6,
-            }}
-          >
-            {notice.created_at?.slice(0, 10)}
-          </span>
-        </div>
-
-        {/* 본문 */}
-        <div
-          style={{
-            fontSize: 18,
-            lineHeight: 1.9,
-            whiteSpace: "pre-line",
+            marginBottom: 26,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
             color: colors.text,
-            marginTop: 8,
+            fontSize: 15,
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            opacity: 0.85,
           }}
         >
-          {notice.content}
-        </div>
-      </motion.div>
+          ← 공지사항 목록
+        </button>
+
+        {/* 🔥 상세 카드 */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28 }}
+          style={{
+            background: colors.card,
+            borderRadius: 16,
+            padding: "34px 28px",
+            border: `1px solid ${colors.border}`,
+            boxShadow: colors.shadow,
+          }}
+        >
+          {/* 제목 + 날짜 */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginBottom: 14,
+            }}
+          >
+            <h2
+              style={{
+                margin: 0,
+                fontSize: 26,
+                fontWeight: 800,
+                color: colors.text,
+                lineHeight: 1.45,
+                flex: 1,
+              }}
+            >
+              {notice.title}
+            </h2>
+
+            <span
+              style={{
+                background: colors.dateTag,
+                padding: "6px 12px",
+                fontSize: 13,
+                borderRadius: 8,
+                color: colors.sub,
+                whiteSpace: "nowrap",
+                marginLeft: 12,
+                marginTop: 4,
+              }}
+            >
+              {notice.created_at?.slice(0, 10)}
+            </span>
+          </div>
+
+          {/* 내용 */}
+          <div
+            style={{
+              fontSize: 18,
+              lineHeight: 1.9,
+              color: colors.text,
+              whiteSpace: "pre-line",
+              marginTop: 12,
+            }}
+          >
+            {notice.content}
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
