@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SellerLayout from "../../components/seller/SellerLayout";
+import SellerHeader from "../../components/seller/SellerHeader";
+import SellerSidebar from "../../components/seller/SellerSidebar";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 
