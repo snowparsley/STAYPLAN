@@ -1,5 +1,7 @@
+// src/components/seller/SellerLayout.js
 import React from "react";
 import SellerSidebar from "./SellerSidebar";
+import SellerHeader from "./SellerHeader";
 import { useTheme } from "../../contexts/ThemeContext";
 
 function SellerLayout({ children }) {
@@ -14,16 +16,20 @@ function SellerLayout({ children }) {
       {/* 왼쪽 사이드바 */}
       <SellerSidebar />
 
-      {/* 우측 메인 콘텐츠 */}
-      <div
-        style={{
-          flex: 1,
-          marginLeft: 220,
-          padding: "40px 32px",
-          color: textColor,
-        }}
-      >
-        {children}
+      {/* 우측 전체 영역 */}
+      <div style={{ flex: 1, marginLeft: 240 }}>
+        {/* 상단 헤더 */}
+        <SellerHeader />
+
+        {/* 메인 콘텐츠 */}
+        <div
+          style={{
+            padding: "40px 32px",
+            color: textColor,
+          }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

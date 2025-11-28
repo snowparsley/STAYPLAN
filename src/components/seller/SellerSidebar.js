@@ -1,11 +1,22 @@
+// src/components/seller/SellerSidebar.js
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FiHome, FiList, FiEdit3, FiBarChart2, FiLogOut } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 function SellerSidebar() {
   const { logout } = useAuth();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const location = useLocation();
+
+  const c = {
+    bg: isDark ? "#1E1D1A" : "#F8F5EF",
+    text: isDark ? "#EDE9E2" : "#4A3F35",
+    activeBg: isDark ? "#2D2B28" : "#EFE9E0",
+    border: isDark ? "#3F3C38" : "#E5E1D8",
+  };
 
   const menu = [
     { name: "대시보드", icon: <FiHome />, path: "/seller/dashboard" },
@@ -15,19 +26,14 @@ function SellerSidebar() {
     { name: "매출 통계", icon: <FiBarChart2 />, path: "/seller/sales" },
   ];
 
-  const activeStyle = {
-    background: "#EFE9E0",
-    fontWeight: 700,
-  };
-
   return (
     <div
       style={{
-        width: 220,
-        background: "#F8F5EF",
+        width: 240,
+        background: c.bg,
         height: "100vh",
-        borderRight: "1px solid #E5E1D8",
-        padding: "24px 16px",
+        borderRight: `1px solid ${c.border}`,
+        padding: "28px 18px",
         boxSizing: "border-box",
         position: "fixed",
         top: 0,
@@ -39,7 +45,7 @@ function SellerSidebar() {
           fontSize: 22,
           fontWeight: 800,
           marginBottom: 30,
-          paddingLeft: 6,
+          color: c.text,
         }}
       >
         판매자 메뉴
@@ -53,12 +59,14 @@ function SellerSidebar() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 10,
+              gap: 12,
               padding: "12px 14px",
               borderRadius: 10,
               textDecoration: "none",
-              color: "#4A3F35",
-              ...(location.pathname === m.path ? activeStyle : {}),
+              color: c.text,
+              background:
+                location.pathname === m.path ? c.activeBg : "transparent",
+              fontWeight: location.pathname === m.path ? 700 : 500,
             }}
           >
             {m.icon}
@@ -80,9 +88,12 @@ function SellerSidebar() {
             color: "#fff",
             fontWeight: 700,
             cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
           }}
         >
-          <FiLogOut style={{ marginRight: 8 }} />
+          <FiLogOut />
           로그아웃
         </button>
       </div>
