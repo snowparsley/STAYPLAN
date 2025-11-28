@@ -108,7 +108,7 @@ function ProfilePage() {
     background: c.card,
     border: `1px solid ${c.line}`,
     borderRadius: 22,
-    padding: "38px",
+    padding: "28px 22px",
     marginBottom: "48px",
     boxShadow: isDark
       ? "0 14px 28px rgba(0,0,0,0.6)"
@@ -140,7 +140,8 @@ function ProfilePage() {
       style={{
         maxWidth: 1150,
         margin: "60px auto 80px",
-        padding: "20px",
+        padding: "0 16px", // ⭐ 모바일에서도 절대 안 잘림
+        boxSizing: "border-box", // ⭐ 패딩 포함한 전체 width 계산
         color: c.text,
       }}
     >
