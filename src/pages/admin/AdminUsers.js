@@ -1,3 +1,4 @@
+// === AdminUsers.js ===
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiEdit2, FiTrash2, FiShield } from "react-icons/fi";
@@ -39,7 +40,7 @@ function AdminUsers() {
     return () => window.removeEventListener("resize", resize);
   }, []);
 
-  // 서버에서 유저 목록 가져오기 (페이징)
+  // 서버에서 유저 목록 가져오기
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -71,7 +72,6 @@ function AdminUsers() {
     fetchUsers();
   }, [page]);
 
-  // 유저 삭제
   const deleteUser = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -94,7 +94,6 @@ function AdminUsers() {
     }
   };
 
-  // 권한 뱃지 UI
   const RoleBadge = ({ role }) => {
     const style = {
       padding: "4px 10px",
@@ -149,7 +148,6 @@ function AdminUsers() {
 
       {!loading && !error && (
         <>
-          {/* 📱 모바일 UI */}
           {isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {users.length === 0 ? (
@@ -224,7 +222,6 @@ function AdminUsers() {
               )}
             </div>
           ) : (
-            /* 🖥 데스크탑 UI */
             <div
               style={{
                 background: c.card,
@@ -296,7 +293,6 @@ function AdminUsers() {
         </>
       )}
 
-      {/* 📌 페이지네이션 */}
       <div
         style={{
           marginTop: 26,
@@ -347,7 +343,6 @@ const editBtn = (c) => ({
   cursor: "pointer",
   color: c.text,
   fontSize: 16,
-  boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
 });
 
 const deleteBtn = {

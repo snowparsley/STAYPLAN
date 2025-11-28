@@ -1,22 +1,18 @@
+// === AdminReservations.js ===
 import React, { useEffect, useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../contexts/AuthContext";
 
 function AdminReservations() {
-  // 데이터
   const [reservations, setReservations] = useState([]);
   const [total, setTotal] = useState(0);
 
-  // 로딩/에러
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // 페이징
   const [page, setPage] = useState(1);
   const limit = 10;
 
-  // 반응형
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= 768 : false
   );
@@ -24,7 +20,6 @@ function AdminReservations() {
   const { theme } = useTheme();
   const { token } = useAuth();
 
-  // 다크모드 색상
   const isDark = theme === "dark";
 
   const c = {
@@ -38,7 +33,6 @@ function AdminReservations() {
       : "0 6px 18px rgba(0,0,0,0.06)",
   };
 
-  // 모바일 감지
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", onResize);
@@ -46,7 +40,6 @@ function AdminReservations() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // 데이터 fetch
   const fetchReservations = async () => {
     try {
       setLoading(true);
@@ -63,8 +56,8 @@ function AdminReservations() {
         setError(data.message || "예약 목록을 불러오지 못했습니다.");
         setReservations([]);
       } else {
-        setReservations(Array.isArray(data.data) ? data.data : []);
-        setTotal(data.total ?? 0);
+        setReservations(data.data || []);
+        setTotal(data.total || 0);
       }
     } catch (err) {
       setError("서버 연결 오류");
@@ -78,7 +71,6 @@ function AdminReservations() {
     fetchReservations();
   }, [page]);
 
-  // 예약 삭제
   const deleteReservation = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -102,14 +94,12 @@ function AdminReservations() {
     }
   };
 
-  // 상태 뱃지
   const StatusBadge = ({ status }) => {
     const style = {
       padding: "4px 10px",
       borderRadius: 12,
       fontSize: 12,
       fontWeight: 700,
-      textTransform: "uppercase",
     };
 
     if (status === "paid")
@@ -133,7 +123,6 @@ function AdminReservations() {
     );
   };
 
-  // 페이지 개수
   const totalPages = Math.ceil(total / limit);
 
   return (
@@ -161,7 +150,6 @@ function AdminReservations() {
 
       {!loading && !error && (
         <>
-          {/* 📱 모바일 UI */}
           {isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {reservations.length === 0 ? (
@@ -203,14 +191,14 @@ function AdminReservations() {
                     </div>
 
                     <div style={{ color: c.sub }}>
-                      체크인 :{" "}
+                      체크인 :
                       <span style={{ color: c.text }}>
                         {r.check_in?.slice(0, 10)}
                       </span>
                     </div>
 
                     <div style={{ color: c.sub }}>
-                      금액 :{" "}
+                      금액 :
                       <span style={{ color: c.text }}>
                         {r.total_price?.toLocaleString()}원
                       </span>
@@ -231,7 +219,6 @@ function AdminReservations() {
               )}
             </div>
           ) : (
-            /* 🖥 데스크탑 테이블 UI */
             <div
               style={{
                 background: c.card,
@@ -288,7 +275,6 @@ function AdminReservations() {
             </div>
           )}
 
-          {/* 📌 페이지네이션 */}
           <div
             style={{
               display: "flex",
