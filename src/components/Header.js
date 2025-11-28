@@ -11,6 +11,7 @@ import {
   FiUserCheck,
   FiMoon,
   FiSun,
+  FiBell,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -223,6 +224,15 @@ function Header() {
                       <FiUserCheck /> 설정
                     </Link>
 
+                    {/* ⭐ 공지사항 추가 */}
+                    <Link
+                      to="/notices"
+                      className="dropdown-item"
+                      style={dropItem(colors)}
+                    >
+                      <FiBell /> 공지사항
+                    </Link>
+
                     <hr
                       style={{
                         border: 0,
@@ -255,7 +265,6 @@ function Header() {
           transition: 0.2s;
         }
 
-        /* 버튼 기본 테두리 제거 */
         button {
           border: none !important;
           outline: none !important;
@@ -270,7 +279,6 @@ function Header() {
           box-shadow: none !important;
         }
 
-        /* 드롭다운 항목 모든 상태에서 테두리 제거 */
         .dropdown-item,
         .dropdown-item:focus,
         .dropdown-item:active,
@@ -296,11 +304,9 @@ const dropItem = (colors) => ({
   fontSize: 15,
   cursor: "pointer",
   textDecoration: "none",
-
   border: "none",
   outline: "none",
   boxShadow: "none",
-
   transition: "0.2s",
 });
 
