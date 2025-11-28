@@ -7,21 +7,29 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // ---------------------------
+  //  세션에서 로그인 정보 불러오기
+  // ---------------------------
   useEffect(() => {
     const storedUser = sessionStorage.getItem("user");
     const storedToken = sessionStorage.getItem("token");
 
     if (storedUser) {
-      const parsed = JSON.parse(storedUser);
-      setUser(parsed);
+      setUser(JSON.parse(storedUser));
     }
 
-    if (storedToken) setToken(storedToken);
+    if (storedToken) {
+      setToken(storedToken);
+    }
 
     setLoading(false);
   }, []);
 
-  const login = async (userId, password) => {
+  // ---------------------------
+  //      로그인 처리
+  //  navigate 전달 방식으로 수정
+  // ---------------------------
+  const login = async (userId, password, navigate) => {
     try {
       const res = await fetch("https://stayplanserver.onrender.com/api/login", {
         method: "POST",
@@ -36,13 +44,13 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      // ⭐ 서버에서 받은 user 정보만 정확히 저장
+      // 유저 정보 저장
       const safeUser = {
         id: data.user.id,
         user_id: data.user.user_id,
         name: data.user.name,
         email: data.user.email,
-        role: data.user.role, // admin / seller / user
+        role: data.user.role, // admin | seller | user
       };
 
       sessionStorage.setItem("user", JSON.stringify(safeUser));
@@ -53,10 +61,12 @@ export const AuthProvider = ({ children }) => {
 
       alert(data.message);
 
-      // ⭐ 역할 기반 리디렉션
-      if (safeUser.role === "admin") window.location.href = "/admin";
-      else if (safeUser.role === "seller") window.location.href = "/seller";
-      else window.location.href = "/";
+      // ---------------------------
+      //   ⭐ SPA navigate로 이동
+      // ---------------------------
+      if (safeUser.role === "admin") navigate("/admin");
+      else if (safeUser.role === "seller") navigate("/seller");
+      else navigate("/");
 
       return true;
     } catch (err) {
@@ -65,14 +75,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ---------------------------
+  //      로그아웃
+  // ---------------------------
   const logout = () => {
     sessionStorage.removeItem("user");
     sessionStorage.removeItem("token");
-
     setUser(null);
     setToken(null);
   };
 
+  // ---------------------------
+  //   유저 정보 업데이트
+  // ---------------------------
   const updateUser = (newUser) => {
     const savedToken = sessionStorage.getItem("token");
 

@@ -23,8 +23,9 @@ function LoginPage() {
       return;
     }
 
-    const success = await login(userId, password);
-    if (success) navigate("/");
+    // ⭐ navigate 전달
+    const success = await login(userId, password, navigate);
+    if (!success) return;
   };
 
   const pageBg = isDark ? "#1F1E1C" : "#FAF7F0";
