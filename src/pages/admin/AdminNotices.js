@@ -12,7 +12,7 @@ function AdminNotices() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const [page, setPage] = useState(1);
-  const limit = 15;
+  const limit = 10;
 
   const { theme } = useTheme();
   const { token } = useAuth();

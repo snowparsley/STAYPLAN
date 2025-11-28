@@ -5,13 +5,18 @@ import { motion } from "framer-motion";
 
 function NoticesPage() {
   const [notices, setNotices] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const [page, setPage] = useState(1);
+  const limit = 10;
+
   const navigate = useNavigate();
   const { theme } = useTheme();
 
   const isDark = theme === "dark";
 
   const colors = {
-    bg: isDark ? "#1F1E1C" : "#FAF7F0", // 전체 배경 단일색
+    bg: isDark ? "#1F1E1C" : "#FAF7F0",
     card: isDark ? "#2A2926" : "#FFFFFF",
     border: isDark ? "#4A4743" : "#E6E1D8",
     text: isDark ? "#EFEDE8" : "#4A3F35",
@@ -22,17 +27,29 @@ function NoticesPage() {
       : "0 4px 14px rgba(0,0,0,0.06)",
   };
 
+  // 📌 공지사항 가져오기 (페이징)
+  const fetchNotices = async () => {
+    const res = await fetch(
+      `https://stayplanserver.onrender.com/api/notices?page=${page}&limit=${limit}`
+    );
+
+    const data = await res.json();
+
+    setNotices(data.data || []);
+    setTotal(data.total || 0);
+  };
+
   useEffect(() => {
-    fetch("https://stayplanserver.onrender.com/api/notices")
-      .then((res) => res.json())
-      .then((data) => setNotices(data));
-  }, []);
+    fetchNotices();
+  }, [page]);
+
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: colors.bg, // 전체 단일 배경
+        background: colors.bg,
         padding: "40px 20px",
       }}
     >
@@ -95,6 +112,59 @@ function NoticesPage() {
               </p>
             </motion.div>
           ))}
+        </div>
+
+        {/* 📌 페이지네이션 */}
+        <div
+          style={{
+            marginTop: 26,
+            display: "flex",
+            justifyContent: "center",
+            gap: 16,
+          }}
+        >
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            style={{
+              padding: "10px 20px",
+              borderRadius: 10,
+              background: page === 1 ? colors.border : colors.card,
+              border: `1px solid ${colors.border}`,
+              cursor: page === 1 ? "not-allowed" : "pointer",
+              color: page === 1 ? colors.sub : colors.text,
+              fontWeight: 700,
+            }}
+          >
+            ← 이전
+          </button>
+
+          <span
+            style={{
+              padding: "10px 20px",
+              color: colors.sub,
+              fontWeight: 700,
+              fontSize: 14,
+            }}
+          >
+            {page} / {totalPages}
+          </span>
+
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            style={{
+              padding: "10px 20px",
+              borderRadius: 10,
+              background: page >= totalPages ? colors.border : colors.card,
+              border: `1px solid ${colors.border}`,
+              cursor: page >= totalPages ? "not-allowed" : "pointer",
+              color: page >= totalPages ? colors.sub : colors.text,
+              fontWeight: 700,
+            }}
+          >
+            다음 →
+          </button>
         </div>
       </div>
     </div>

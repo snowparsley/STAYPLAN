@@ -14,7 +14,7 @@ function AdminReservations() {
 
   // 페이징
   const [page, setPage] = useState(1);
-  const limit = 15;
+  const limit = 10;
 
   // 반응형
   const [isMobile, setIsMobile] = useState(
