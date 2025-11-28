@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SellerLayout from "./components/SellerLayout";
+import SellerLayout from "../../components/seller/SellerLayout";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
