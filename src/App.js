@@ -19,6 +19,10 @@ import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
 import ReservationComplete from "./pages/ReservationComplete";
 
+// ⭐ 공지사항 페이지
+import NoticesPage from "./pages/NoticesPage";
+import NoticeDetailPage from "./pages/NoticeDetailPage";
+
 // 관리자 컴포넌트
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
