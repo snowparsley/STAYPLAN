@@ -6,53 +6,58 @@ import { useAuth } from "../../contexts/AuthContext";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const [page, setPage] = useState(1);
+  const limit = 20;
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 768 : false
-  );
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { token } = useAuth();
 
   const isDark = theme === "dark";
+
   const c = {
-    bg: isDark ? "#2A2926" : "#F7F5EF",
-    card: isDark ? "#34322D" : "#FFFFFF",
+    bg: isDark ? "#1F1E1C" : "#FAF7F0",
+    card: isDark ? "#2A2926" : "#FFFFFF",
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#CFCAC0" : "#7A746D",
     line: isDark ? "#3F3C38" : "#E5E1D8",
+    shadow: isDark
+      ? "0 6px 18px rgba(0,0,0,0.35)"
+      : "0 6px 18px rgba(0,0,0,0.06)",
   };
 
-  // 화면 크기 감지
+  // 반응형 감지
   useEffect(() => {
-    const handleResize = () => {
-      if (typeof window === "undefined") return;
-      setIsMobile(window.innerWidth <= 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const resize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
   }, []);
 
-  // 유저 목록 불러오기
+  // 서버에서 유저 목록 가져오기 (페이징)
   const fetchUsers = async () => {
     try {
       setLoading(true);
       setError("");
 
       const res = await fetch(
-        "https://stayplanserver.onrender.com/api/admin/users",
+        `https://stayplanserver.onrender.com/api/admin/users?page=${page}&limit=${limit}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const data = await res.json();
+
       if (!res.ok) {
         setError(data.message || "유저 목록을 불러오지 못했습니다.");
         setUsers([]);
       } else {
-        setUsers(Array.isArray(data) ? data : []);
+        setUsers(data.data || []);
+        setTotal(data.total || 0);
       }
     } catch {
       setError("서버 연결 오류");
@@ -64,7 +69,7 @@ function AdminUsers() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page]);
 
   // 유저 삭제
   const deleteUser = async (id) => {
@@ -89,9 +94,7 @@ function AdminUsers() {
     }
   };
 
-  // ---------------------------
-  // 🔥 권한 뱃지 컴포넌트
-  // ---------------------------
+  // 권한 뱃지 UI
   const RoleBadge = ({ role }) => {
     const style = {
       padding: "4px 10px",
@@ -124,23 +127,29 @@ function AdminUsers() {
     );
   };
 
-  // ---------------------------
-  // 출력 UI
-  // ---------------------------
+  const totalPages = Math.ceil(total / limit);
+
   return (
-    <main style={{ padding: "20px", color: c.text }}>
-      <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 28 }}>
+    <main
+      style={{
+        padding: "20px",
+        background: c.bg,
+        color: c.text,
+        minHeight: "100vh",
+      }}
+    >
+      <h2 style={{ fontSize: 26, fontWeight: 800, marginBottom: 28 }}>
         유저 관리
       </h2>
 
       {loading && <p style={{ color: c.sub }}>불러오는 중...</p>}
       {error && (
-        <p style={{ fontSize: 16, color: "red", marginBottom: 16 }}>{error}</p>
+        <p style={{ fontSize: 15, color: "red", marginBottom: 16 }}>{error}</p>
       )}
 
       {!loading && !error && (
         <>
-          {/* 모바일 UI */}
+          {/* 📱 모바일 UI */}
           {isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {users.length === 0 ? (
@@ -151,21 +160,20 @@ function AdminUsers() {
                     key={u.id}
                     style={{
                       background: c.card,
-                      borderRadius: 12,
-                      padding: "14px 16px",
+                      borderRadius: 14,
+                      padding: "16px 18px",
                       border: `1px solid ${c.line}`,
-                      boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                      boxShadow: c.shadow,
                       display: "flex",
                       flexDirection: "column",
                       gap: 6,
-                      fontSize: 14,
                     }}
                   >
                     <div
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
-                        marginBottom: 6,
+                        marginBottom: 4,
                         fontWeight: 700,
                       }}
                     >
@@ -174,7 +182,8 @@ function AdminUsers() {
                     </div>
 
                     <div style={{ color: c.sub }}>
-                      ID : <span style={{ color: c.text }}>{u.user_id}</span>
+                      유저 ID :{" "}
+                      <span style={{ color: c.text }}>{u.user_id}</span>
                     </div>
                     <div style={{ color: c.sub }}>
                       이름 : <span style={{ color: c.text }}>{u.name}</span>
@@ -193,12 +202,12 @@ function AdminUsers() {
                       style={{
                         display: "flex",
                         justifyContent: "flex-end",
-                        marginTop: 10,
                         gap: 10,
+                        marginTop: 10,
                       }}
                     >
                       <button
-                        style={editBtn}
+                        style={editBtn(c)}
                         onClick={() => navigate(`/admin/users/edit/${u.id}`)}
                       >
                         <FiEdit2 />
@@ -215,14 +224,14 @@ function AdminUsers() {
               )}
             </div>
           ) : (
-            /* 데스크탑 UI */
+            /* 🖥 데스크탑 UI */
             <div
               style={{
                 background: c.card,
-                borderRadius: 14,
-                padding: "20px 24px",
+                borderRadius: 16,
+                padding: "22px",
                 border: `1px solid ${c.line}`,
-                boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+                boxShadow: c.shadow,
               }}
             >
               {users.length === 0 ? (
@@ -231,33 +240,37 @@ function AdminUsers() {
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                   <thead>
                     <tr style={{ borderBottom: `1px solid ${c.line}` }}>
-                      <th style={thStyle(c)}>ID</th>
-                      <th style={thStyle(c)}>유저 ID</th>
-                      <th style={thStyle(c)}>이름</th>
-                      <th style={thStyle(c)}>이메일</th>
-                      <th style={thStyle(c)}>가입일</th>
-                      <th style={thStyle(c)}>권한</th>
-                      <th style={thStyle(c)}>관리</th>
+                      <th style={th(c)}>ID</th>
+                      <th style={th(c)}>유저 ID</th>
+                      <th style={th(c)}>이름</th>
+                      <th style={th(c)}>이메일</th>
+                      <th style={th(c)}>가입일</th>
+                      <th style={th(c)}>권한</th>
+                      <th style={th(c)}>관리</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     {users.map((u) => (
-                      <tr key={u.id} style={trStyle(c)}>
+                      <tr key={u.id} style={tr(c)}>
                         <td>{u.id}</td>
                         <td>{u.user_id}</td>
                         <td>{u.name}</td>
                         <td>{u.email}</td>
                         <td>{u.created_at?.slice(0, 10)}</td>
-
                         <td>
                           <RoleBadge role={u.role} />
                         </td>
-
                         <td>
-                          <div style={{ display: "flex", gap: 12 }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: 12,
+                              justifyContent: "center",
+                            }}
+                          >
                             <button
-                              style={editBtn}
+                              style={editBtn(c)}
                               onClick={() =>
                                 navigate(`/admin/users/edit/${u.id}`)
                               }
@@ -282,40 +295,79 @@ function AdminUsers() {
           )}
         </>
       )}
+
+      {/* 📌 페이지네이션 */}
+      <div
+        style={{
+          marginTop: 26,
+          display: "flex",
+          justifyContent: "center",
+          gap: 16,
+        }}
+      >
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          style={pageBtn(page === 1, c)}
+        >
+          ← 이전
+        </button>
+
+        <button
+          disabled={page >= totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          style={pageBtn(page >= totalPages, c)}
+        >
+          다음 →
+        </button>
+      </div>
     </main>
   );
 }
 
-const thStyle = (c) => ({
-  padding: "14px 0",
+const th = (c) => ({
+  padding: "12px 0",
   fontSize: 15,
   color: c.sub,
   fontWeight: 700,
 });
 
-const trStyle = (c) => ({
+const tr = (c) => ({
   textAlign: "center",
   borderBottom: `1px solid ${c.line}`,
-  height: 60,
+  height: 56,
   color: c.text,
 });
 
-const editBtn = {
-  background: "#fff",
-  border: "1px solid #c7c2ba",
-  borderRadius: 6,
-  padding: "6px 10px",
+const editBtn = (c) => ({
+  background: c.card,
+  border: `1px solid ${c.line}`,
+  borderRadius: 8,
+  padding: "7px 11px",
   cursor: "pointer",
-  color: "#6f5f55",
-};
+  color: c.text,
+  fontSize: 16,
+  boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+});
 
 const deleteBtn = {
   background: "#B33A3A",
   border: "none",
-  borderRadius: 6,
-  padding: "6px 10px",
+  borderRadius: 8,
+  padding: "7px 11px",
   cursor: "pointer",
   color: "#fff",
+  fontSize: 16,
 };
+
+const pageBtn = (disabled, c) => ({
+  padding: "10px 20px",
+  borderRadius: 10,
+  background: disabled ? c.line : c.card,
+  border: `1px solid ${c.line}`,
+  cursor: disabled ? "not-allowed" : "pointer",
+  color: disabled ? c.sub : c.text,
+  fontWeight: 700,
+});
 
 export default AdminUsers;

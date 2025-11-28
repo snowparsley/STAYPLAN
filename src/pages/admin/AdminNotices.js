@@ -6,10 +6,13 @@ import { useAuth } from "../../contexts/AuthContext";
 
 function AdminNotices() {
   const [notices, setNotices] = useState([]);
+  const [total, setTotal] = useState(0);
+
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth <= 768 : false
-  );
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  const [page, setPage] = useState(1);
+  const limit = 15;
 
   const { theme } = useTheme();
   const { token } = useAuth();
@@ -18,27 +21,28 @@ function AdminNotices() {
   const isDark = theme === "dark";
 
   const c = {
-    card: isDark ? "#34322D" : "#FFFFFF",
+    bg: isDark ? "#1F1E1C" : "#FAF7F0",
+    card: isDark ? "#2A2926" : "#FFFFFF",
+    line: isDark ? "#3F3C38" : "#E5E1D8",
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#CFCAC0" : "#7A746D",
-    line: isDark ? "#3F3C38" : "#E5E1D8",
+    shadow: isDark
+      ? "0 6px 18px rgba(0,0,0,0.4)"
+      : "0 6px 18px rgba(0,0,0,0.06)",
   };
 
-  // 모바일 감지
+  // 반응형 감지
   useEffect(() => {
-    const onResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    window.addEventListener("resize", onResize);
-    onResize();
-    return () => window.removeEventListener("resize", onResize);
+    const resize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
   }, []);
 
-  // 공지 목록 가져오기
+  // 공지 가져오기
   const fetchNotices = async () => {
     try {
       const res = await fetch(
-        "https://stayplanserver.onrender.com/api/admin/notices",
+        `https://stayplanserver.onrender.com/api/admin/notices?page=${page}&limit=${limit}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -49,7 +53,8 @@ function AdminNotices() {
         return;
       }
 
-      setNotices(data);
+      setNotices(data.data || []);
+      setTotal(data.total || 0);
       setLoading(false);
     } catch (err) {
       alert("서버 연결 실패");
@@ -58,8 +63,9 @@ function AdminNotices() {
 
   useEffect(() => {
     fetchNotices();
-  }, []);
+  }, [page]);
 
+  // 삭제
   const deleteNotice = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -77,23 +83,33 @@ function AdminNotices() {
 
       alert("삭제 완료");
       fetchNotices();
-    } catch (err) {
+    } catch {
       alert("서버 오류: 삭제 실패");
     }
   };
 
+  // 총 페이지 수 계산
+  const totalPages = Math.ceil(total / limit);
+
   return (
-    <main style={{ padding: "20px", color: c.text }}>
-      {/* 상단 헤더 */}
+    <main
+      style={{
+        padding: "20px",
+        background: c.bg,
+        color: c.text,
+        minHeight: "100vh",
+      }}
+    >
+      {/* 헤더 */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
           marginBottom: 20,
+          alignItems: "center",
         }}
       >
-        <h2 style={{ fontSize: 22, fontWeight: 800 }}>공지사항 관리</h2>
+        <h2 style={{ fontSize: 26, fontWeight: 800 }}>공지사항 관리</h2>
 
         <button
           onClick={() => navigate("/admin/notices/new")}
@@ -105,55 +121,46 @@ function AdminNotices() {
             background: "#A47A6B",
             color: "#fff",
             border: "none",
-            borderRadius: 10,
-            cursor: "pointer",
+            borderRadius: 12,
             fontWeight: 700,
-            fontSize: 14,
+            cursor: "pointer",
+            boxShadow: c.shadow,
           }}
         >
-          <FiPlus /> 공지 작성
+          <FiPlus /> 새 공지
         </button>
       </div>
 
-      {/*  모바일 */}
+      {/* 📱 모바일 UI */}
       {isMobile ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {loading ? (
             <p style={{ color: c.sub }}>불러오는 중...</p>
           ) : notices.length === 0 ? (
-            <p style={{ color: c.sub }}>등록된 공지사항이 없습니다.</p>
+            <p style={{ color: c.sub }}>등록된 공지가 없습니다.</p>
           ) : (
             notices.map((n) => (
               <div
                 key={n.id}
                 style={{
                   background: c.card,
-                  borderRadius: 12,
+                  borderRadius: 14,
                   padding: "16px 18px",
                   border: `1px solid ${c.line}`,
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
+                  boxShadow: c.shadow,
                   display: "flex",
                   flexDirection: "column",
-                  gap: 6,
+                  gap: 8,
                 }}
               >
-                <div
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 700,
-                    marginBottom: 4,
-                    color: c.text,
-                  }}
-                >
-                  {n.title}
+                <div style={{ fontSize: 17, fontWeight: 700 }}>{n.title}</div>
+
+                <div style={{ color: c.sub, fontSize: 13 }}>
+                  작성일: {n.created_at?.slice(0, 10)}
                 </div>
 
-                <div style={{ fontSize: 13, color: c.sub }}>
-                  작성일 : {n.created_at?.slice(0, 10)}
-                </div>
-
-                <div style={{ fontSize: 13, color: c.sub }}>
-                  상태 :{" "}
+                <div style={{ color: c.sub, fontSize: 13 }}>
+                  상태:{" "}
                   <span style={{ color: c.text }}>
                     {n.visible ? "공개" : "비공개"}
                   </span>
@@ -164,7 +171,6 @@ function AdminNotices() {
                     display: "flex",
                     justifyContent: "flex-end",
                     gap: 10,
-                    marginTop: 10,
                   }}
                 >
                   <button
@@ -183,26 +189,25 @@ function AdminNotices() {
           )}
         </div>
       ) : (
-        //  데스크탑
+        // 🖥 데스크탑 UI
         <div
           style={{
             background: c.card,
-            borderRadius: 14,
-            padding: "20px 24px",
+            borderRadius: 16,
+            padding: "22px",
             border: `1px solid ${c.line}`,
-            boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-            overflowX: "auto",
+            boxShadow: c.shadow,
           }}
         >
           {loading ? (
             <p style={{ color: c.sub }}>불러오는 중...</p>
           ) : notices.length === 0 ? (
-            <p style={{ color: c.sub }}>등록된 공지사항이 없습니다.</p>
+            <p style={{ color: c.sub }}>등록된 공지가 없습니다.</p>
           ) : (
             <table
               style={{
                 width: "100%",
-                minWidth: 650,
+                minWidth: 700,
                 borderCollapse: "collapse",
               }}
             >
@@ -228,8 +233,8 @@ function AdminNotices() {
                       <div
                         style={{
                           display: "flex",
-                          gap: 12,
                           justifyContent: "center",
+                          gap: 12,
                         }}
                       >
                         <button
@@ -256,6 +261,32 @@ function AdminNotices() {
           )}
         </div>
       )}
+
+      {/* 📌 페이지네이션 */}
+      <div
+        style={{
+          marginTop: 25,
+          display: "flex",
+          justifyContent: "center",
+          gap: 16,
+        }}
+      >
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          style={pageBtn(page === 1, c)}
+        >
+          ← 이전
+        </button>
+
+        <button
+          disabled={page >= totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          style={pageBtn(page >= totalPages, c)}
+        >
+          다음 →
+        </button>
+      </div>
     </main>
   );
 }
@@ -277,21 +308,32 @@ const tr = (c) => ({
 const editBtn = (c) => ({
   background: c.card,
   border: `1px solid ${c.line}`,
-  borderRadius: 6,
-  padding: "6px 10px",
+  borderRadius: 8,
+  padding: "7px 11px",
   cursor: "pointer",
   color: c.text,
   fontSize: 16,
+  boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
 });
 
 const deleteBtn = {
   background: "#B33A3A",
   border: "none",
-  borderRadius: 6,
-  padding: "6px 10px",
+  borderRadius: 8,
+  padding: "7px 11px",
   cursor: "pointer",
   color: "#fff",
   fontSize: 16,
 };
+
+const pageBtn = (disabled, c) => ({
+  padding: "10px 20px",
+  borderRadius: 10,
+  background: disabled ? c.line : c.card,
+  border: `1px solid ${c.line}`,
+  cursor: disabled ? "not-allowed" : "pointer",
+  color: disabled ? c.sub : c.text,
+  fontWeight: 700,
+});
 
 export default AdminNotices;
