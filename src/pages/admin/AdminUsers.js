@@ -26,7 +26,6 @@ function AdminUsers() {
   };
 
   // 화면 크기 감지
-
   useEffect(() => {
     const handleResize = () => {
       if (typeof window === "undefined") return;
@@ -37,8 +36,7 @@ function AdminUsers() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  //유저 목록 불러오기
-
+  // 유저 목록 불러오기
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -69,7 +67,6 @@ function AdminUsers() {
   }, []);
 
   // 유저 삭제
-
   const deleteUser = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -92,8 +89,44 @@ function AdminUsers() {
     }
   };
 
-  // 화면 출력
+  // ---------------------------
+  // 🔥 권한 뱃지 컴포넌트
+  // ---------------------------
+  const RoleBadge = ({ role }) => {
+    const style = {
+      padding: "4px 10px",
+      borderRadius: 10,
+      fontWeight: 700,
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 4,
+      fontSize: 13,
+    };
 
+    if (role === "admin")
+      return (
+        <span style={{ ...style, background: "#d5e8ff", color: "#003b7a" }}>
+          <FiShield /> 관리자
+        </span>
+      );
+
+    if (role === "seller")
+      return (
+        <span style={{ ...style, background: "#ffe7c2", color: "#9a6200" }}>
+          판매자
+        </span>
+      );
+
+    return (
+      <span style={{ ...style, background: "#ddf8d8", color: "#2d7a32" }}>
+        일반
+      </span>
+    );
+  };
+
+  // ---------------------------
+  // 출력 UI
+  // ---------------------------
   return (
     <main style={{ padding: "20px", color: c.text }}>
       <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 28 }}>
@@ -107,7 +140,7 @@ function AdminUsers() {
 
       {!loading && !error && (
         <>
-          {/*  모바일 UI */}
+          {/* 모바일 UI */}
           {isMobile ? (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {users.length === 0 ? (
@@ -137,13 +170,7 @@ function AdminUsers() {
                       }}
                     >
                       <span>유저 #{u.id}</span>
-                      {u.admin ? (
-                        <span style={adminBadge}>
-                          <FiShield /> 관리자
-                        </span>
-                      ) : (
-                        <span style={userBadge}>일반</span>
-                      )}
+                      <RoleBadge role={u.role} />
                     </div>
 
                     <div style={{ color: c.sub }}>
@@ -224,13 +251,7 @@ function AdminUsers() {
                         <td>{u.created_at?.slice(0, 10)}</td>
 
                         <td>
-                          {u.admin ? (
-                            <span style={adminBadge}>
-                              <FiShield /> 관리자
-                            </span>
-                          ) : (
-                            <span style={userBadge}>일반</span>
-                          )}
+                          <RoleBadge role={u.role} />
                         </td>
 
                         <td>
@@ -278,25 +299,6 @@ const trStyle = (c) => ({
   height: 60,
   color: c.text,
 });
-
-const adminBadge = {
-  background: "#d5e8ff",
-  color: "#003b7a",
-  padding: "4px 10px",
-  borderRadius: 10,
-  fontWeight: 700,
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 4,
-};
-
-const userBadge = {
-  background: "#EFE8D8",
-  color: "#6A645B",
-  padding: "4px 10px",
-  borderRadius: 10,
-  fontWeight: 700,
-};
 
 const editBtn = {
   background: "#fff",

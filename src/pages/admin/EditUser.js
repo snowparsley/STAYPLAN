@@ -22,13 +22,14 @@ function EditUser() {
     user_id: "",
     name: "",
     email: "",
-    admin: false,
+    role: "user",
     newPassword: "",
     confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(true);
 
+  // 유저 정보 불러오기
   const fetchUser = async () => {
     try {
       const res = await fetch(
@@ -48,7 +49,7 @@ function EditUser() {
         user_id: data.user_id,
         name: data.name,
         email: data.email,
-        admin: data.admin === 1,
+        role: data.role,
         newPassword: "",
         confirmPassword: "",
       });
@@ -65,13 +66,11 @@ function EditUser() {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 유저 정보 저장
   const saveUser = async () => {
     if (!form.user_id.trim()) return alert("유저 ID를 입력해주세요.");
     if (!form.name.trim()) return alert("이름을 입력해주세요.");
@@ -93,7 +92,7 @@ function EditUser() {
             user_id: form.user_id,
             name: form.name,
             email: form.email,
-            admin: form.admin ? 1 : 0,
+            role: form.role,
           }),
         }
       );
@@ -108,6 +107,7 @@ function EditUser() {
     }
   };
 
+  // 비밀번호 재설정
   const resetPassword = async () => {
     if (form.newPassword.length < 4)
       return alert("비밀번호는 최소 4자리 이상이어야 합니다.");
@@ -172,6 +172,7 @@ function EditUser() {
           boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
         }}
       >
+        {/* 유저 ID */}
         <label style={label(c)}>유저 ID</label>
         <input
           name="user_id"
@@ -180,6 +181,7 @@ function EditUser() {
           style={input(c)}
         />
 
+        {/* 이름 */}
         <label style={label(c)}>이름</label>
         <input
           name="name"
@@ -188,6 +190,7 @@ function EditUser() {
           style={input(c)}
         />
 
+        {/* 이메일 */}
         <label style={label(c)}>이메일</label>
         <input
           name="email"
@@ -196,25 +199,31 @@ function EditUser() {
           style={input(c)}
         />
 
-        <label style={label(c)}>관리자 권한</label>
-        <div style={{ marginBottom: 18 }}>
-          <input
-            type="checkbox"
-            name="admin"
-            checked={form.admin}
-            onChange={handleChange}
-            style={{ marginRight: 8 }}
-          />
-          <span style={{ color: c.text }}>관리자로 설정</span>
-        </div>
+        {/* 역할 선택 */}
+        <label style={label(c)}>권한 설정</label>
+        <select
+          name="role"
+          value={form.role}
+          onChange={handleChange}
+          style={{
+            ...input(c),
+            cursor: "pointer",
+            height: 46,
+          }}
+        >
+          <option value="user">일반 사용자</option>
+          <option value="seller">판매자</option>
+          <option value="admin">관리자</option>
+        </select>
 
+        {/* 비밀번호 재설정 */}
         <h3
           style={{
-            marginTop: 25,
-            marginBottom: 10,
-            color: c.text,
+            marginTop: 32,
+            marginBottom: 12,
             fontSize: 18,
             fontWeight: 700,
+            color: c.text,
           }}
         >
           비밀번호 재설정
@@ -227,7 +236,6 @@ function EditUser() {
           value={form.newPassword}
           onChange={handleChange}
           style={input(c)}
-          placeholder="새 비밀번호 입력"
         />
 
         <label style={label(c)}>비밀번호 확인</label>
@@ -237,7 +245,6 @@ function EditUser() {
           value={form.confirmPassword}
           onChange={handleChange}
           style={input(c)}
-          placeholder="다시 입력"
         />
 
         <button style={resetBtn} onClick={resetPassword}>
