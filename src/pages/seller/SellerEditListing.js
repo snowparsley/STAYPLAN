@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useParams } from "react-router-dom";
+import SellerLayout from "../../components/seller/SellerLayout";
 
 function SellerEditListing() {
   const { token } = useAuth();

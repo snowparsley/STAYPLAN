@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import SellerLayout from "../../components/seller/SellerLayout";
 
 function SellerListings() {
   const { token } = useAuth();

@@ -1,6 +1,7 @@
 // src/pages/seller/SellerAddListing.js
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import SellerLayout from "../../components/seller/SellerLayout";
 
 function SellerAddListing() {
   const { token } = useAuth();

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import SellerLayout from "../../components/seller/SellerLayout";
 
 function SellerSales() {
   const { token } = useAuth();
