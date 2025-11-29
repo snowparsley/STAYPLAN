@@ -8,26 +8,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // ---------------------------
-  //  세션에서 로그인 정보 불러오기
+  //  localStorage에서 로그인 정보 불러오기
   // ---------------------------
   useEffect(() => {
-    const storedUser = sessionStorage.getItem("user");
-    const storedToken = sessionStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedToken) setToken(storedToken);
 
     setLoading(false);
   }, []);
 
   // ---------------------------
   //      로그인 처리
-  //  navigate 전달 방식으로 수정
   // ---------------------------
   const login = async (userId, password, navigate) => {
     try {
@@ -44,26 +38,23 @@ export const AuthProvider = ({ children }) => {
         return false;
       }
 
-      // 유저 정보 저장
       const safeUser = {
         id: data.user.id,
         user_id: data.user.user_id,
         name: data.user.name,
         email: data.user.email,
-        role: data.user.role, // admin | seller | user
+        role: data.user.role,
       };
 
-      sessionStorage.setItem("user", JSON.stringify(safeUser));
-      sessionStorage.setItem("token", data.token);
+      // ⭐ localStorage 저장
+      localStorage.setItem("user", JSON.stringify(safeUser));
+      localStorage.setItem("token", data.token);
 
       setUser(safeUser);
       setToken(data.token);
 
       alert(data.message);
 
-      // ---------------------------
-      //   ⭐ SPA navigate로 이동
-      // ---------------------------
       if (safeUser.role === "admin") navigate("/admin");
       else if (safeUser.role === "seller") navigate("/seller");
       else navigate("/");
@@ -79,17 +70,17 @@ export const AuthProvider = ({ children }) => {
   //      로그아웃
   // ---------------------------
   const logout = () => {
-    sessionStorage.removeItem("user");
-    sessionStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
     setToken(null);
   };
 
   // ---------------------------
-  //   유저 정보 업데이트
+  //      유저 정보 업데이트
   // ---------------------------
   const updateUser = (newUser) => {
-    const savedToken = sessionStorage.getItem("token");
+    const savedToken = localStorage.getItem("token");
 
     const updated = {
       ...user,
@@ -99,7 +90,8 @@ export const AuthProvider = ({ children }) => {
 
     setUser(updated);
     setToken(savedToken);
-    sessionStorage.setItem("user", JSON.stringify(updated));
+
+    localStorage.setItem("user", JSON.stringify(updated));
   };
 
   return (
