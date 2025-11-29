@@ -40,7 +40,6 @@ import SellerListings from "./pages/seller/SellerListings";
 import SellerAddListing from "./pages/seller/SellerAddListing";
 import SellerEditListing from "./pages/seller/SellerEditListing";
 import SellerReservations from "./pages/seller/SellerReservations";
-import SellerSales from "./pages/seller/SellerSales";
 
 // 공용 컴포넌트
 import Header from "./components/Header";
