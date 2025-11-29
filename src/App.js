@@ -1,3 +1,51 @@
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
+import { useAuth } from "./contexts/AuthContext";
+
+// 공용 페이지
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import ReservationsPage from "./pages/ReservationsPage";
+import ListingDetailPage from "./pages/ListingDetailPage";
+import PaymentPage from "./pages/PaymentPage";
+import ReservationComplete from "./pages/ReservationComplete";
+
+// 공지사항
+import NoticesPage from "./pages/NoticesPage";
+import NoticeDetailPage from "./pages/NoticeDetailPage";
+
+// 관리자
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminListings from "./pages/admin/AdminListings";
+import AdminReservations from "./pages/admin/AdminReservations";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminNotices from "./pages/admin/AdminNotices";
+import AdminNoticeNew from "./pages/admin/AdminNoticeNew";
+import AdminNoticeEdit from "./pages/admin/AdminNoticeEdit";
+import EditUser from "./pages/admin/EditUser";
+
+// 판매자
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import SellerListings from "./pages/seller/SellerListings";
+import SellerAddListing from "./pages/seller/SellerAddListing";
+import SellerEditListing from "./pages/seller/SellerEditListing";
+import SellerReservations from "./pages/seller/SellerReservations";
+import SellerSales from "./pages/seller/SellerSales";
+
+// 공용
+import Header from "./components/Header";
+import PrivateRoute from "./components/PrivateRoute";
+
 export default function App() {
   const { user, loading } = useAuth();
   if (loading) return null;
