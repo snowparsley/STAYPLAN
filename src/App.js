@@ -8,7 +8,7 @@ import {
 
 import { useAuth } from "./contexts/AuthContext";
 
-// 공용 페이지
+// 공용
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -19,11 +19,11 @@ import ListingDetailPage from "./pages/ListingDetailPage";
 import PaymentPage from "./pages/PaymentPage";
 import ReservationComplete from "./pages/ReservationComplete";
 
-// 공지사항
+// ⭐ 공지사항 페이지
 import NoticesPage from "./pages/NoticesPage";
 import NoticeDetailPage from "./pages/NoticeDetailPage";
 
-// 관리자
+// 관리자 컴포넌트
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminListings from "./pages/admin/AdminListings";
@@ -34,7 +34,7 @@ import AdminNoticeNew from "./pages/admin/AdminNoticeNew";
 import AdminNoticeEdit from "./pages/admin/AdminNoticeEdit";
 import EditUser from "./pages/admin/EditUser";
 
-// 판매자
+// 판매자 컴포넌트
 import SellerDashboard from "./pages/seller/SellerDashboard";
 import SellerListings from "./pages/seller/SellerListings";
 import SellerAddListing from "./pages/seller/SellerAddListing";
@@ -42,144 +42,178 @@ import SellerEditListing from "./pages/seller/SellerEditListing";
 import SellerReservations from "./pages/seller/SellerReservations";
 import SellerSales from "./pages/seller/SellerSales";
 
-// 공용
+// 공용 컴포넌트
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 
-export default function App() {
+function App() {
   const { user, loading } = useAuth();
+
   if (loading) return null;
 
-  return (
-    <Router>
-      {/* 일반 유저만 Header 보임 */}
-      {user?.role !== "admin" && user?.role !== "seller" && <Header />}
-
-      <Routes>
-        {/* ======================== */}
-        {/*        ⭐ 관리자 라우트   */}
-        {/* ======================== */}
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute adminOnly>
+  // ==========================
+  // ⭐ 관리자 라우트
+  // ==========================
+  if (user?.role === "admin") {
+    return (
+      <Router>
+        <Routes>
+          <Route
+            path="/admin"
+            element={
               <AdminLayout>
                 <AdminDashboard />
               </AdminLayout>
-            </PrivateRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/admin/listings"
-          element={
-            <PrivateRoute adminOnly>
+          <Route
+            path="/admin/listings"
+            element={
               <AdminLayout>
                 <AdminListings />
               </AdminLayout>
-            </PrivateRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/admin/reservations"
-          element={
-            <PrivateRoute adminOnly>
+          <Route
+            path="/admin/reservations"
+            element={
               <AdminLayout>
                 <AdminReservations />
               </AdminLayout>
-            </PrivateRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/admin/users"
-          element={
-            <PrivateRoute adminOnly>
+          <Route
+            path="/admin/users"
+            element={
               <AdminLayout>
                 <AdminUsers />
               </AdminLayout>
-            </PrivateRoute>
-          }
-        />
+            }
+          />
 
-        <Route
-          path="/admin/notices"
-          element={
-            <PrivateRoute adminOnly>
+          <Route
+            path="/admin/users/edit/:id"
+            element={
+              <AdminLayout>
+                <EditUser />
+              </AdminLayout>
+            }
+          />
+
+          <Route
+            path="/admin/notices"
+            element={
               <AdminLayout>
                 <AdminNotices />
               </AdminLayout>
-            </PrivateRoute>
-          }
-        />
+            }
+          />
 
-        {/* ======================== */}
-        {/*        ⭐ 판매자 라우트   */}
-        {/* ======================== */}
-        <Route
-          path="/seller"
-          element={
-            <PrivateRoute sellerOnly>
-              <SellerDashboard />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/admin/notices/new"
+            element={
+              <AdminLayout>
+                <AdminNoticeNew />
+              </AdminLayout>
+            }
+          />
 
-        <Route
-          path="/seller/listings"
-          element={
-            <PrivateRoute sellerOnly>
-              <SellerListings />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/admin/notices/edit/:id"
+            element={
+              <AdminLayout>
+                <AdminNoticeEdit />
+              </AdminLayout>
+            }
+          />
 
-        <Route
-          path="/seller/add-listing"
-          element={
-            <PrivateRoute sellerOnly>
-              <SellerAddListing />
-            </PrivateRoute>
-          }
-        />
+          <Route path="*" element={<Navigate to="/admin" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
 
-        <Route
-          path="/seller/edit/:id"
-          element={
-            <PrivateRoute sellerOnly>
-              <SellerEditListing />
-            </PrivateRoute>
-          }
-        />
+  // ==========================
+  // ⭐ 판매자 라우트
+  // ==========================
+  if (user?.role === "seller") {
+    return (
+      <Router>
+        <Routes>
+          <Route
+            path="/seller"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerDashboard />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/seller/reservations"
-          element={
-            <PrivateRoute sellerOnly>
-              <SellerReservations />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/seller/listings"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerListings />
+              </PrivateRoute>
+            }
+          />
 
-        <Route
-          path="/seller/sales"
-          element={
-            <PrivateRoute sellerOnly>
-              <SellerSales />
-            </PrivateRoute>
-          }
-        />
+          <Route
+            path="/seller/add-listing"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerAddListing />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/seller/edit/:id"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerEditListing />
+              </PrivateRoute>
+            }
+          />
 
-        {/* ======================== */}
-        {/*        ⭐ 사용자 라우트   */}
-        {/* ======================== */}
+          <Route
+            path="/seller/reservations"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerReservations />
+              </PrivateRoute>
+            }
+          />
 
+          <Route
+            path="/seller/sales"
+            element={
+              <PrivateRoute sellerOnly>
+                <SellerSales />
+              </PrivateRoute>
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/seller" replace />} />
+        </Routes>
+      </Router>
+    );
+  }
+
+  // ==========================
+  // ⭐ 일반 유저 라우트
+  // ==========================
+  return (
+    <Router>
+      <Header />
+
+      <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/listing/:id" element={<ListingDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-
         <Route path="/notices" element={<NoticesPage />} />
         <Route path="/notices/:id" element={<NoticeDetailPage />} />
 
@@ -233,3 +267,5 @@ export default function App() {
     </Router>
   );
 }
+
+export default App;
