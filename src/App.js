@@ -187,15 +187,6 @@ function App() {
             }
           />
 
-          <Route
-            path="/seller/sales"
-            element={
-              <PrivateRoute sellerOnly>
-                <SellerSales />
-              </PrivateRoute>
-            }
-          />
-
           <Route path="*" element={<Navigate to="/seller" replace />} />
         </Routes>
       </Router>

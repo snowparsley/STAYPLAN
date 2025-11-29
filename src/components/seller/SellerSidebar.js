@@ -23,7 +23,6 @@ function SellerSidebar() {
     { name: "내 숙소 목록", icon: <FiList />, path: "/seller/listings" },
     { name: "숙소 등록", icon: <FiEdit3 />, path: "/seller/add-listing" },
     { name: "예약 관리", icon: <FiList />, path: "/seller/reservations" },
-    { name: "매출 통계", icon: <FiBarChart2 />, path: "/seller/sales" },
   ];
 
   return (

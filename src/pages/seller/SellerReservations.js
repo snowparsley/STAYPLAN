@@ -48,7 +48,7 @@ function SellerReservations() {
       );
 
       const data = await res.json();
-      setReservations(Array.isArray(data) ? data : []);
+      setReservations(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
       console.error("예약 불러오기 오류:", err);
     } finally {
