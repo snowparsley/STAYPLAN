@@ -58,15 +58,26 @@ function SellerEditListing() {
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [desc, setDesc] = useState("");
-  const [images, setImages] = useState([""]);
+  const [images, setImages] = useState([]);
+
+  // 신규 업로드 파일
+  const [newFiles, setNewFiles] = useState([]);
+  const [newPreview, setNewPreview] = useState([]);
 
   // ⭐ 추가된 type 상태
   const [type, setType] = useState("domestic");
 
-  /** 이미지 추가 */
-  const addImageField = () => setImages((prev) => [...prev, ""]);
+  /* -------------------------------------------------------
+      이미지 URL 수정 + 새로운 로컬 업로드까지 지원
+  ------------------------------------------------------- */
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setNewFiles(files);
 
-  /** 이미지 업데이트 */
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setNewPreview(previews);
+  };
+
   const updateImage = (index, value) => {
     setImages((prev) => {
       const arr = [...prev];
@@ -98,9 +109,9 @@ function SellerEditListing() {
       setPrice(data.price);
       setLocation(data.location);
       setDesc(data.description);
-      setImages(data.images && Array.isArray(data.images) ? data.images : [""]);
 
-      // ⭐ type 값 설정 (domestic | abroad)
+      setImages(data.images && Array.isArray(data.images) ? data.images : []);
+
       setType(data.type || "domestic");
     } catch (err) {
       alert("서버 오류: 상세 정보 로딩 실패");
@@ -122,14 +133,23 @@ function SellerEditListing() {
       return;
     }
 
-    const body = {
-      title,
-      description: desc,
-      price,
-      location,
-      type, // ⭐ 추가된 부분
-      images: images.filter((v) => v.trim() !== ""),
-    };
+    const formData = new FormData();
+
+    formData.append("title", title);
+    formData.append("description", desc);
+    formData.append("price", price);
+    formData.append("location", location);
+    formData.append("type", type);
+
+    // 기존 URL 이미지 전달
+    images
+      .filter((v) => v.trim() !== "")
+      .forEach((url) => formData.append("oldImages", url));
+
+    // 새로 추가된 파일 전달
+    newFiles.forEach((file) => {
+      formData.append("newImages", file);
+    });
 
     try {
       const res = await fetch(
@@ -137,10 +157,9 @@ function SellerEditListing() {
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(body),
+          body: formData,
         }
       );
 
@@ -172,201 +191,165 @@ function SellerEditListing() {
   ------------------------------------------------------- */
   return (
     <SellerLayout>
-      <div style={{ maxWidth: 840, margin: "0 auto", paddingBottom: 40 }}>
+      <div style={{ maxWidth: 840, margin: "0 auto", paddingBottom: 50 }}>
         {/* 상단 타이틀 */}
-        <div style={{ marginBottom: 26 }}>
-          <h2
-            style={{ fontSize: 28, fontWeight: 800, margin: 0, color: c.text }}
-          >
-            숙소 수정
-          </h2>
-          <p style={{ marginTop: 8, fontSize: 14, color: c.sub }}>
-            등록된 숙소 정보를 수정할 수 있습니다.
-          </p>
-        </div>
+        <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>
+          숙소 수정
+        </h2>
+        <p style={{ color: c.sub, marginBottom: 20 }}>
+          등록된 숙소 정보를 수정합니다.
+        </p>
 
-        {/* 카드 */}
         <div
           style={{
             background: c.card,
+            padding: 32,
             borderRadius: 18,
-            padding: "30px 26px",
             border: `1px solid ${c.border}`,
-            boxShadow: isDark
-              ? "0 12px 28px rgba(0,0,0,0.55)"
-              : "0 12px 28px rgba(0,0,0,0.06)",
           }}
         >
-          {/* ⭐ 타입 선택 */}
-          <section style={{ marginBottom: 26 }}>
-            <h3
+          {/* ====== 타입 선택 ====== */}
+          <FieldLabel color={c.sub} text="숙소 유형" />
+
+          <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+            <button
+              onClick={() => setType("domestic")}
               style={{
-                fontSize: 16,
-                fontWeight: 700,
-                marginBottom: 12,
-                color: c.text,
+                flex: 1,
+                padding: "12px 0",
+                borderRadius: 10,
+                border: `1px solid ${c.border}`,
+                background: type === "domestic" ? c.highlight : c.input,
+                color: type === "domestic" ? "white" : c.text,
+                fontWeight: 600,
+                cursor: "pointer",
               }}
             >
-              숙소 유형
-            </h3>
+              국내
+            </button>
 
-            <div style={{ display: "flex", gap: 10 }}>
-              <button
-                onClick={() => setType("domestic")}
-                style={{
-                  flex: 1,
-                  padding: "12px 0",
-                  borderRadius: 10,
-                  border: `1px solid ${c.border}`,
-                  background: type === "domestic" ? c.highlight : c.input,
-                  color: type === "domestic" ? "#fff" : c.text,
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                국내
-              </button>
-
-              <button
-                onClick={() => setType("abroad")}
-                style={{
-                  flex: 1,
-                  padding: "12px 0",
-                  borderRadius: 10,
-                  border: `1px solid ${c.border}`,
-                  background: type === "abroad" ? c.highlight : c.input,
-                  color: type === "abroad" ? "#fff" : c.text,
-                  cursor: "pointer",
-                  fontWeight: 600,
-                }}
-              >
-                해외
-              </button>
-            </div>
-          </section>
+            <button
+              onClick={() => setType("abroad")}
+              style={{
+                flex: 1,
+                padding: "12px 0",
+                borderRadius: 10,
+                border: `1px solid ${c.border}`,
+                background: type === "abroad" ? c.highlight : c.input,
+                color: type === "abroad" ? "white" : c.text,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              해외
+            </button>
+          </div>
 
           {/* 기본 정보 */}
-          <section style={{ marginBottom: 26 }}>
-            <h3
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                marginBottom: 12,
-                color: c.text,
-              }}
-            >
-              기본 정보
-            </h3>
+          <FieldLabel color={c.sub} text="숙소 제목" />
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            style={inputStyle(c)}
+          />
 
-            <FieldLabel color={c.sub} text="숙소 제목" />
+          <FieldLabel color={c.sub} text="가격 (원)" />
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            style={inputStyle(c)}
+            placeholder="예: 120000"
+          />
+
+          <FieldLabel color={c.sub} text="지역" />
+          <input
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            style={inputStyle(c)}
+          />
+
+          {/* 설명 */}
+          <FieldLabel color={c.sub} text="설명" />
+          <textarea
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            style={{
+              ...inputStyle(c),
+              height: 140,
+              resize: "none",
+            }}
+          />
+
+          {/* 기존 이미지 수정 */}
+          <FieldLabel color={c.sub} text="현재 등록된 이미지 URL" />
+
+          {images.map((img, i) => (
             <input
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              key={i}
+              value={img}
+              onChange={(e) => updateImage(i, e.target.value)}
+              placeholder="https://example.com/image.jpg"
               style={inputStyle(c)}
             />
+          ))}
 
-            <FieldLabel color={c.sub} text="가격 (원)" />
-            <input
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              style={inputStyle(c)}
-            />
+          {/* 새 이미지 업로드 */}
+          <FieldLabel color={c.sub} text="새로운 이미지 업로드" />
 
-            <FieldLabel color={c.sub} text="지역" />
-            <input
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              style={inputStyle(c)}
-            />
-          </section>
+          <input
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={handleFileChange}
+            style={{
+              padding: 10,
+              border: `1px dashed ${c.border}`,
+              borderRadius: 10,
+              background: c.input,
+              width: "100%",
+              marginBottom: 10,
+            }}
+          />
 
-          {/* 상세 설명 */}
-          <section style={{ marginBottom: 26 }}>
-            <h3
+          {/* 새 미리보기 */}
+          {newPreview.length > 0 && (
+            <div
               style={{
-                fontSize: 16,
-                fontWeight: 700,
-                marginBottom: 12,
-                color: c.text,
+                display: "flex",
+                gap: 10,
+                flexWrap: "wrap",
+                marginBottom: 20,
               }}
             >
-              상세 설명
-            </h3>
-
-            <FieldLabel color={c.sub} text="설명" />
-            <textarea
-              value={desc}
-              onChange={(e) => setDesc(e.target.value)}
-              style={{
-                ...inputStyle(c),
-                height: 140,
-                resize: "none",
-                lineHeight: 1.5,
-              }}
-            />
-          </section>
-
-          {/* 이미지 */}
-          <section>
-            <h3
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                marginBottom: 12,
-                color: c.text,
-              }}
-            >
-              이미지 URL 수정
-            </h3>
-
-            <FieldLabel color={c.sub} text="숙소 이미지 URL 목록" />
-
-            {images.map((img, index) => (
-              <input
-                key={index}
-                value={img}
-                onChange={(e) => updateImage(index, e.target.value)}
-                placeholder="https://example.com/img.jpg"
-                style={inputStyle(c)}
-              />
-            ))}
-
-            {/* 이미지 필드 추가 */}
-            <button
-              type="button"
-              onClick={addImageField}
-              style={{
-                width: "100%",
-                padding: "10px 0",
-                background: c.input,
-                color: c.text,
-                border: `1px dashed ${c.border}`,
-                borderRadius: 10,
-                cursor: "pointer",
-                fontSize: 14,
-                fontWeight: 500,
-                marginBottom: 8,
-              }}
-            >
-              + 이미지 추가
-            </button>
-          </section>
+              {newPreview.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  style={{
+                    width: 120,
+                    height: 90,
+                    borderRadius: 10,
+                    objectFit: "cover",
+                    border: `1px solid ${c.border}`,
+                  }}
+                />
+              ))}
+            </div>
+          )}
 
           {/* 수정 버튼 */}
           <button
-            type="button"
             onClick={handleUpdate}
             style={{
               width: "100%",
               background: c.btn,
-              color: "#fff",
+              color: "white",
               padding: "14px 0",
-              fontWeight: 600,
               borderRadius: 12,
-              fontSize: 15,
-              border: "none",
+              fontSize: 16,
               cursor: "pointer",
-              marginTop: 8,
+              border: "none",
             }}
           >
             숙소 수정하기
