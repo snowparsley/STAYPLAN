@@ -14,12 +14,18 @@ function HomePage() {
   const fetchListings = async (selectedType) => {
     try {
       setLoading(true);
+
       const res = await fetch(
         `https://stayplanserver.onrender.com/api/listings?type=${selectedType}`
       );
+
       const data = await res.json();
-      if (Array.isArray(data)) setListings(data);
-      else setListings([]);
+
+      if (Array.isArray(data)) {
+        setListings(data);
+      } else {
+        setListings([]);
+      }
     } catch (err) {
       console.error("❌ 숙소 불러오기 오류:", err);
       setListings([]);
@@ -70,6 +76,7 @@ function HomePage() {
 
   const sections = [];
   const chunkSize = type === "domestic" ? 8 : 5;
+
   for (let i = 0; i < listings.length; i += chunkSize) {
     const index = Math.floor(i / chunkSize) % sectionTitles.length;
     sections.push({

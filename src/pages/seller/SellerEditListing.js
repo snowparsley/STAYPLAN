@@ -50,6 +50,7 @@ function SellerEditListing() {
     sub: isDark ? "#A9A39A" : "#7A746D",
     input: isDark ? "#34322E" : "#F8F5EF",
     btn: "#8C6A4A",
+    highlight: "#A47A6B",
   };
 
   const [loading, setLoading] = useState(true);
@@ -58,6 +59,9 @@ function SellerEditListing() {
   const [location, setLocation] = useState("");
   const [desc, setDesc] = useState("");
   const [images, setImages] = useState([""]);
+
+  // ⭐ 추가된 type 상태
+  const [type, setType] = useState("domestic");
 
   /** 이미지 추가 */
   const addImageField = () => setImages((prev) => [...prev, ""]);
@@ -95,6 +99,9 @@ function SellerEditListing() {
       setLocation(data.location);
       setDesc(data.description);
       setImages(data.images && Array.isArray(data.images) ? data.images : [""]);
+
+      // ⭐ type 값 설정 (domestic | abroad)
+      setType(data.type || "domestic");
     } catch (err) {
       alert("서버 오류: 상세 정보 로딩 실패");
     } finally {
@@ -120,6 +127,7 @@ function SellerEditListing() {
       description: desc,
       price,
       location,
+      type, // ⭐ 추가된 부분
       images: images.filter((v) => v.trim() !== ""),
     };
 
@@ -189,6 +197,54 @@ function SellerEditListing() {
               : "0 12px 28px rgba(0,0,0,0.06)",
           }}
         >
+          {/* ⭐ 타입 선택 */}
+          <section style={{ marginBottom: 26 }}>
+            <h3
+              style={{
+                fontSize: 16,
+                fontWeight: 700,
+                marginBottom: 12,
+                color: c.text,
+              }}
+            >
+              숙소 유형
+            </h3>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={() => setType("domestic")}
+                style={{
+                  flex: 1,
+                  padding: "12px 0",
+                  borderRadius: 10,
+                  border: `1px solid ${c.border}`,
+                  background: type === "domestic" ? c.highlight : c.input,
+                  color: type === "domestic" ? "#fff" : c.text,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                국내
+              </button>
+
+              <button
+                onClick={() => setType("abroad")}
+                style={{
+                  flex: 1,
+                  padding: "12px 0",
+                  borderRadius: 10,
+                  border: `1px solid ${c.border}`,
+                  background: type === "abroad" ? c.highlight : c.input,
+                  color: type === "abroad" ? "#fff" : c.text,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                해외
+              </button>
+            </div>
+          </section>
+
           {/* 기본 정보 */}
           <section style={{ marginBottom: 26 }}>
             <h3
@@ -209,7 +265,7 @@ function SellerEditListing() {
               style={inputStyle(c)}
             />
 
-            <FieldLabel color={c.sub} text="가격 (1박 기준, 원)" />
+            <FieldLabel color={c.sub} text="가격 (원)" />
             <input
               value={price}
               onChange={(e) => setPrice(e.target.value)}

@@ -14,6 +14,7 @@ function SellerAddListing() {
     sub: isDark ? "#A9A39A" : "#7A746D",
     input: isDark ? "#34322E" : "#F8F5EF",
     btn: "#8C6A4A",
+    highlight: "#A47A6B",
   };
 
   const [title, setTitle] = useState("");
@@ -22,6 +23,9 @@ function SellerAddListing() {
   const [desc, setDesc] = useState("");
   const [files, setFiles] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
+
+  // ⭐ 추가된 type 상태
+  const [type, setType] = useState("domestic"); // 기본값: 국내
 
   /* =====================================================
       📸 파일 업로드 & 미리보기
@@ -50,6 +54,7 @@ function SellerAddListing() {
     formData.append("price", price);
     formData.append("location", location);
     formData.append("description", desc);
+    formData.append("type", type); // ⭐ 추가된 부분
 
     files.forEach((file) => {
       formData.append("images", file);
@@ -100,6 +105,49 @@ function SellerAddListing() {
             border: `1px solid ${c.border}`,
           }}
         >
+          {/* ====== 타입 선택 ====== */}
+          <Label c={c} text="숙소 유형" />
+
+          <div
+            style={{
+              display: "flex",
+              gap: 10,
+              marginBottom: 16,
+            }}
+          >
+            <button
+              onClick={() => setType("domestic")}
+              style={{
+                flex: 1,
+                padding: "12px 0",
+                borderRadius: 10,
+                border: `1px solid ${c.border}`,
+                background: type === "domestic" ? c.highlight : c.input,
+                color: type === "domestic" ? "white" : c.text,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              국내
+            </button>
+
+            <button
+              onClick={() => setType("abroad")}
+              style={{
+                flex: 1,
+                padding: "12px 0",
+                borderRadius: 10,
+                border: `1px solid ${c.border}`,
+                background: type === "abroad" ? c.highlight : c.input,
+                color: type === "abroad" ? "white" : c.text,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              해외
+            </button>
+          </div>
+
           {/* 제목 */}
           <Label c={c} text="숙소 제목" />
           <input
@@ -110,19 +158,12 @@ function SellerAddListing() {
 
           {/* 가격 */}
           <Label c={c} text="가격 (원)" />
-          <p style={labelStyle(c)}>가격 (원)</p>
           <input
             type="number"
             value={price}
             onChange={(e) => {
-              let val = e.target.value;
-
-              // 숫자만 허용
-              val = val.replace(/\D/g, "");
-
-              // 최대 8자리 제한
+              let val = e.target.value.replace(/\D/g, "");
               if (val.length > 8) val = val.slice(0, 8);
-
               setPrice(val);
             }}
             style={inputStyle(c)}
