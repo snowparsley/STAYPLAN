@@ -1,47 +1,43 @@
 import React, { useEffect, useState } from "react";
 import SellerLayout from "../../components/seller/SellerLayout";
-import SellerHeader from "../../components/seller/SellerHeader";
-import SellerSidebar from "../../components/seller/SellerSidebar";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 function SellerListings() {
   const { token } = useAuth();
-  const { theme } = useTheme();
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const isDark = theme === "dark";
 
   const c = {
     bg: isDark ? "#1A1A18" : "#FAF7F0",
     card: isDark ? "#262522" : "#FFFFFF",
-    line: isDark ? "#3F3C38" : "#E5E1D8",
     text: isDark ? "#EFEDE8" : "#4A3F35",
     sub: isDark ? "#A9A39A" : "#7A746D",
-    hover: isDark ? "#373632" : "#F1EBE2",
+    line: isDark ? "#3F3C38" : "#E5E1D8",
     shadow: isDark
-      ? "0 10px 22px rgba(0,0,0,0.5)"
-      : "0 10px 22px rgba(0,0,0,0.08)",
+      ? "0 10px 22px rgba(0,0,0,0.45)"
+      : "0 10px 22px rgba(0,0,0,0.06)",
   };
 
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // 반응형
   useEffect(() => {
-    const r = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener("resize", r);
-    return () => window.removeEventListener("resize", r);
+    const resize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
   }, []);
 
-  // 숙소 불러오기
+  /* -------------------------------------------
+      숙소 목록 불러오기 (중요 수정)
+  ------------------------------------------- */
   const loadListings = async () => {
     try {
-      setLoading(true);
-
       const res = await fetch(
         "https://stayplanserver.onrender.com/api/seller/my-listings",
         {
@@ -51,9 +47,10 @@ function SellerListings() {
 
       const data = await res.json();
 
-      setListings(data.data || []); // <-- 무조건 배열 세팅
+      // ⭐ 백엔드 응답 구조: { data: [...], total, page, limit, totalPages }
+      setListings(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
-      console.error("숙소 불러오기 오류:", err);
+      console.error("숙소 목록 불러오기 오류:", err);
     } finally {
       setLoading(false);
     }
@@ -63,7 +60,9 @@ function SellerListings() {
     loadListings();
   }, []);
 
-  // 삭제
+  /* -------------------------------------------
+      숙소 삭제
+  ------------------------------------------- */
   const deleteListing = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
 
@@ -77,7 +76,11 @@ function SellerListings() {
       );
 
       const data = await res.json();
-      if (!res.ok) return alert(data.message || "삭제 실패");
+
+      if (!res.ok) {
+        alert(data.message || "삭제 실패");
+        return;
+      }
 
       alert("삭제 완료");
       loadListings();
@@ -86,111 +89,121 @@ function SellerListings() {
     }
   };
 
-  // ------------ 스타일 -------------
+  /* -------------------------------------------
+      스타일 공통
+  ------------------------------------------- */
+  const tableStyle = {
+    width: "100%",
+    minWidth: 700,
+    borderCollapse: "collapse",
+  };
+
   const th = {
     padding: "14px 0",
     fontSize: 15,
     color: c.sub,
     fontWeight: 700,
-  };
-
-  const tr = {
-    textAlign: "center",
     borderBottom: `1px solid ${c.line}`,
-    height: 70,
-    color: c.text,
   };
 
-  const editBtn = {
+  const td = {
+    padding: "18px 10px",
+    textAlign: "center",
+    fontSize: 15,
+    color: c.text,
+    borderBottom: `1px solid ${c.line}`,
+  };
+
+  const btnEdit = {
     background: c.card,
     border: `1px solid ${c.line}`,
-    borderRadius: 6,
     padding: "6px 10px",
+    borderRadius: 8,
     cursor: "pointer",
     color: c.text,
   };
 
-  const deleteBtn = {
+  const btnDelete = {
     background: "#B33A3A",
     border: "none",
-    borderRadius: 6,
     padding: "6px 10px",
+    borderRadius: 8,
     cursor: "pointer",
     color: "#fff",
   };
 
-  // ------------ JSX -------------
+  /* -------------------------------------------
+      JSX
+  ------------------------------------------- */
   return (
     <SellerLayout>
       <h1 style={{ fontSize: 30, fontWeight: 800, marginBottom: 26 }}>
         내 숙소 목록
       </h1>
 
-      {loading && <p style={{ color: c.sub }}>불러오는 중...</p>}
-
-      {!loading && listings.length === 0 && (
+      {loading ? (
+        <p style={{ color: c.sub }}>불러오는 중...</p>
+      ) : listings.length === 0 ? (
         <p style={{ color: c.sub }}>등록된 숙소가 없습니다.</p>
-      )}
-
-      {/* 모바일 UI */}
-      {isMobile ? (
+      ) : isMobile ? (
+        /* =====================
+           📱 모바일 UI
+        ===================== */
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {listings.map((l) => (
+          {listings.map((item) => (
             <div
-              key={l.id}
+              key={item.id}
               style={{
                 background: c.card,
+                borderRadius: 14,
                 border: `1px solid ${c.line}`,
-                borderRadius: 12,
                 padding: 16,
                 boxShadow: c.shadow,
               }}
             >
               <img
-                src={l.images?.[0] || l.thumbnail}
+                src={item.images?.[0] || item.thumbnail}
                 alt=""
                 style={{
                   width: "100%",
-                  height: 160,
-                  objectFit: "cover",
+                  height: 140,
                   borderRadius: 10,
-                  marginBottom: 14,
+                  objectFit: "cover",
+                  marginBottom: 12,
                 }}
               />
 
-              <h3 style={{ margin: "0 0 8px", color: c.text }}>{l.title}</h3>
+              <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>
+                {item.title}
+              </h3>
 
-              <p style={{ margin: 0, fontSize: 14, color: c.sub }}>
-                {l.location}
+              <p style={{ color: c.sub, marginTop: 6, fontSize: 14 }}>
+                {item.location}
               </p>
 
-              <p
-                style={{
-                  marginTop: 10,
-                  fontWeight: 700,
-                  fontSize: 18,
-                  color: c.text,
-                }}
-              >
-                {Number(l.price).toLocaleString()}원
+              <p style={{ fontWeight: 700, marginTop: 6 }}>
+                {item.price.toLocaleString()}원
               </p>
 
               <div
                 style={{
                   display: "flex",
-                  gap: 10,
                   justifyContent: "flex-end",
+                  gap: 10,
                   marginTop: 14,
                 }}
               >
                 <button
-                  style={editBtn}
-                  onClick={() => navigate(`/seller/edit/${l.id}`)}
+                  style={btnEdit}
+                  onClick={() => navigate(`/seller/edit/${item.id}`)}
                 >
                   <FiEdit2 />
                 </button>
 
-                <button style={deleteBtn} onClick={() => deleteListing(l.id)}>
+                <button
+                  style={btnDelete}
+                  onClick={() => deleteListing(item.id)}
+                >
                   <FiTrash2 />
                 </button>
               </div>
@@ -198,51 +211,54 @@ function SellerListings() {
           ))}
         </div>
       ) : (
-        // 데스크탑 테이블 UI
+        /* =====================
+           🖥 데스크탑 UI
+        ===================== */
         <div
           style={{
             background: c.card,
-            borderRadius: 14,
+            borderRadius: 16,
             border: `1px solid ${c.line}`,
-            padding: "20px 24px",
+            padding: 20,
             boxShadow: c.shadow,
-            marginTop: 10,
+            overflowX: "auto",
           }}
         >
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <table style={tableStyle}>
             <thead>
-              <tr style={{ borderBottom: `1px solid ${c.line}` }}>
+              <tr>
                 <th style={th}>ID</th>
                 <th style={th}>이미지</th>
                 <th style={th}>제목</th>
+                <th style={th}>지역</th>
                 <th style={th}>가격</th>
                 <th style={th}>관리</th>
               </tr>
             </thead>
 
             <tbody>
-              {listings.map((l) => (
-                <tr key={l.id} style={tr}>
-                  <td>{l.id}</td>
+              {listings.map((item) => (
+                <tr key={item.id}>
+                  <td style={td}>{item.id}</td>
 
-                  <td>
+                  <td style={td}>
                     <img
-                      src={l.images?.[0] || l.thumbnail}
+                      src={item.images?.[0] || item.thumbnail}
                       alt=""
                       style={{
-                        width: 80,
-                        height: 60,
-                        objectFit: "cover",
+                        width: 75,
+                        height: 55,
                         borderRadius: 10,
+                        objectFit: "cover",
                       }}
                     />
                   </td>
 
-                  <td>{l.title}</td>
+                  <td style={td}>{item.title}</td>
+                  <td style={td}>{item.location}</td>
+                  <td style={td}>{Number(item.price).toLocaleString()}원</td>
 
-                  <td>{Number(l.price).toLocaleString()}원</td>
-
-                  <td>
+                  <td style={td}>
                     <div
                       style={{
                         display: "flex",
@@ -251,14 +267,15 @@ function SellerListings() {
                       }}
                     >
                       <button
-                        style={editBtn}
-                        onClick={() => navigate(`/seller/edit/${l.id}`)}
+                        style={btnEdit}
+                        onClick={() => navigate(`/seller/edit/${item.id}`)}
                       >
                         <FiEdit2 />
                       </button>
+
                       <button
-                        style={deleteBtn}
-                        onClick={() => deleteListing(l.id)}
+                        style={btnDelete}
+                        onClick={() => deleteListing(item.id)}
                       >
                         <FiTrash2 />
                       </button>
