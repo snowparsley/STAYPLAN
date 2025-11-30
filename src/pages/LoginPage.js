@@ -145,7 +145,7 @@ function LoginPage() {
               fontSize: 16,
             }}
           >
-            로그인하기
+            로그인 하기
           </button>
         </form>
 
