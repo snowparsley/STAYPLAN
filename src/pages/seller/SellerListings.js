@@ -48,8 +48,10 @@ function SellerListings() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       const data = await res.json();
-      if (Array.isArray(data.data)) setListings(data.data);
+
+      setListings(data.data || []); // <-- 무조건 배열 세팅
     } catch (err) {
       console.error("숙소 불러오기 오류:", err);
     } finally {
