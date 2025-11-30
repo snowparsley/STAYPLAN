@@ -5,6 +5,9 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
+// 🔥 이미지 URL 변환 함수 추가
+import { getImageUrl } from "../../utils/image";
+
 function SellerListings() {
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -34,7 +37,7 @@ function SellerListings() {
   }, []);
 
   /* -------------------------------------------
-      숙소 목록 불러오기 (중요 수정)
+      숙소 목록 불러오기
   ------------------------------------------- */
   const loadListings = async () => {
     try {
@@ -47,7 +50,6 @@ function SellerListings() {
 
       const data = await res.json();
 
-      // ⭐ 백엔드 응답 구조: { data: [...], total, page, limit, totalPages }
       setListings(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
       console.error("숙소 목록 불러오기 오류:", err);
@@ -162,7 +164,7 @@ function SellerListings() {
               }}
             >
               <img
-                src={item.images?.[0] || item.thumbnail}
+                src={getImageUrl(item.images?.[0] || item.thumbnail)}
                 alt=""
                 style={{
                   width: "100%",
@@ -243,7 +245,7 @@ function SellerListings() {
 
                   <td style={td}>
                     <img
-                      src={item.images?.[0] || item.thumbnail}
+                      src={getImageUrl(item.images?.[0] || item.thumbnail)}
                       alt=""
                       style={{
                         width: 75,

@@ -5,6 +5,9 @@ import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 
+// 🔥 이미지 URL 변환 함수
+import { getImageUrl } from "../utils/image";
+
 function PaymentPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -48,7 +51,6 @@ function PaymentPage() {
         payment_method: selectedMethod,
       };
 
-      // Render 서버 URL로 변경됨
       const res = await axios.post(
         "https://stayplanserver.onrender.com/api/reservations",
         payload,
@@ -72,15 +74,12 @@ function PaymentPage() {
   const cardBg = isDark ? "#2A2926" : "#FFFFFF";
   const sideCardBg = isDark ? "#252422" : "#FFFFFF";
   const lineColor = isDark ? "#4A4743" : "#E6E1D8";
-
   const headingColor = isDark ? "#E3DFD7" : "#3F3A35";
   const textColor = isDark ? "#D8D4CC" : "#4B463F";
   const subtleText = isDark ? "#A9A39A" : "#7A746D";
-
   const mainShadow = isDark
     ? "0 14px 34px rgba(0,0,0,0.5)"
     : "0 14px 34px rgba(0,0,0,0.08)";
-
   const buttonBg = isDark ? "#CFCAC0" : "#5A554D";
   const buttonText = isDark ? "#1F1E1C" : "#FFFFFF";
 
@@ -115,7 +114,6 @@ function PaymentPage() {
           margin: "0 auto",
         }}
       >
-        {/* 숙소 정보 카드 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -129,7 +127,7 @@ function PaymentPage() {
           }}
         >
           <img
-            src={listing.thumbnail}
+            src={getImageUrl(listing.thumbnail)}
             alt={listing.title}
             style={{
               width: "100%",
@@ -193,7 +191,6 @@ function PaymentPage() {
           </div>
         </motion.div>
 
-        {/* 결제 요약 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -4,6 +4,9 @@ import { useTheme } from "../contexts/ThemeContext";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
+// 🔥 이미지 URL 변환 함수
+import { getImageUrl } from "../utils/image";
+
 function ReservationsPage() {
   const navigate = useNavigate();
   const { token } = useAuth();
@@ -121,7 +124,6 @@ function ReservationsPage() {
           나의 예약 내역
         </h2>
 
-        {/* 빈 상태 */}
         {reservations.length === 0 ? (
           <div
             style={{
@@ -160,8 +162,9 @@ function ReservationsPage() {
                   cursor: "pointer",
                 }}
               >
+                {/* 🔥 이미지 경로 수정됨 */}
                 <img
-                  src={r.thumbnail}
+                  src={getImageUrl(r.thumbnail)}
                   alt={r.title}
                   style={{
                     width: "100%",
