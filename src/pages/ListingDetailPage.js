@@ -5,6 +5,22 @@ import axios from "axios";
 import Footer from "../components/Footer";
 import { useTheme } from "../contexts/ThemeContext";
 
+/* -------------------------------------------------------
+   🔥 서버 이미지 URL 자동 변환
+------------------------------------------------------- */
+const SERVER_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://stayplanserver.onrender.com"
+    : "http://localhost:5000";
+
+const getImageUrl = (img) => {
+  if (!img) return "https://via.placeholder.com/600x400";
+
+  if (img.startsWith("http")) return img;
+
+  return `${SERVER_URL}${img}`;
+};
+
 function ListingDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -136,9 +152,9 @@ function ListingDetailPage() {
         transition: "0.3s ease",
       }}
     >
-      {/* 썸네일 */}
+      {/* 🔥 썸네일 이미지 절대 URL 변환 적용 */}
       <motion.img
-        src={listing.thumbnail}
+        src={getImageUrl(listing.thumbnail)}
         alt={listing.title}
         initial={{ scale: 1.03, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
