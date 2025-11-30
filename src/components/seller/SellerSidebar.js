@@ -1,11 +1,11 @@
 // src/components/seller/SellerSidebar.js
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiHome, FiList, FiEdit3, FiBarChart2, FiLogOut } from "react-icons/fi";
+import { FiHome, FiList, FiEdit3, FiLogOut } from "react-icons/fi";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 
-function SellerSidebar() {
+function SellerSidebar({ closeMenu }) {
   const { logout } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -25,18 +25,19 @@ function SellerSidebar() {
     { name: "예약 관리", icon: <FiList />, path: "/seller/reservations" },
   ];
 
+  const handleClick = () => {
+    if (closeMenu) closeMenu();
+  };
+
   return (
     <div
       style={{
         width: 240,
         background: c.bg,
-        height: "100vh",
+        height: "100%",
         borderRight: `1px solid ${c.border}`,
         padding: "28px 18px",
         boxSizing: "border-box",
-        position: "fixed",
-        top: 0,
-        left: 0,
       }}
     >
       <h2
@@ -55,6 +56,7 @@ function SellerSidebar() {
           <Link
             key={m.path}
             to={m.path}
+            onClick={handleClick}
             style={{
               display: "flex",
               alignItems: "center",
