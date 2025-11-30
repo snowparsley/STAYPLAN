@@ -26,18 +26,17 @@ function SellerDashboard() {
     totalSales: 0,
   });
 
-  /* ==============================================
-      📌 판매자 통계 불러오기 API (백엔드 매칭 필요)
-  =============================================== */
+  // 🔥 여기 URL이 문제였음 → 수정 완료
   useEffect(() => {
     const loadStats = async () => {
       try {
         const res = await fetch(
-          "https://stayplanserver.onrender.com/api/seller/dashboard",
+          "https://stayplanserver.onrender.com/api/seller/stats",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+
         const data = await res.json();
         if (res.ok) setStats(data);
       } catch (err) {
@@ -48,9 +47,6 @@ function SellerDashboard() {
     loadStats();
   }, [token]);
 
-  /* ==============================================
-      📌 카드 공통 스타일
-  =============================================== */
   const card = {
     background: c.card,
     borderRadius: 18,
@@ -69,9 +65,6 @@ function SellerDashboard() {
         판매자 대시보드
       </h1>
 
-      {/* ================================
-          📌 카드 4개 그대로 유지
-      ================================= */}
       <div
         style={{
           display: "flex",
@@ -80,7 +73,6 @@ function SellerDashboard() {
           marginBottom: 30,
         }}
       >
-        {/* 등록된 숙소 수 */}
         <div style={card}>
           <div style={iconStyle}>🏠</div>
           <p style={{ color: c.sub, fontSize: 14 }}>등록된 숙소 수</p>
@@ -89,7 +81,6 @@ function SellerDashboard() {
           </h3>
         </div>
 
-        {/* 오늘 예약 수 */}
         <div style={card}>
           <div style={iconStyle}>📅</div>
           <p style={{ color: c.sub, fontSize: 14 }}>오늘 예약 수</p>
@@ -98,7 +89,6 @@ function SellerDashboard() {
           </h3>
         </div>
 
-        {/* 전체 예약 수 */}
         <div style={card}>
           <div style={iconStyle}>🧾</div>
           <p style={{ color: c.sub, fontSize: 14 }}>전체 예약 수</p>
@@ -107,7 +97,6 @@ function SellerDashboard() {
           </h3>
         </div>
 
-        {/* 총 매출 */}
         <div style={card}>
           <div style={iconStyle}>⭐</div>
           <p style={{ color: c.sub, fontSize: 14 }}>총 매출</p>
