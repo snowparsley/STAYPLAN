@@ -110,11 +110,23 @@ function SellerAddListing() {
 
           {/* 가격 */}
           <Label c={c} text="가격 (원)" />
+          <p style={labelStyle(c)}>가격 (원)</p>
           <input
             type="number"
             value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            onChange={(e) => {
+              let val = e.target.value;
+
+              // 숫자만 허용
+              val = val.replace(/\D/g, "");
+
+              // 최대 8자리 제한
+              if (val.length > 8) val = val.slice(0, 8);
+
+              setPrice(val);
+            }}
             style={inputStyle(c)}
+            placeholder="예: 120000"
           />
 
           {/* 지역 */}
