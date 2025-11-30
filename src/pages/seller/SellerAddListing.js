@@ -23,16 +23,20 @@ function SellerAddListing() {
   const [files, setFiles] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
 
-  // 이미지 선택
+  /* =====================================================
+      📸 파일 업로드 & 미리보기
+  ===================================================== */
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles(selectedFiles);
 
-    // 미리보기
     const previews = selectedFiles.map((file) => URL.createObjectURL(file));
     setPreviewImages(previews);
   };
 
+  /* =====================================================
+      📌 등록 처리
+  ===================================================== */
   const handleSubmit = async () => {
     if (!title || !price || !location || !desc || files.length === 0) {
       alert("모든 필드를 입력하고 이미지를 선택해주세요.");
@@ -47,7 +51,6 @@ function SellerAddListing() {
     formData.append("location", location);
     formData.append("description", desc);
 
-    // 여러 이미지 파일 첨부
     files.forEach((file) => {
       formData.append("images", file);
     });
@@ -85,8 +88,8 @@ function SellerAddListing() {
         <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>
           숙소 등록
         </h2>
-        <p style={{ marginBottom: 20, color: c.sub }}>
-          판매자님이 운영하시는 숙소 정보를 입력하세요.
+        <p style={{ color: c.sub, marginBottom: 20 }}>
+          판매자님이 운영하시는 숙소 정보를 입력해주세요.
         </p>
 
         <div
@@ -98,7 +101,7 @@ function SellerAddListing() {
           }}
         >
           {/* 제목 */}
-          <p style={labelStyle(c)}>숙소 제목</p>
+          <Label c={c} text="숙소 제목" />
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -106,16 +109,16 @@ function SellerAddListing() {
           />
 
           {/* 가격 */}
-          <p style={labelStyle(c)}>가격 (원)</p>
+          <Label c={c} text="가격 (원)" />
           <input
+            type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             style={inputStyle(c)}
-            type="number"
           />
 
           {/* 지역 */}
-          <p style={labelStyle(c)}>지역</p>
+          <Label c={c} text="지역" />
           <input
             value={location}
             onChange={(e) => setLocation(e.target.value)}
@@ -123,7 +126,7 @@ function SellerAddListing() {
           />
 
           {/* 설명 */}
-          <p style={labelStyle(c)}>설명</p>
+          <Label c={c} text="설명" />
           <textarea
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
@@ -131,7 +134,7 @@ function SellerAddListing() {
           />
 
           {/* 이미지 업로드 */}
-          <p style={labelStyle(c)}>이미지 업로드</p>
+          <Label c={c} text="이미지 업로드" />
           <input
             type="file"
             multiple
@@ -143,6 +146,7 @@ function SellerAddListing() {
               borderRadius: 10,
               background: c.input,
               width: "100%",
+              marginBottom: 10,
             }}
           />
 
@@ -152,15 +156,14 @@ function SellerAddListing() {
               style={{
                 display: "flex",
                 gap: 10,
-                marginTop: 12,
                 flexWrap: "wrap",
+                marginBottom: 20,
               }}
             >
-              {previewImages.map((src, idx) => (
+              {previewImages.map((src, i) => (
                 <img
-                  key={idx}
+                  key={i}
                   src={src}
-                  alt="preview"
                   style={{
                     width: 120,
                     height: 90,
@@ -173,19 +176,18 @@ function SellerAddListing() {
             </div>
           )}
 
-          {/* 제출 */}
+          {/* 제출 버튼 */}
           <button
             onClick={handleSubmit}
             style={{
               width: "100%",
               background: c.btn,
               color: "white",
-              border: "none",
-              fontSize: 16,
               padding: "14px 0",
-              marginTop: 20,
               borderRadius: 12,
+              fontSize: 16,
               cursor: "pointer",
+              border: "none",
             }}
           >
             숙소 등록하기
@@ -196,12 +198,20 @@ function SellerAddListing() {
   );
 }
 
-const labelStyle = (c) => ({
-  fontSize: 13,
-  fontWeight: 600,
-  margin: "10px 0 4px",
-  color: c.sub,
-});
+function Label({ c, text }) {
+  return (
+    <p
+      style={{
+        fontSize: 13,
+        fontWeight: 600,
+        margin: "10px 0 4px",
+        color: c.sub,
+      }}
+    >
+      {text}
+    </p>
+  );
+}
 
 const inputStyle = (c) => ({
   width: "100%",
@@ -212,7 +222,6 @@ const inputStyle = (c) => ({
   marginBottom: 12,
   color: c.text,
   fontSize: 14,
-  boxSizing: "border-box",
 });
 
 export default SellerAddListing;
