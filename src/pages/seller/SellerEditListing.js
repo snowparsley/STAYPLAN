@@ -141,14 +141,14 @@ function SellerEditListing() {
     formData.append("location", location);
     formData.append("type", type);
 
-    // 기존 URL 이미지 전달
+    // 기존 URL 이미지 전달 → 서버는 existingImages 로 받음
     images
       .filter((v) => v.trim() !== "")
-      .forEach((url) => formData.append("oldImages", url));
+      .forEach((url) => formData.append("existingImages", url));
 
-    // 새로 추가된 파일 전달
+    // 새 이미지 파일 전달 → 서버는 images 로 받음 (multer.array("images"))
     newFiles.forEach((file) => {
-      formData.append("newImages", file);
+      formData.append("images", file);
     });
 
     try {
